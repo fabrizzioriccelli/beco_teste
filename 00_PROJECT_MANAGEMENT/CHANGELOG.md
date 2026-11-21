@@ -1,0 +1,22 @@
+# Histórico de versões
+
+## [0.1.0] — 21/11/2026 — Fase 0 (rascunho para validação)
+
+### Adicionado
+
+- Estrutura de pastas do projeto (00 a 15), com README por pasta.
+- Relatório da Fase 0: pesquisa, benchmarking e diagnóstico estratégico (`01_RESEARCH_BENCHMARK/FASE0_RELATORIO_DIAGNOSTICO.md`).
+- Fichas de benchmarking de concorrentes nacionais e internacionais.
+- Registro de fontes consultadas, com links e data de consulta.
+- Registro normativo HIS/HMP em YAML, com parâmetros de 2025 e 2026 (`07_HIS_HMP_LEGAL/REGISTRO_NORMATIVO_HIS_HMP.yaml`).
+- Mapa preliminar de fontes de dados.
+- Análise do briefing do Radar (o anexo original não foi encontrado).
+- Catálogo preliminar de 30 skills.
+- Três territórios de posicionamento e análise preliminar do nome BECO.
+- Histórico de decisões (DEC-0001 a DEC-0005) e lista de decisões pendentes (D1 a D11).
+- Imagem de referência da arquitetura inicial do briefing (`09_AI_AGENTS/referencia_arquitetura_inicial_briefing.jpg`).
+
+### Limitações conhecidas
+
+- Pesquisa feita por busca indexada; textos integrais das normas não lidos (bloqueio de rede do ambiente).
+- Disponibilidade do nome e do domínio BECO não verificada.

@@ -1,0 +1,320 @@
+# BECO — Registro normativo HIS/HMP (semente da Fase 0)
+#
+# Objetivo: base versionada das normas e parâmetros que afetam a classificação
+# de empreendimentos e unidades HIS/HMP no Município de São Paulo.
+#
+# Campos exigidos pelo briefing (seção 8.1): identificação, fonte oficial, data de
+# publicação, data de vigência, abrangência, interpretação operacional, impacto
+# sobre a classificação e data da última verificação.
+#
+# Status de verificação:
+#   busca_indexada       -> conteúdo lido em trecho indexado; texto integral NÃO lido
+#   texto_integral       -> texto oficial lido e conferido (nenhum ainda)
+#   validado_juridico    -> revisado por advogado (nenhum ainda)
+#   nao_confirmado       -> informação conflitante ou de fonte única
+#
+# AVISO: inteligência de mercado, não parecer jurídico. Nenhuma regra deste arquivo
+# deve alimentar classificação em produção antes de status texto_integral e, quando
+# marcado, validado_juridico.
+
+meta:
+  versao_registro: "0.1"
+  municipio: "São Paulo/SP"
+  data_ultima_verificacao_geral: "2026-11-21"
+  responsavel_verificacao: "Equipe BECO (Fase 0)"
+  fontes: "../01_RESEARCH_BENCHMARK/FONTES_CONSULTADAS.md"
+
+normas:
+  - id: NORMA-001
+    titulo: "Plano Diretor Estratégico (PDE)"
+    tipo: lei_municipal
+    numero: "16.050/2014"
+    fonte_oficial: "Câmara Municipal de São Paulo / Diário Oficial da Cidade"
+    fontes_registro: [F01, F10]
+    data_publicacao: "2014-07-31"   # a confirmar no DOC
+    vigencia_inicio: "2014-08-01"   # a confirmar
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: >
+      Art. 46 define faixas: HIS-1 até 3 SM de renda familiar mensal ou 0,5 SM per capita;
+      HIS-2 até 6 SM ou 1 SM per capita; HMP até 10 SM ou 1,5 SM per capita.
+      Define EHIS, EHMP, EZEIS e percentuais por tipo de ZEIS (Quadro 4), com redação
+      alterada pela Lei 17.975/2023.
+    impacto_classificacao: "Base das faixas de renda e das categorias HIS-1, HIS-2, HMP"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    pendencias:
+      - "Extrair percentuais do Quadro 4 (ZEIS 1 a 5) na redação vigente"
+      - "Extrair definições exatas de EHIS, EHMP e EZEIS"
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-002
+    titulo: "Revisão intermediária do PDE"
+    tipo: lei_municipal
+    numero: "17.975/2023"
+    fonte_oficial: "https://www.saopaulo.sp.leg.br/iah/fulltext/leis/L17975.pdf"
+    fontes_registro: [F10]
+    data_publicacao: "2023-07"      # sancionada em julho/2023; dia a confirmar
+    vigencia_inicio: null           # a confirmar
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: >
+      Cerca de 120 artigos de ajuste ao PDE. Aperfeiçoa a caracterização de HIS e HMP;
+      permite destinar unidades total ou parcialmente à locação; regras de adensamento
+      para habitação popular em ZEIS 2, 3 e 5 no entorno dos Eixos.
+    impacto_classificacao: "Altera definições e incentivos de HIS/HMP; afeta EZEIS"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-003
+    titulo: "Lei de Parcelamento, Uso e Ocupação do Solo (LPUOS)"
+    tipo: lei_municipal
+    numero: "16.402/2016"
+    fonte_oficial: "Gestão Urbana / Câmara Municipal"
+    fontes_registro: [F11]
+    data_publicacao: "2016-03"      # a confirmar
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Zoneamento, incluindo demarcação e parâmetros de ZEIS"
+    impacto_classificacao: "Determina se o lote está em ZEIS e qual tipo (EZEIS)"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-004
+    titulo: "Revisão parcial da LPUOS"
+    tipo: lei_municipal
+    numero: "18.081/2024"
+    fonte_oficial: "Diário Oficial da Cidade (edição extraordinária)"
+    fontes_registro: [F11]
+    data_publicacao: "2024-01-19"
+    vigencia_inicio: null           # a confirmar
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Correções e ajustes à LPUOS de 2016; declarada válida e constitucional pelo Órgão Especial do TJ-SP"
+    impacto_classificacao: "Parâmetros de zoneamento vigentes"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-005
+    titulo: "Ajustes à revisão da LPUOS ('revisão da revisão')"
+    tipo: lei_municipal
+    numero: "18.177/2024"
+    fonte_oficial: "Diário Oficial da Cidade"
+    fontes_registro: [F11]
+    data_publicacao: "2024-07"
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Desburocratiza artigos da Lei 18.081; o art. 8º, que alterou o mapa de zoneamento, foi declarado inconstitucional"
+    impacto_classificacao: "Pode afetar o mapa de zoneamento aplicável a lotes específicos"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-006
+    titulo: "Regulamentação da produção privada de HIS e HMP"
+    tipo: decreto_municipal
+    numero: "63.130/2024"
+    fonte_oficial: "Diário Oficial da Cidade"
+    fontes_registro: [F05, F08]
+    data_publicacao: "2024-01-19"
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "Empreendimentos privados com HIS/HMP no Município"
+    conteudo_operacional: "Regulamento-base de HIS/HMP; alterado pelo Decreto 64.244/2025, que incorporou os limites de renda"
+    impacto_classificacao: "Regras de destinação, comprovação e fiscalização"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-007
+    titulo: "Atualização e compatibilização da legislação de HIS e HMP"
+    tipo: decreto_municipal
+    numero: "63.728/2024"
+    fonte_oficial: "https://www.saopaulo.sp.leg.br/iah/fulltext/decretos/D63728.pdf"
+    fontes_registro: [F09]
+    data_publicacao: "2024-09-10"
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Compatibiliza normas de HIS/HMP (relação exata com o Decreto 63.130 a confirmar)"
+    impacto_classificacao: "A confirmar"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-008
+    titulo: "Endurecimento do controle de destinação de HIS e HMP"
+    tipo: decreto_municipal
+    numero: "64.244/2025"
+    fonte_oficial: "Diário Oficial da Cidade"
+    fontes_registro: [F05, F06, F07, F12, F16]
+    data_publicacao: "2025-05-28"
+    vigencia_inicio: null           # a confirmar
+    vigencia_fim: null
+    abrangencia: "Alienação e locação de unidades HIS-1, HIS-2 e HMP"
+    conteudo_operacional: >
+      (a) destinação depende de certidão emitida pelo Município atestando a faixa de renda,
+      em substituição à autodeclaração; (b) comprovação na assinatura do compromisso ou do
+      contrato de compra e venda; (c) conceito ampliado de família da Lei federal 13.982/2020;
+      (d) Certificado de Conclusão condicionado à averbação do enquadramento nas matrículas;
+      (e) aluguel limitado a 30% da renda familiar máxima da faixa; contratos com cláusula de
+      enquadramento; (f) proibição de locação por temporada (prazo inferior a 90 dias),
+      vedação permanente; (g) SEHAB e Subprefeituras podem requisitar documentos.
+    impacto_classificacao: >
+      A averbação em matrícula passa a ser a evidência mais forte de classificação por
+      unidade. Anúncio de locação curta de unidade HIS/HMP é indício de irregularidade.
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-009
+    titulo: "Valores de renda e preço de HIS/HMP para 2025"
+    tipo: decreto_municipal
+    numero: "64.006/2025"
+    fonte_oficial: "Diário Oficial da Cidade"
+    fontes_registro: [F03, F07]
+    data_publicacao: "2025-01-10"
+    vigencia_inicio: "2025-01-10"   # a confirmar
+    vigencia_fim: "2026-01-05"      # revogado pelo Decreto 64.895/2026; data exata a confirmar
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Tetos de venda 2025: HIS-1 R$ 266.000,00; HIS-2 R$ 369.600,00; HMP R$ 518.000,00"
+    impacto_classificacao: "Aplicável a transações realizadas durante a sua vigência"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: false
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-010
+    titulo: "Valores de renda e preço de HIS/HMP para 2026"
+    tipo: decreto_municipal
+    numero: "64.895/2026"
+    fonte_oficial: "Diário Oficial da Cidade de 06/01/2026"
+    fontes_registro: [F01, F02, F03]
+    data_publicacao: "2026-01-06"
+    vigencia_inicio: "2026-01-06"   # a confirmar
+    vigencia_fim: null              # esperado: substituição em jan/2027
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Atualiza renda pelo SM de R$ 1.621 e tetos de venda pelo INCC (maio a dezembro de 2025); revoga o Decreto 64.006/2025"
+    impacto_classificacao: "Parâmetros numéricos da classificação em 2026 (ver bloco parametros)"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: false
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-011
+    titulo: "Compartilhamento de dados de licenciamento e fiscalização de HIS/HMP"
+    tipo: portaria_conjunta
+    numero: "SMUL/SEHAB 01/2026"
+    fonte_oficial: "Diário Oficial da Cidade"
+    fontes_registro: [F14, F22]
+    data_publicacao: "2026-06"      # firmada em junho/2026; dia a confirmar
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "SMUL e SEHAB"
+    conteudo_operacional: >
+      Plataforma integrada alimentada com dados de licenciamento (base GeoSampa) e de
+      fiscalização. Campos citados: número de unidades HIS-1, HIS-2 e HMP licenciadas;
+      CNPJ e razão social do empreendedor; valores de despachos de multa por empreendimento.
+    impacto_classificacao: "Sinaliza dados públicos futuros por empreendimento; obrigações das incorporadoras a confirmar no texto"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-012
+    titulo: "Salário mínimo nacional de 2026"
+    tipo: decreto_federal
+    numero: "12.797/2025"
+    fonte_oficial: "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/decreto/d12797.htm"
+    fontes_registro: [F04, F55]
+    data_publicacao: "2025-12-24"
+    vigencia_inicio: "2026-01-01"
+    vigencia_fim: null              # substituição esperada em 01/01/2027
+    abrangencia: "Nacional"
+    conteudo_operacional: "SM de R$ 1.621,00 (diário R$ 54,04; hora R$ 7,37)"
+    impacto_classificacao: "Base de cálculo das faixas de renda HIS/HMP"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: false
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-013
+    titulo: "Divulgação mensal de dados de ITBI"
+    tipo: lei_municipal
+    numero: "18.161/2024"
+    fonte_oficial: "https://www.saopaulo.sp.leg.br/iah/fulltext/leis/L18161.pdf"
+    fontes_registro: [F48]
+    data_publicacao: "2024"
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "Secretaria Municipal da Fazenda"
+    conteudo_operacional: "Divulgação mensal das transações tributadas pelo ITBI nos últimos 5 anos"
+    impacto_classificacao: "Fonte para o indicador de aderência ao teto de preço"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true   # uso para indicadores: avaliar LGPD
+    data_ultima_verificacao: "2026-11-21"
+
+  - id: NORMA-014
+    titulo: "Política de dados abertos do Município"
+    tipo: decreto_municipal
+    numero: "56.701/2015"
+    fonte_oficial: "Diário Oficial da Cidade"
+    fontes_registro: [F47]
+    data_publicacao: "2015"
+    vigencia_inicio: null
+    vigencia_fim: null
+    abrangencia: "Município de São Paulo"
+    conteudo_operacional: "Dados disponibilizados sob licença livre, com download e reutilização sem autorização prévia"
+    impacto_classificacao: "Base legal para reutilização de GeoSampa, IPTU e ITBI"
+    status_verificacao: busca_indexada
+    requer_validacao_juridica: true
+    data_ultima_verificacao: "2026-11-21"
+
+parametros:
+  # Valores numéricos por ano de vigência. Uma transação é sempre avaliada pelo
+  # bloco cujo intervalo contém a data da transação.
+  - vigencia_inicio: "2026-01-06"     # a confirmar
+    vigencia_fim: null
+    norma_renda: NORMA-010
+    norma_preco: NORMA-010
+    salario_minimo: 1621.00
+    renda_familiar_max:
+      HIS-1: 4863.00
+      HIS-2: 9726.00
+      HMP: 16210.00
+    renda_per_capita_max:
+      HIS-1: 810.50
+      HIS-2: 1621.00
+      HMP: 2431.50
+    preco_venda_max:
+      HIS-1: 276102.20
+      HIS-2: 383636.74
+      HMP: 537672.71
+    aluguel_max_derivado:          # 30% da renda familiar máxima (cálculo BECO; confirmar no texto)
+      HIS-1: 1458.90
+      HIS-2: 2917.80
+      HMP: 4863.00
+    status_verificacao: busca_indexada
+    data_ultima_verificacao: "2026-11-21"
+
+  - vigencia_inicio: "2025-01-10"     # a confirmar
+    vigencia_fim: "2026-01-05"
+    norma_preco: NORMA-009
+    salario_minimo: 1518.00
+    preco_venda_max:
+      HIS-1: 266000.00
+      HIS-2: 369600.00
+      HMP: 518000.00
+    status_verificacao: busca_indexada
+    data_ultima_verificacao: "2026-11-21"
+
+alertas_de_atualizacao:
+  - id: ALERTA-2027-01
+    descricao: "Novo salário mínimo (dez/2026) e novo decreto municipal de valores (jan/2027)"
+    acao: "Monitorar DOU e DOC; criar novo bloco de parametros com vigencia_inicio de 2027; fechar o bloco de 2026"
+    prazo_estimado: "2027-01"
+  - id: ALERTA-CPI
+    descricao: "Propostas do relatório final da CPI HIS (ex.: fim de HIS em áreas de alta renda; programa de regularização)"
+    acao: "Acompanhar projetos de lei na Câmara Municipal"
+    prazo_estimado: "contínuo"
