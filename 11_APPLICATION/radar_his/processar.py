@@ -119,7 +119,7 @@ def carregar_empreendimentos(pasta):
             "def0": min(deferimentos).isoformat() if deferimentos else None,
             "def1": max(deferimentos).isoformat() if deferimentos else None,
             "alv": [[q.get("cd_numero_documento_execucao"), (q.get("dt_deferimento_execucao") or "")[:10],
-                     tipo_alvara(q.get("tx_assunto_alvara"))] for q, _ in itens],
+                     tipo_alvara(q.get("tx_assunto_alvara")), q.get("cd_numero_processo_execucao")] for q, _ in itens],
             "_ceps": ceps, "_nums": nums, "_sq": sql[:6] if sql[:1].isdigit() else "",
             "_atualizacao": max((q.get("dt_atualizacao") or "")[:10] for q, _ in itens),
         })
@@ -298,6 +298,7 @@ def chave_unidade(t, numeros_endereco):
     return re.sub(r"[^A-Z0-9]", "", c) or f"sql{t['sql']}"
 
 
+FAIXA_PLAUSIVEL = (0.5, 2.5)  # revenda/compra fora disso costuma ser guia parcial ou erro de cadastro
 JANELA_MESMO_NEGOCIO = 90  # guias da mesma unidade em até 90 dias = um único negócio
 
 
@@ -308,6 +309,43 @@ def eh_compra_venda(t):
 def eh_permuta(t):
     n = norm(t["nat"])
     return "dacao" in n or "permuta" in n or "integralizacao" in n
+
+
+def numero_cartorio(nome):
+    m = re.search(r"(\d+)", nome or "")
+    return int(m.group(1)) if m else 0
+
+
+def destaques(emps, transacoes, ipca, limite=40):
+    """Itens do boletim: alvarás novos, revendas recentes e vendas acima do teto."""
+    por_id = {e["id"]: e for e in emps}
+    base = lambda e: {"id": e["id"], "end": e["end"], "dist": e["dist"]}
+    novos = [dict(base(e), data=e["def1"], his1=e["his1"], his2=e["his2"], hmp=e["hmp"], cat=e["cat"])
+             for e in sorted(emps, key=lambda e: e["def1"] or "", reverse=True)[:limite]]
+    revendas, acima = [], []
+    for eid, lista in transacoes.items():
+        e = por_id[eid]
+        unidades = collections.defaultdict(list)
+        for t in lista:
+            if t[2] in ("venda", "revenda"):
+                unidades[t[8]].append(t)
+            if t[6]:
+                teto, norma = teto_na_data(dt.date.fromisoformat(t[0]), e["teto_cat"])
+                acima.append(dict(base(e), un=t[3], data=t[0], valor=t[1], teto=teto, categoria=e["teto_cat"], norma=norma))
+        for l in unidades.values():
+            if len(l) > 1 and l[-1][2] == "revenda":
+                a, b = l[0], l[-1]
+                d0, d1 = dt.date.fromisoformat(a[0]), dt.date.fromisoformat(b[0])
+                nom = b[1] / a[1]
+                if not FAIXA_PLAUSIVEL[0] <= nom <= FAIXA_PLAUSIVEL[1]:
+                    continue
+                revendas.append(dict(base(e), un=b[3] or a[3], d0=a[0], v0=a[1], d1=b[0], v1=b[1],
+                                     nominal=round(nom - 1, 4), real=round(nom / fator(ipca, d0, d1) - 1, 4)))
+    revendas.sort(key=lambda r: r["d1"], reverse=True)
+    acima.sort(key=lambda r: r["data"], reverse=True)
+    ganhos = sorted((r for r in revendas if (dt.date.fromisoformat(r["d1"]) - dt.date.fromisoformat(r["d0"])).days >= 365),
+                    key=lambda r: r["real"], reverse=True)
+    return {"novos": novos, "revendas": revendas[:limite], "acima_teto": acima[:limite], "maiores_ganhos": ganhos[:limite]}
 
 
 def analisar(emps, linhas, ipca, cdi):
@@ -387,7 +425,7 @@ def analisar(emps, linhas, ipca, cdi):
                 elif t["_tipo"] == "revenda":
                     revendas.append(t["valor"])
             precos = [t for t in eventos if t["_tipo"] in ("venda", "revenda") and eh_compra_venda(t)]
-            if len(precos) >= 2:
+            if len(precos) >= 2 and FAIXA_PLAUSIVEL[0] <= precos[-1]["valor"] / precos[0]["valor"] <= FAIXA_PLAUSIVEL[1]:
                 a, b = precos[0], precos[-1]
                 nom = b["valor"] / a["valor"]
                 variacoes.append((nom, nom / fator(ipca, a["data"], b["data"]), fator(cdi, a["data"], b["data"])))
@@ -411,7 +449,8 @@ def analisar(emps, linhas, ipca, cdi):
             e["itbi"]["ultima"] = e["itbi"]["ultima"].isoformat()
         visiveis = ("terreno", "venda", "revenda", "permuta", "vaga", "outro")
         saida = [[t["data"].isoformat(), round(t["valor"], 2), t["_tipo"], t["compl"][:24], round(t["area"] or 0, 1),
-                  1 if t["fin_valor"] else 0, t.get("_acima"), t["nat"].split(".", 1)[-1][:28], t.get("_un", 0)]
+                  1 if t["fin_valor"] else 0, t.get("_acima"), t["nat"].split(".", 1)[-1][:28], t.get("_un", 0),
+                  numero_cartorio(t["cartorio"]), t["matricula"]]
                  for t in ts if t.get("_tipo") in visiveis]
         if saida:
             transacoes[e["id"]] = saida
@@ -475,6 +514,7 @@ def main():
     }
     escrever = lambda nome, obj: (saida / nome).write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     escrever("empreendimentos.json", emps)
+    escrever("destaques.json", destaques(emps, transacoes, ipca))
     for velho in saida.glob("tx_*.json"):
         velho.unlink()
     lotes = collections.defaultdict(dict)
