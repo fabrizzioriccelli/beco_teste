@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## [0.2.0] — 22/11/2026 — Radar HIS (primeira versão com dados reais)
+
+### Adicionado
+
+- `11_APPLICATION/radar_his/`: coleta e processamento de dados oficiais (GeoSampa, ITBI 2006–set/2026, IPCA e CDI) e o site do relatório.
+- Relatório publicado com mapa, lista filtrável, vendas e revendas por prédio, "antes × agora" por unidade e calculadora de investimento.
+- Tetos de preço de HIS/HMP conferidos no texto oficial dos Decretos 64.244/2025 e 64.895/2026.
+
 ## [0.1.0] — 21/11/2026 — Fase 0 (rascunho para validação)
 
 ### Adicionado

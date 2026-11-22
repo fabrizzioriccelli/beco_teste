@@ -1,0 +1,455 @@
+<title>Radar HIS São Paulo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: operational report. Summary and "antes × agora" first, then map + detail side by side, then the filterable list. */
+:root {
+  --bg: #f4f5f3; --paper: #ffffff; --ink: #1b2220; --muted: #5a6561; --rule: #d9ddd9; --soft: #e9ece9;
+  --accent: #24507a; --accent-soft: #e4ecf4;
+  --his: #1f7a52; --hmp: #2f62b0; --misto: #b06a12; --sem: #9aa39f;
+  --good: #1f6b45; --good-bg: #e3f1e8; --warn: #8a5a00; --warn-bg: #f8eed9; --bad: #a1302a; --bad-bg: #f8e4e2;
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111514; --paper: #181d1c; --ink: #e4e8e6; --muted: #9aa5a1; --rule: #2c3432; --soft: #222927;
+    --accent: #8db4dc; --accent-soft: #1c2936;
+    --his: #5fc495; --hmp: #7fa8ea; --misto: #e0a44f; --sem: #5f6966;
+    --good: #7fcf9f; --good-bg: #17301f; --warn: #e6b85c; --warn-bg: #33280f; --bad: #f0938c; --bad-bg: #3a1c1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111514; --paper: #181d1c; --ink: #e4e8e6; --muted: #9aa5a1; --rule: #2c3432; --soft: #222927;
+  --accent: #8db4dc; --accent-soft: #1c2936;
+  --his: #5fc495; --hmp: #7fa8ea; --misto: #e0a44f; --sem: #5f6966;
+  --good: #7fcf9f; --good-bg: #17301f; --warn: #e6b85c; --warn-bg: #33280f; --bad: #f0938c; --bad-bg: #3a1c1a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+.wrap > *, .grid2 > *, .grid-map > * { min-width: 0; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 56px; display: grid; gap: 28px; }
+header.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 16px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 4px 0 0; font-size: clamp(26px, 3.6vw, 36px); line-height: 1.15; text-wrap: balance; }
+h2 { margin: 0 0 12px; font-size: 20px; text-wrap: balance; }
+h3 { margin: 0 0 8px; font-size: 16px; }
+.fontes { font-family: var(--mono); font-size: 12px; color: var(--muted); display: grid; gap: 2px; text-align: right; }
+.fontes b { color: var(--ink); font-weight: 500; }
+.card { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; min-width: 0; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.kpi { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; display: grid; gap: 2px; }
+.kpi .v { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: 13px; color: var(--muted); }
+.kpi.alerta .v { color: var(--bad); }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.grid-map { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 920px) { .grid2, .grid-map { grid-template-columns: minmax(0, 1fr); } .fontes { text-align: left; } }
+label { font-size: 13px; color: var(--muted); display: grid; gap: 4px; }
+input, select, button { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 7px 9px; min-width: 0; }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible, .linha:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button { cursor: pointer; background: var(--soft); }
+button.primario { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.check { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 14px; }
+.resultado { display: grid; gap: 10px; }
+.veredito { padding: 12px 14px; border-radius: 5px; font-weight: 600; border-left: 4px solid currentColor; }
+.v-bom { color: var(--good); background: var(--good-bg); }
+.v-medio { color: var(--warn); background: var(--warn-bg); }
+.v-ruim { color: var(--bad); background: var(--bad-bg); }
+.contas { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font-variant-numeric: tabular-nums; }
+.contas dt { color: var(--muted); }
+.contas dd { margin: 0; text-align: right; font-weight: 500; }
+.nota { font-size: 13px; color: var(--muted); margin: 0; }
+.aviso { padding: 10px 12px; border-radius: 5px; font-size: 14px; }
+.aviso.ruim { background: var(--bad-bg); color: var(--bad); }
+.aviso.ok { background: var(--good-bg); color: var(--good); }
+.aviso.neutro { background: var(--soft); color: var(--ink); }
+#mapa { width: 100%; aspect-ratio: 1 / 1.15; display: block; }
+#mapa .dist { fill: var(--soft); stroke: var(--rule); stroke-width: .6; }
+#mapa .pt { stroke: var(--paper); stroke-width: .4; cursor: pointer; }
+#mapa .pt.sel { stroke: var(--ink); stroke-width: 2; }
+.legenda { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.chip { display: inline-block; font-family: var(--mono); font-size: 11px; padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+.chip.venda { color: var(--accent); } .chip.revenda { color: var(--his); } .chip.terreno { color: var(--muted); }
+.chip.permuta, .chip.vaga, .chip.outro { color: var(--muted); }
+.chip.acima { color: var(--bad); background: var(--bad-bg); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--soft); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12.5px; white-space: nowrap; border-bottom-color: var(--rule); }
+td.n, th.n { text-align: right; }
+.linha { cursor: pointer; }
+.linha:hover { background: var(--accent-soft); }
+.linha.sel { background: var(--accent-soft); }
+.detalhe { display: grid; gap: 12px; }
+.detalhe .end { font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.mini div { background: var(--soft); border-radius: 4px; padding: 8px 10px; }
+.mini b { display: block; font-size: 15px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.mini span { font-size: 12px; color: var(--muted); }
+.filtros { display: grid; grid-template-columns: 2fr repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; margin-bottom: 12px; }
+@media (max-width: 920px) { .filtros { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .filtros .busca { grid-column: 1 / -1; } }
+.paginacao { display: flex; gap: 10px; align-items: center; justify-content: flex-end; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.vazio { color: var(--muted); font-size: 14px; }
+.novidades { display: grid; gap: 0; }
+.novidades .linha { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 10px; padding: 8px 4px; border-bottom: 1px solid var(--soft); font-size: 14px; }
+.novidades .data { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.carregando { color: var(--muted); }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 14px; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Relatório para Diogo · São Paulo capital</div>
+      <h1>Radar HIS São Paulo</h1>
+    </div>
+    <div class="fontes" id="fontes"><span class="carregando">Carregando dados oficiais…</span></div>
+  </header>
+
+  <section>
+    <h2>Resumo</h2>
+    <div class="kpis" id="kpis"></div>
+    <p class="nota" style="margin-top:8px">Fonte: alvarás de HIS e HMP do GeoSampa (Prefeitura) cruzados com as guias de ITBI pagas (Secretaria da Fazenda). Uma venda só aparece quando o ITBI é pago, em geral na escritura ou no contrato com o banco.</p>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Antes × agora: foi um bom negócio?</h2>
+      <form id="calc" class="campos" novalidate>
+        <label>Valor de compra (R$)<input id="c-valor0" inputmode="numeric" value="200.000"></label>
+        <label>Mês da compra<input id="c-mes0" type="month" value="2010-01" min="2006-01"></label>
+        <label>Valor hoje (R$)<input id="c-valor1" inputmode="numeric" value="1.000.000"></label>
+        <label>Mês de hoje<input id="c-mes1" type="month"></label>
+        <label class="check" style="grid-column:1/-1"><input id="c-his" type="checkbox" checked> É unidade HIS ou HMP</label>
+        <label>Categoria<select id="c-cat"><option>HIS-1</option><option selected>HIS-2</option><option>HMP</option></select></label>
+        <label>Mês do habite-se<input id="c-habite" type="month" value="2010-01" min="1990-01"></label>
+      </form>
+    </div>
+    <div class="card resultado" id="calc-res" aria-live="polite"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Novos alvarás HIS/HMP</h2>
+      <p class="nota" id="novidades-nota" style="margin-bottom:8px"></p>
+      <div class="novidades" id="novidades"></div>
+    </div>
+    <div class="card">
+      <h2>Contato do proprietário</h2>
+      <p style="margin-top:0">Os dados públicos <b>não trazem nome nem telefone</b> de quem comprou. A Prefeitura retira esses campos do ITBI por sigilo fiscal.</p>
+      <p>O que este relatório já entrega para chegar até as pessoas certas:</p>
+      <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+        <li><b>Endereço, unidade e número do alvará</b> de cada prédio.</li>
+        <li><b>Cartório e matrícula</b> estão no ITBI. Com eles, a certidão de matrícula (paga) mostra o nome do proprietário.</li>
+        <li><b>Incorporadora:</b> o número do alvará identifica o responsável pela obra na Prefeitura.</li>
+      </ul>
+      <p class="nota" style="margin-top:10px">Comprar listas de telefones ou contatar proprietários sem base legal é risco de LGPD. Para unidades HIS dentro do prazo de 10 anos, o comprador também precisa ter renda dentro da faixa.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Mapa dos empreendimentos</h2>
+    <div class="grid-map">
+      <div class="card">
+        <svg id="mapa" role="img" aria-label="Mapa de São Paulo com os empreendimentos HIS e HMP"></svg>
+        <div class="legenda">
+          <span><i style="background:var(--his)"></i>Só HIS</span>
+          <span><i style="background:var(--hmp)"></i>HIS e HMP ou só HMP</span>
+          <span><i style="background:var(--misto)"></i>Com unidades de mercado livre</span>
+          <span><i style="background:var(--sem)"></i>Categoria não informada</span>
+        </div>
+      </div>
+      <div class="card detalhe" id="detalhe">
+        <p class="vazio">Toque num ponto do mapa ou numa linha da lista para ver o prédio, as vendas e a valorização de cada unidade.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Lista de empreendimentos</h2>
+    <div class="filtros">
+      <label class="busca">Buscar endereço<input id="f-busca" placeholder="Rua, número ou bairro"></label>
+      <label>Distrito<select id="f-dist"><option value="">Todos</option></select></label>
+      <label>Mostrar<select id="f-tipo">
+        <option value="">Todos</option>
+        <option value="vendas">Com vendas registradas</option>
+        <option value="revendas">Com revendas</option>
+        <option value="acima">Com venda acima do teto</option>
+      </select></label>
+      <label>Alvará<select id="f-periodo">
+        <option value="">Qualquer data</option>
+        <option value="90">Últimos 90 dias</option>
+        <option value="365">Últimos 12 meses</option>
+      </select></label>
+      <label>Ordenar por<select id="f-ordem">
+        <option value="def1">Alvará mais recente</option>
+        <option value="unid">Mais unidades</option>
+        <option value="revendas">Mais revendas</option>
+        <option value="valoriz">Maior valorização real</option>
+      </select></label>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Endereço</th><th>Distrito</th><th>Alvará</th><th class="n">HIS-1</th><th class="n">HIS-2</th><th class="n">HMP</th><th class="n">Vendas</th><th class="n">Revendas</th><th class="n">Valorização real</th><th>Alerta</th></tr></thead>
+        <tbody id="lista"><tr><td colspan="10" class="carregando">Carregando…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="paginacao"><span id="pag-info"></span><button id="pag-ant" type="button">Anterior</button><button id="pag-prox" type="button">Próxima</button></div>
+  </section>
+
+  <footer>
+    <span><b>Como ler.</b> "Valorização real" desconta a inflação (IPCA). "Venda acima do teto" só é marcada em prédios 100% HIS/HMP, para vendas desde 28/05/2025, quando o teto passou a valer (Decreto 64.244/2025, atualizado pelo Decreto 64.895/2026).</span>
+    <span>Valores do ITBI são os declarados pelo contribuinte. A ligação entre alvará e venda é feita por setor e quadra fiscal, CEP e número. Pode haver unidade não ligada ou ligada a mais.</span>
+    <span>Este relatório é inteligência de mercado e não substitui consulta jurídica nem a certidão de matrícula.</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+  const num = new Intl.NumberFormat("pt-BR");
+  const pct = (x, casas = 0) => (x >= 0 ? "+" : "") + (x * 100).toLocaleString("pt-BR", { maximumFractionDigits: casas, minimumFractionDigits: casas }) + "%";
+  const dataBR = (iso) => iso ? iso.slice(0, 10).split("-").reverse().join("/") : "—";
+  const mesBR = (ym) => { const [y, m] = ym.split("-"); return ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"][+m - 1] + "/" + y; };
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const parseValor = (s) => { const d = String(s).replace(/[^\d,]/g, "").replace(",", "."); return parseFloat(d) || 0; };
+  const cor = (e) => !e.cat ? "var(--sem)" : (/R2|nR|R1/.test(e.cat) ? "var(--misto)" : (/HMP/.test(e.cat) ? "var(--hmp)" : "var(--his)"));
+  const MESES = { JAN: "01", FEV: "02", MAR: "03", ABR: "04", MAI: "05", JUN: "06", JUL: "07", AGO: "08", SET: "09", OUT: "10", NOV: "11", DEZ: "12" };
+
+  let EMPS = [], META = {}, IDX = { ipca: {}, cdi: {} }, TXCACHE = {}, filtrados = [], pagina = 0, selecionado = null;
+  const POR_PAG = 40;
+
+  // ---------- índices
+  function fator(serie, ym0, ym1) {
+    let [y, m] = ym0.split("-").map(Number); const [y1, m1] = ym1.split("-").map(Number);
+    let f = 1, ultimo = ym0;
+    while (y < y1 || (y === y1 && m < m1)) {
+      m += 1; if (m > 12) { y += 1; m = 1; }
+      const k = `${y}-${String(m).padStart(2, "0")}`;
+      if (!(k in serie)) break;
+      f *= 1 + serie[k] / 100; ultimo = k;
+    }
+    return { f, ultimo };
+  }
+  const anual = (f, meses) => meses > 0 ? Math.pow(f, 12 / meses) - 1 : 0;
+  const mesesEntre = (a, b) => { const [y0, m0] = a.split("-").map(Number), [y1, m1] = b.split("-").map(Number); return (y1 - y0) * 12 + (m1 - m0); };
+  function tetoNaData(iso, cat) {
+    for (const t of META.tetos || []) if (iso >= t.inicio && (!t.fim || iso <= t.fim)) return { valor: t.valores[cat], norma: t.norma };
+    return null;
+  }
+
+  // ---------- calculadora
+  function calcular() {
+    const v0 = parseValor($("c-valor0").value), v1 = parseValor($("c-valor1").value);
+    const m0 = $("c-mes0").value, m1 = $("c-mes1").value;
+    const out = $("calc-res");
+    if (!v0 || !v1 || !m0 || !m1 || m1 <= m0) { out.innerHTML = '<p class="vazio">Preencha os dois valores e um mês de hoje posterior ao mês da compra.</p>'; return; }
+    const ip = fator(IDX.ipca, m0, m1), cd = fator(IDX.cdi, m0, m1);
+    const corrigido = v0 * ip.f, noCdi = v0 * cd.f, meses = mesesEntre(m0, m1);
+    const nominal = v1 / v0 - 1, real = v1 / corrigido - 1;
+    let classe, texto;
+    if (v1 < corrigido) { classe = "v-ruim"; texto = "Perdeu para a inflação: hoje o imóvel vale menos, em poder de compra, do que custou."; }
+    else if (v1 < noCdi) { classe = "v-medio"; texto = `Ganhou da inflação, mas rendeu menos que o CDI. O dinheiro aplicado teria virado ${brl.format(noCdi)}.`; }
+    else { classe = "v-bom"; texto = "Ganhou da inflação e do CDI."; }
+    const deficit = v1 - corrigido;
+    let his = "";
+    if ($("c-his").checked) {
+      const hab = $("c-habite").value, cat = $("c-cat").value;
+      const fim = hab ? `${+hab.slice(0, 4) + 10}${hab.slice(4)}` : null;
+      const isoHoje = `${m1}-15`;
+      const teto = tetoNaData(isoHoje, cat);
+      if (fim && m1 < fim) {
+        his = teto
+          ? (v1 > teto.valor
+              ? `<div class="aviso ruim"><b>Dentro do prazo de 10 anos (até ${mesBR(fim)}).</b> O teto de ${cat} é ${brl.format(teto.valor)} (${teto.norma}). Vender por ${brl.format(v1)} fica ${brl.format(v1 - teto.valor)} acima do teto, o que é infração. O comprador também precisa ter renda dentro da faixa.</div>`
+              : `<div class="aviso ok"><b>Dentro do prazo de 10 anos (até ${mesBR(fim)}).</b> ${brl.format(v1)} está abaixo do teto de ${cat}, ${brl.format(teto.valor)} (${teto.norma}). O comprador precisa ter renda dentro da faixa.</div>`)
+          : `<div class="aviso neutro"><b>Dentro do prazo de 10 anos (até ${mesBR(fim)}).</b> Venda só para família com renda dentro da faixa. O teto de preço em decreto só existe desde 28/05/2025.</div>`;
+      } else if (fim) {
+        his = `<div class="aviso neutro"><b>Fora do prazo de 10 anos</b> (venceu em ${mesBR(fim)}). Pela regra atual da Prefeitura, a restrição de renda não vale mais. Confirme na matrícula, porque imóveis antigos podem ter regras diferentes.</div>`;
+      }
+    }
+    out.innerHTML = `
+      <h2 style="margin:0">Resultado</h2>
+      <div class="veredito ${classe}">${texto}</div>
+      <dl class="contas">
+        <dt>Valorização no período</dt><dd>${pct(nominal)} <span class="nota">(${pct(anual(1 + nominal, meses), 1)} ao ano)</span></dd>
+        <dt>${brl.format(v0)} corrigidos pela inflação</dt><dd>${brl.format(corrigido)}</dd>
+        <dt>Diferença acima da inflação</dt><dd style="color:${deficit >= 0 ? "var(--good)" : "var(--bad)"}">${deficit >= 0 ? "+" : "−"}${brl.format(Math.abs(deficit))}</dd>
+        <dt>Ganho real</dt><dd>${pct(real)} <span class="nota">(${pct(anual(1 + real, meses), 1)} ao ano)</span></dd>
+        <dt>Mesmo valor no CDI</dt><dd>${brl.format(noCdi)}</dd>
+      </dl>
+      ${his}
+      <p class="nota">Inflação: IPCA de ${mesBR(m0)} a ${mesBR(ip.ultimo)}. CDI: até ${mesBR(cd.ultimo)}, sem imposto. Fonte: Banco Central. A conta não inclui aluguel recebido, IPTU, condomínio, ITBI nem corretagem.</p>`;
+  }
+
+  // ---------- resumo e novidades
+  function resumo() {
+    const t = META.totais;
+    const itens = [
+      [num.format(t.empreendimentos), "prédios com alvará HIS/HMP"],
+      [num.format(t.his1 + t.his2), "unidades HIS licenciadas"],
+      [num.format(t.hmp), "unidades HMP licenciadas"],
+      [num.format(t.com_vendas), "prédios com vendas no ITBI"],
+      [num.format(t.vendas), "primeiras vendas registradas"],
+      [num.format(t.revendas), "revendas registradas"],
+      [num.format(t.acima_teto), "vendas acima do teto desde mai/2025", "alerta"],
+    ];
+    $("kpis").innerHTML = itens.map(([v, l, c]) => `<div class="kpi ${c || ""}"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
+    const ultimoItbi = META.itbi_ultimo_mes;
+    $("fontes").innerHTML = `
+      <span>Alvarás (GeoSampa): <b>atualizado em ${dataBR(META.geosampa_atualizacao)}</b></span>
+      <span>Vendas (ITBI): <b>${ultimoItbi.slice(0, 3).toLowerCase()}/2006 a ${ultimoItbi.slice(0, 3).toLowerCase()}/${ultimoItbi.slice(4)}</b></span>
+      <span>Inflação e CDI (Banco Central): <b>até ${mesBR(META.cdi_ultimo)}</b></span>
+      <span>Relatório gerado em <b>${dataBR(META.gerado_em)}</b></span>`;
+    const recentes = EMPS.filter((e) => e.def1).slice(0, 10);
+    $("novidades-nota").textContent = `Alvarás mais recentes publicados pela Prefeitura (último em ${dataBR(META.ultimo_deferimento)}).`;
+    $("novidades").innerHTML = recentes.map((e) => `
+      <div class="linha" tabindex="0" data-id="${esc(e.id)}">
+        <span class="data">${dataBR(e.def1)}</span>
+        <span>${esc(e.end)}<br><span class="nota">${esc(e.dist)} · ${esc(e.alv[e.alv.length - 1][2] || "")}</span></span>
+        <span class="nota" style="text-align:right">${num.format(e.his1 + e.his2 + e.hmp)} un.</span>
+      </div>`).join("");
+  }
+
+  // ---------- mapa
+  let pontos;
+  function mapa(distritos) {
+    const svg = d3.select("#mapa"), W = 600, H = 690;
+    svg.attr("viewBox", `0 0 ${W} ${H}`);
+    const proj = d3.geoMercator().fitExtent([[8, 8], [W - 8, H - 8]], distritos);
+    const path = d3.geoPath(proj);
+    svg.append("g").selectAll("path").data(distritos.features).join("path").attr("class", "dist").attr("d", path)
+      .append("title").text((d) => d.properties.nome);
+    const r = d3.scaleSqrt().domain([0, 2000]).range([1.6, 7]).clamp(true);
+    pontos = svg.append("g").selectAll("circle").data(EMPS).join("circle")
+      .attr("class", "pt").attr("cx", (e) => proj([e.lon, e.lat])[0]).attr("cy", (e) => proj([e.lon, e.lat])[1])
+      .attr("r", (e) => r(e.his1 + e.his2 + e.hmp)).attr("fill", cor).attr("fill-opacity", .78)
+      .on("click", (ev, e) => selecionar(e.id));
+    pontos.append("title").text((e) => `${e.end} · ${num.format(e.his1 + e.his2 + e.hmp)} unidades`);
+  }
+  function atualizarMapa() {
+    if (!pontos) return;
+    const ids = new Set(filtrados.map((e) => e.id));
+    pontos.attr("display", (e) => ids.has(e.id) ? null : "none").classed("sel", (e) => e.id === selecionado);
+  }
+
+  // ---------- lista
+  function preencherDistritos() {
+    const ds = [...new Set(EMPS.map((e) => e.dist).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+    $("f-dist").insertAdjacentHTML("beforeend", ds.map((d) => `<option>${esc(d)}</option>`).join(""));
+  }
+  function filtrar() {
+    const q = $("f-busca").value.trim().toLowerCase(), d = $("f-dist").value, tipo = $("f-tipo").value, per = +$("f-periodo").value, ordem = $("f-ordem").value;
+    const corte = per ? new Date(new Date(META.ultimo_deferimento).getTime() - per * 864e5).toISOString().slice(0, 10) : "";
+    filtrados = EMPS.filter((e) =>
+      (!q || (e.end + " " + e.dist + " " + e.cep).toLowerCase().includes(q)) &&
+      (!d || e.dist === d) &&
+      (!corte || (e.def1 && e.def1 >= corte)) &&
+      (!tipo || (tipo === "vendas" && e.itbi.n_vendas) || (tipo === "revendas" && e.itbi.n_revendas) || (tipo === "acima" && e.itbi.n_acima_teto)));
+    const chave = { def1: (e) => e.def1 || "", unid: (e) => e.his1 + e.his2 + e.hmp, revendas: (e) => e.itbi.n_revendas, valoriz: (e) => e.itbi.med_var_real ?? -9 }[ordem];
+    filtrados.sort((a, b) => (chave(b) > chave(a) ? 1 : chave(b) < chave(a) ? -1 : 0));
+    pagina = 0; desenharLista(); atualizarMapa();
+  }
+  function desenharLista() {
+    const ini = pagina * POR_PAG, itens = filtrados.slice(ini, ini + POR_PAG);
+    $("lista").innerHTML = itens.length ? itens.map((e) => `
+      <tr class="linha${e.id === selecionado ? " sel" : ""}" tabindex="0" data-id="${esc(e.id)}">
+        <td>${esc(e.end)}</td><td>${esc(e.dist)}</td><td>${dataBR(e.def1)}</td>
+        <td class="n">${num.format(e.his1)}</td><td class="n">${num.format(e.his2)}</td><td class="n">${num.format(e.hmp)}</td>
+        <td class="n">${num.format(e.itbi.n_vendas)}</td><td class="n">${num.format(e.itbi.n_revendas)}</td>
+        <td class="n">${e.itbi.n_com_revenda ? pct(e.itbi.med_var_real) : "—"}</td>
+        <td>${e.itbi.n_acima_teto ? `<span class="chip acima">${e.itbi.n_acima_teto} acima do teto</span>` : ""}</td>
+      </tr>`).join("") : '<tr><td colspan="10" class="vazio">Nenhum empreendimento com esses filtros.</td></tr>';
+    const tot = filtrados.length;
+    $("pag-info").textContent = tot ? `${num.format(ini + 1)}–${num.format(Math.min(ini + POR_PAG, tot))} de ${num.format(tot)}` : "";
+    $("pag-ant").disabled = pagina === 0; $("pag-prox").disabled = ini + POR_PAG >= tot;
+  }
+
+  // ---------- detalhe
+  const ROTULO = { venda: "1ª venda", revenda: "Revenda", terreno: "Lote/terreno", permuta: "Permuta/dação", vaga: "Vaga", outro: "Outro" };
+  async function transacoes(id) {
+    const lote = /^\d\d/.test(id) ? id.slice(0, 2) : "xx";
+    if (!TXCACHE[lote]) TXCACHE[lote] = fetch(`dados/tx_${lote}.json`).then((r) => r.ok ? r.json() : {}).catch(() => ({}));
+    return (await TXCACHE[lote])[id] || [];
+  }
+  async function selecionar(id) {
+    selecionado = id; const e = EMPS.find((x) => x.id === id); if (!e) return;
+    document.querySelectorAll(".linha").forEach((l) => l.classList.toggle("sel", l.dataset.id === id));
+    atualizarMapa();
+    const box = $("detalhe");
+    const s = e.itbi;
+    box.innerHTML = `
+      <div><div class="end">${esc(e.end)}</div><div class="nota">${esc(e.dist)} · Subprefeitura ${esc(e.sub)} · CEP ${esc(e.cep.replace(/(\d{5})(\d{3})/, "$1-$2"))}</div></div>
+      <div class="mini">
+        <div><b>${num.format(e.his1)}</b><span>HIS-1</span></div><div><b>${num.format(e.his2)}</b><span>HIS-2</span></div><div><b>${num.format(e.hmp)}</b><span>HMP</span></div>
+        <div><b>${s.med_venda ? brl.format(s.med_venda) : "—"}</b><span>preço típico 1ª venda</span></div>
+        <div><b>${s.med_m2 ? brl.format(s.med_m2) : "—"}</b><span>por m² (1ª venda)</span></div>
+        <div><b>${s.n_com_revenda ? pct(s.med_var_real) : "—"}</b><span>valorização real típica</span></div>
+      </div>
+      <p class="nota" style="margin:0">Categorias no alvará: ${esc(e.cat || "não informadas")}. Alvará ${esc(e.alv[e.alv.length - 1][0] || "")} (${esc(e.alv[e.alv.length - 1][2] || "")}), deferido em ${dataBR(e.def1)}. Terreno ${e.a_terreno ? num.format(e.a_terreno) + " m²" : "—"}, área construída ${e.a_constr ? num.format(e.a_constr) + " m²" : "—"}.
+        <a href="https://www.google.com/maps?q=${e.lat},${e.lon}" target="_blank" rel="noopener">Abrir no mapa</a></p>
+      <div id="det-revendas"></div>
+      <div id="det-tx" class="carregando">Carregando vendas…</div>`;
+    const tx = await transacoes(id);
+    if (selecionado !== id) return;
+    // revendas: antes × agora por unidade
+    const porUn = {};
+    tx.filter((t) => t[2] === "venda" || t[2] === "revenda").forEach((t) => (porUn[t[8]] ||= []).push(t));
+    const pares = Object.values(porUn).filter((l) => l.length > 1).map((l) => {
+      const a = l[0], b = l[l.length - 1], ma = a[0].slice(0, 7), mb = b[0].slice(0, 7);
+      const real = b[1] / (a[1] * fator(IDX.ipca, ma, mb).f) - 1;
+      return { un: a[3] || b[3], a, b, nominal: b[1] / a[1] - 1, real };
+    }).sort((x, y) => y.b[0].localeCompare(x.b[0]));
+    $("det-revendas").innerHTML = pares.length ? `
+      <h3>Antes × agora por unidade (${pares.length})</h3>
+      <div class="scroll"><table><thead><tr><th>Unidade</th><th>Compra</th><th class="n">Valor</th><th>Revenda</th><th class="n">Valor</th><th class="n">Nominal</th><th class="n">Real</th></tr></thead><tbody>
+      ${pares.slice(0, 30).map((p) => `<tr><td>${esc(p.un)}</td><td>${dataBR(p.a[0])}</td><td class="n">${brl.format(p.a[1])}</td><td>${dataBR(p.b[0])}</td><td class="n">${brl.format(p.b[1])}</td>
+        <td class="n">${pct(p.nominal)}</td><td class="n" style="color:${p.real >= 0 ? "var(--good)" : "var(--bad)"}">${pct(p.real)}</td></tr>`).join("")}
+      </tbody></table></div>` : "";
+    const linhas = tx.slice().reverse();
+    const mostrar = (n) => {
+      $("det-tx").className = "";
+      $("det-tx").innerHTML = linhas.length ? `
+        <h3>Vendas registradas no ITBI (${num.format(linhas.length)})</h3>
+        <div class="scroll"><table><thead><tr><th>Data</th><th>Tipo</th><th>Unidade</th><th class="n">Valor</th><th class="n">R$/m²</th><th>Banco</th></tr></thead><tbody>
+        ${linhas.slice(0, n).map((t) => `<tr><td>${dataBR(t[0])}</td><td><span class="chip ${t[2]}">${ROTULO[t[2]] || t[2]}</span>${t[6] ? ' <span class="chip acima">acima do teto</span>' : ""}</td>
+          <td>${esc(t[3])}</td><td class="n">${brl.format(t[1])}</td><td class="n">${t[4] && t[4] < 400 && (t[2] === "venda" || t[2] === "revenda") ? brl.format(t[1] / t[4]) : "—"}</td><td>${t[5] ? "financiado" : ""}</td></tr>`).join("")}
+        </tbody></table></div>
+        ${linhas.length > n ? `<button type="button" id="mais-tx" style="margin-top:8px">Mostrar todas</button>` : ""}` : '<p class="vazio">Nenhuma venda deste endereço encontrada no ITBI até agora. Prédios novos costumam aparecer quando as unidades são entregues e registradas.</p>';
+      const b = $("mais-tx"); if (b) b.onclick = () => mostrar(linhas.length);
+    };
+    mostrar(25);
+    if (window.matchMedia("(max-width: 920px)").matches) box.scrollIntoView({ block: "start" });
+  }
+
+  // ---------- eventos
+  document.addEventListener("click", (ev) => { const l = ev.target.closest(".linha"); if (l && l.dataset.id) selecionar(l.dataset.id); });
+  document.addEventListener("keydown", (ev) => { const l = ev.target.closest?.(".linha"); if (l && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); selecionar(l.dataset.id); } });
+  $("calc").addEventListener("input", calcular);
+  $("calc").addEventListener("submit", (ev) => ev.preventDefault());
+  ["f-busca", "f-dist", "f-tipo", "f-periodo", "f-ordem"].forEach((id) => $(id).addEventListener("input", filtrar));
+  $("pag-ant").onclick = () => { pagina--; desenharLista(); };
+  $("pag-prox").onclick = () => { pagina++; desenharLista(); };
+
+  // ---------- carga
+  Promise.all(["meta", "indices", "empreendimentos", "distritos"].map((n) => fetch(`dados/${n}.json`).then((r) => { if (!r.ok) throw new Error(n); return r.json(); })))
+    .then(([meta, idx, emps, dist]) => {
+      META = meta; IDX = idx; EMPS = emps;
+      $("c-mes1").value = META.ipca_ultimo; $("c-mes1").max = META.cdi_ultimo;
+      resumo(); preencherDistritos();
+      try { mapa(dist); } catch (e) { $("mapa").outerHTML = '<p class="vazio">O mapa não carregou. A lista abaixo continua funcionando.</p>'; }
+      filtrar(); calcular();
+    })
+    .catch((err) => { $("fontes").innerHTML = `<span style="color:var(--bad)">Não foi possível carregar os dados (${esc(err.message)}). Recarregue a página.</span>`; });
+})();
+</script>
