@@ -16,7 +16,6 @@ Uso: python3 rotina_diaria.py [--sem-coleta]
 """
 import argparse
 import datetime as dt
-import hashlib
 import json
 import pathlib
 import subprocess
@@ -27,7 +26,6 @@ import auditor
 import redator
 
 AQUI = pathlib.Path(__file__).resolve().parent
-LOGO_EMAIL = AQUI.parents[1] / "03_BRAND_IDENTITY" / "logo" / "png" / "assinatura-email.png"
 
 
 def etapa(nome, comando):
@@ -76,13 +74,11 @@ def main():
         (AQUI / "boletins" / f"{hoje.isoformat()}.html").write_text(boletim["html"], encoding="utf-8")
         print(f"[Redator] {boletim['assunto']}")
 
-    sha = hashlib.sha256(LOGO_EMAIL.read_bytes()).hexdigest() if LOGO_EMAIL.exists() else None
     saida = {
         "data": hoje.isoformat(), "status": auditoria["status"], "auditoria": auditoria,
         "destinatarios": config.get("destinatarios", []), "copia": config.get("copia", []),
         "assunto": boletim and boletim["assunto"], "html": boletim and boletim["html"], "texto": boletim and boletim["texto"],
         "comparacao": boletim and boletim["comparacao"],
-        "anexo_logo": {"content": f"sha256:{sha}:{LOGO_EMAIL}", "filename": "radar-his.png", "mimeType": "image/png", "inline": True} if sha else None,
         "site": {"file_path": str(AQUI / "site" / "index.html"), "root": str(AQUI / "site"),
                  "files": sorted(f"dados/{p.name}" for p in (AQUI / "site" / "dados").glob("*.json")), "url": config["link_radar"]},
     }

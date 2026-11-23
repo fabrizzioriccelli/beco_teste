@@ -32,7 +32,18 @@ def plural(n, um, varios):
 
 def oportunidade_plausivel(r):
     """Para o boletim, só pares de compra e revenda com cara de negócio real de apartamento."""
-    return r["v0"] >= 100_000 and 0.6 <= r["v1"] / r["v0"] <= 1.8
+    return r["v0"] >= 100_000 and 0.6 <= r["v1"] / r["v0"] <= 1.8 and r["real"] >= 0.03
+
+
+def milhar(n):
+    return f"{n:,}".replace(",", ".")
+
+
+def mes_extenso(aba_ou_ym):
+    """'SET-2026' ou '2026-11' -> 'set/2026'."""
+    if "-" in aba_ou_ym and aba_ou_ym[:3].isalpha():
+        return f"{aba_ou_ym[:3].lower()}/{aba_ou_ym[-4:]}"
+    return f"{MES[int(aba_ou_ym[5:7]) - 1]}/{aba_ou_ym[:4]}"
 
 
 def data_br(iso):
@@ -127,6 +138,17 @@ def item_html(link, titulo, linha1, linha2="", destaque=None):
 </td></tr>"""
 
 
+def logo_html():
+    """Símbolo "H de quadra" em tabela (sem imagem): aparece mesmo com imagens bloqueadas."""
+    q = f'<td style="width:8px;height:26px;background:{COR["placa"]};font-size:0;line-height:0">&nbsp;</td>'
+    rua = '<td style="width:1px;font-size:0;line-height:0">&nbsp;</td>'
+    lote = (f'<td style="width:8px;height:26px;vertical-align:middle;font-size:0;line-height:0">'
+            f'<div style="width:8px;height:8px;background:{COR["faixa"]};font-size:0;line-height:0">&nbsp;</div></td>')
+    return (f'<table role="presentation" cellspacing="0" cellpadding="0"><tr>{q}{rua}{lote}{rua}{q}'
+            f'<td style="padding-left:10px;font-family:{FONTE_MARCA};font-weight:800;font-size:22px;letter-spacing:-0.2px;color:{COR["asfalto"]}">Radar HIS</td>'
+            f'</tr></table>')
+
+
 def secao(titulo, itens_html, nota=""):
     if not itens_html:
         return ""
@@ -163,16 +185,16 @@ def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
     vistos = set()
     if c["primeiro"]:
         titulo = "Panorama do Radar HIS"
-        resumo = (f"Primeiro boletim. Estamos acompanhando {meta['totais']['empreendimentos']:,} prédios com alvará HIS/HMP na capital, "
-                  f"{meta['totais']['vendas']:,} primeiras vendas e {meta['totais']['revendas']:,} revendas registradas.").replace(",", ".")
-        numeros = [(f"{meta['totais']['empreendimentos']:,}".replace(",", "."), "prédios HIS/HMP"),
-                   (f"{meta['totais']['revendas']:,}".replace(",", "."), "revendas registradas"),
+        resumo = (f"Primeiro boletim. Estamos acompanhando {milhar(meta['totais']['empreendimentos'])} prédios com alvará HIS/HMP na capital, "
+                  f"com {milhar(meta['totais']['vendas'])} primeiras vendas e {milhar(meta['totais']['revendas'])} revendas registradas.")
+        numeros = [(milhar(meta['totais']['empreendimentos']), "prédios HIS/HMP"),
+                   (milhar(meta['totais']['revendas']), "revendas registradas"),
                    (f"{meta['totais']['acima_teto']}", "vendas acima do teto")]
         novos = dest["novos"][:3]
         blocos.append(secao("Alvarás mais recentes", [item_html(ficha(n["id"]), n["end"], f"{_e(n['dist'])} · alvará de {data_br(n['data'])}",
                                                                  f"{n['his1'] + n['his2'] + n['hmp']} unidades HIS/HMP") for n in novos]))
         vistos |= {n["id"] for n in novos}
-        assunto = f"Radar HIS · {dia} · panorama de {meta['totais']['empreendimentos']:,} prédios HIS/HMP".replace(",", ".")
+        assunto = f"Radar HIS · {dia} · panorama de {milhar(meta['totais']['empreendimentos'])} prédios HIS/HMP"
     else:
         n_alv, vn, rn, an = len(c["novos_alvaras"]), c["vendas_novas"], c["revendas_novas"], c["acima_novas"]
         titulo = "O que mapeamos ontem"
@@ -185,7 +207,7 @@ def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
             resumo = "Desde o último boletim: " + ", ".join(partes) + "."
         else:
             resumo = (f"A Prefeitura não publicou dados novos desde o último boletim. Alvarás atualizados em "
-                      f"{data_br(meta['geosampa_atualizacao'])}; vendas do ITBI até {meta['itbi_ultimo_mes'].lower()}. "
+                      f"{data_br(meta['geosampa_atualizacao'])}; vendas do ITBI até {mes_extenso(meta['itbi_ultimo_mes'])}. "
                       "Abaixo, oportunidades da base que valem um contato hoje.")
         numeros = [(str(n_alv), "alvarás novos"), (str(vn), "vendas novas"), (str(rn), "revendas novas")]
         blocos.append(secao("Alvarás novos", [item_html(ficha(e["id"]), e["end"], f"{_e(e['dist'])} · alvará de {data_br(e['def1'])}",
@@ -215,7 +237,7 @@ def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%">
  <tr><td style="padding:0 0 14px;border-bottom:2px solid {COR['asfalto']}">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-   <td><img src="cid:att0" alt="Radar HIS" width="189" height="36" style="display:block;border:0"></td>
+   <td>{logo_html()}</td>
    <td align="right" style="font-family:{FONTE_DADO};font-size:12px;color:{COR['grafite']}">{data_br(hoje.isoformat())}</td>
   </tr></table>
  </td></tr>
@@ -226,7 +248,7 @@ def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
  {''.join(blocos)}
  <tr><td align="center" style="padding:26px 0 10px"><a href="{link}" style="display:inline-block;background:{COR['asfalto']};color:#FFFFFF;font-family:{FONTE_TEXTO};font-weight:600;font-size:15px;text-decoration:none;padding:12px 22px;border-radius:10px">Abrir o Radar e perguntar</a></td></tr>
  <tr><td style="padding:18px 0 0;border-top:1px solid {COR['meio_fio']};font-family:{FONTE_DADO};font-size:11.5px;line-height:1.6;color:{COR['grafite']}">
-  Fontes: alvarás HIS/HMP do GeoSampa (atualizado em {data_br(meta['geosampa_atualizacao'])}), guias de ITBI da Secretaria da Fazenda (até {meta['itbi_ultimo_mes'].lower()}), IPCA e CDI do Banco Central (até {meta['cdi_ultimo']}). Teto de preço: Decreto 64.895/2026.<br>
+  Fontes: alvarás HIS/HMP do GeoSampa (atualizado em {data_br(meta['geosampa_atualizacao'])}), guias de ITBI da Secretaria da Fazenda (até {mes_extenso(meta['itbi_ultimo_mes'])}), IPCA e CDI do Banco Central (até {mes_extenso(meta['cdi_ultimo'])}). Teto de preço: Decreto 64.895/2026.<br>
   Os dados públicos não trazem nome nem telefone de proprietários. Inteligência de mercado; não substitui consulta jurídica nem certidão de matrícula.
  </td></tr>
 </table></td></tr></table></body></html>"""

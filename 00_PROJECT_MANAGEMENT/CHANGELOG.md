@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## [0.3.0] — 23/11/2026 — Identidade, design system e boletim diário
+
+### Adicionado
+
+- Identidade visual "H de quadra" (`03_BRAND_IDENTITY/`) e design system com tokens (`04_DESIGN_SYSTEM/`).
+- Rotina diária com agentes (Coletor, Analista, Auditor, Redator, Distribuidor) e roteiro do orquestrador.
+- Tarefa agendada todo dia às 7h38 (São Paulo): atualiza o site e envia o boletim "O que mapeamos ontem" por e-mail.
+
 ## [0.2.0] — 22/11/2026 — Radar HIS (primeira versão com dados reais)
 
 ### Adicionado
