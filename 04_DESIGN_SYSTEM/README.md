@@ -6,7 +6,7 @@ Base do site e do boletim por e-mail. Tokens em [tokens.css](tokens.css), marca 
 
 1. **Preto e branco.** A única cor é a luz quente da cidade, e ela fica na imagem, nunca em texto ou botão.
 2. **Estilo Apple.** Fonte do sistema (SF Pro), escala do iOS, listas agrupadas, cápsulas, cantos concêntricos.
-3. **Liquid Glass na navegação, nunca no conteúdo** (Apple HIG, Materials). Vidro na barra do topo, nos controles e na ficha do imóvel; listas, cartões e números em superfície sólida. Sobre a cidade acesa, a variante transparente com camada de escurecimento.
+3. **Liquid Glass na navegação, nunca no conteúdo** (Apple HIG, Materials). Vidro na barra do topo, nos controles e na ficha do imóvel; listas e cartões em superfície sólida. Sobre a cidade acesa, a variante transparente com camada de escurecimento. O vidro é **nítido**: desfoque baixo (4 px), saturação alta (190%), borda que pega luz (fio branco no alto e à esquerda) e reflexo suave no topo. No Chrome e no Edge, uma lente SVG gerada pelo script curva o fundo nas bordas, como a refração do vidro da Apple; no Safari fica o vidro nítido sem a lente.
 4. **A cidade é a fotografia.** O herói do site e o topo do e-mail mostram os prédios HIS/HMP como luzes; os imóveis do dia ganham um anel.
 
 ## Cores
@@ -57,3 +57,13 @@ Uma coluna de 920 px no máximo, com margens laterais de 20 px (ou a área segur
 ## Voz
 
 Direta e completa: número, contexto e próximo passo, em frases curtas. Termo técnico só quando ele é o certo (ITBI, alvará, matrícula, teto), sem explicar o óbvio para quem é do ramo.
+
+## Desempenho
+
+- O site carrega primeiro o boletim, os pontos da cidade e os distritos (cerca de 80 KB comprimidos); a base completa chega em segundo plano.
+- A cidade acesa é desenhada uma vez, com um sprite de luz; os anéis dos imóveis do dia são animados em CSS (sem redesenhar o canvas).
+- O mapa é um canvas único (sem biblioteca e sem 5 mil elementos na página); o clique acha o prédio mais próximo.
+- Seções fora da tela não são desenhadas até chegar perto (`content-visibility`); a busca espera 120 ms entre teclas.
+- Modo leve: quem pede menos movimento ou menos transparência, ou aparelho muito fraco, recebe vidro sólido e nenhuma animação.
+
+Medição em 23/11/2026 (mesma página, antes → depois): download 3,9 → 1,6 MB (0,45 MB comprimido); tempo de JavaScript 4,15 → 0,03 s; elementos na página 17.584 → 1.465; rolagem 13 → 59 quadros por segundo (58 com o processador 6 vezes mais lento).

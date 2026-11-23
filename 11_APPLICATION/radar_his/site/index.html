@@ -103,15 +103,23 @@ button:disabled { opacity: .5; cursor: default; }
 .btn-prim { background: var(--acao); color: var(--acao-texto); font-weight: 500; }
 .fonte, .nota { font-size: var(--t-nota); color: var(--texto-2); }
 
-/* Liquid Glass: variante regular (sobre conteúdo claro) */
-.vidro { background: var(--vidro-claro); -webkit-backdrop-filter: var(--vidro-desfoque); backdrop-filter: var(--vidro-desfoque);
-  border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), var(--vidro-sombra); }
+/* Liquid Glass (Apple): nítido. Pouco desfoque, cor saturada, borda que pega luz e, no Chrome/Edge, refração nas bordas (lente SVG gerada pelo script) */
+:root { --vidro-blur: 4px; }
+.vidro { position: relative; isolation: isolate; background: rgb(255 255 255 / .5);
+  -webkit-backdrop-filter: blur(var(--vidro-blur)) saturate(190%) brightness(1.05); backdrop-filter: blur(var(--vidro-blur)) saturate(190%) brightness(1.05);
+  border: 0; box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .6), inset 1.5px 1.5px 0 -1px rgb(255 255 255 / .95), inset -1px -1px 0 -.5px rgb(255 255 255 / .45), 0 1px 3px rgb(0 0 0 / .06), 0 10px 30px rgb(0 0 0 / .12); }
+.vidro::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
+  background: linear-gradient(180deg, rgb(255 255 255 / .34) 0%, rgb(255 255 255 / .08) 36%, rgb(255 255 255 / 0) 58%, rgb(255 255 255 / .12) 100%); }
+.vidro.escuro, .escuro.vidro { background: rgb(22 24 28 / .28);
+  box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .22), inset 1.5px 1.5px 0 -1px rgb(255 255 255 / .55), inset -1px -1px 0 -.5px rgb(255 255 255 / .18), 0 10px 30px rgb(0 0 0 / .35); }
+.vidro.escuro::before { background: linear-gradient(180deg, rgb(255 255 255 / .16) 0%, rgb(255 255 255 / .03) 40%, rgb(255 255 255 / 0) 60%, rgb(255 255 255 / .06) 100%); }
+.lente-on .vidro[data-lente] { -webkit-backdrop-filter: var(--lente, none) blur(var(--vidro-blur)) saturate(190%) brightness(1.05); backdrop-filter: var(--lente, none) blur(var(--vidro-blur)) saturate(190%) brightness(1.05); }
 
 /* Barra flutuante */
-.barra { position: fixed; z-index: 25; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 50%; transform: translateX(-50%);
+.barra { position: absolute; z-index: 25; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 50%; transform: translateX(-50%);
   width: calc(min(var(--largura), 100%) - 2 * max(20px, env(safe-area-inset-left, 0px))); display: flex; align-items: center; gap: 12px;
-  padding: 7px 7px 7px 20px; border-radius: var(--raio-capsula); color: var(--texto); transition: background .35s, color .35s, border-color .35s, box-shadow .35s; }
-.barra.escuro { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #F5F5F7; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 8px 32px rgb(0 0 0 / .3); }
+  padding: 7px 7px 7px 20px; border-radius: var(--raio-capsula); color: var(--texto); }
+.barra.escuro { color: #F5F5F7; }
 .barra .marca { display: block; color: inherit; line-height: 0; }
 .barra .marca svg { height: 15px; width: auto; }
 .barra-data { margin-left: auto; font-size: 13px; opacity: .72; white-space: nowrap; }
@@ -132,12 +140,14 @@ button:disabled { opacity: .5; cursor: default; }
 .heroi-base { position: relative; z-index: 1; margin-top: -96px; padding-bottom: 40px; display: grid; gap: 14px; }
 /* números do dia: vidro sobre a cidade, mais denso para a leitura não depender do fundo */
 .b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.b-numeros div { position: relative; overflow: hidden; min-width: 0; display: grid; gap: 6px; padding: 18px 20px 16px; border-radius: var(--raio-grupo);
-  background: rgb(18 20 24 / .62); -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
-  border: 1px solid var(--vidro-escuro-borda); box-shadow: inset 0 1px 0 rgb(255 255 255 / .14), 0 12px 32px rgb(0 0 0 / .35); }
+.b-numeros .vidro { min-width: 0; display: grid; gap: 6px; padding: 18px 20px 16px; border-radius: var(--raio-grupo); background: rgb(10 12 16 / .5); }
 .b-numeros b { font-family: var(--fonte-titulo); font-size: clamp(28px, 5.4vw, 48px); font-weight: 600; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
 .b-numeros span { font-size: 13px; line-height: 1.3; color: rgb(235 235 245 / .7); }
 .heroi-legenda { position: absolute; z-index: 1; top: 10px; left: 50%; transform: translateX(-50%); width: calc(min(var(--largura), 100%) - 2 * max(20px, env(safe-area-inset-left, 0px))); font-size: 12px; color: rgb(235 235 245 / .6); display: flex; gap: 8px; align-items: center; }
+.anel { position: absolute; z-index: 1; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: #FFF6EA; box-shadow: 0 0 12px 3px rgb(255 220 180 / .65); pointer-events: none; }
+.anel::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .8); animation: anel 2.4s ease-out infinite; }
+#mapa { cursor: pointer; touch-action: manipulation; }
+#destaques-sec, #mapa-sec, #calc-box, footer { content-visibility: auto; contain-intrinsic-size: auto 900px; }
 .heroi-legenda i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .75); flex: none; }
 
 /* Conteúdo */
@@ -177,8 +187,8 @@ button:disabled { opacity: .5; cursor: default; }
 /* Pergunte ao Faro: barra de vidro flutuante + painel de vidro */
 .ia-barra { position: fixed; z-index: 26; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
   width: min(560px, calc(100% - 2 * max(20px, env(safe-area-inset-left, 0px)))); min-height: 52px; display: flex; align-items: center; gap: 12px;
-  padding: 0 20px; border-radius: var(--raio-capsula); font-size: 16px; color: var(--texto); text-align: left; transition: background .35s, color .35s, border-color .35s; }
-.ia-barra.escuro { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #F5F5F7; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 8px 32px rgb(0 0 0 / .35); }
+  padding: 0 20px; border-radius: var(--raio-capsula); font-size: 16px; color: var(--texto); text-align: left; }
+.ia-barra.escuro { color: #F5F5F7; }
 .ia-barra b { font-weight: 600; white-space: nowrap; } .ia-barra .dica { color: inherit; opacity: .55; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .ia-ponto { position: relative; width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex: none; }
 .ia-ponto::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 1.5px solid currentColor; opacity: .5; animation: anel 2.4s ease-out infinite; }
@@ -186,8 +196,8 @@ button:disabled { opacity: .5; cursor: default; }
 @keyframes anel { from { transform: scale(.6); opacity: .8; } to { transform: scale(1.6); opacity: 0; } }
 .ia { position: fixed; z-index: 41; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   width: min(470px, calc(100% - 24px)); border-radius: var(--raio-cartao); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
-  background: rgb(245 245 247 / .8); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), 0 30px 80px rgb(0 0 0 / .28); }
+  background: rgb(245 245 247 / .78); -webkit-backdrop-filter: blur(14px) saturate(190%) brightness(1.04); backdrop-filter: blur(14px) saturate(190%) brightness(1.04);
+  border: 0; box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .7), inset 1.5px 1.5px 0 -1px rgb(255 255 255 / .9), 0 30px 80px rgb(0 0 0 / .28); }
 :root[data-theme="dark"] .ia { background: rgb(28 28 30 / .8); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ia { background: rgb(28 28 30 / .8); } }
 @media (max-width: 640px) { .ia { top: calc(env(safe-area-inset-top, 0px) + 44px); left: 0; right: 0; bottom: 0; width: 100%; border-radius: var(--raio-cartao) var(--raio-cartao) 0 0; } }
@@ -273,8 +283,8 @@ details.calc input, details.calc select { background: var(--fundo); box-shadow: 
 .fundo { position: fixed; inset: 0; background: rgb(0 0 0 / .32); z-index: 40; }
 .ficha { position: fixed; z-index: 42; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   width: min(470px, calc(100% - 24px)); border-radius: var(--raio-cartao); overflow-y: auto; padding: 14px; display: grid; gap: 12px; align-content: start;
-  background: rgb(245 245 247 / .78); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), 0 30px 80px rgb(0 0 0 / .28); }
+  background: rgb(245 245 247 / .78); -webkit-backdrop-filter: blur(14px) saturate(190%) brightness(1.04); backdrop-filter: blur(14px) saturate(190%) brightness(1.04);
+  border: 0; box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .7), inset 1.5px 1.5px 0 -1px rgb(255 255 255 / .9), 0 30px 80px rgb(0 0 0 / .28); }
 :root[data-theme="dark"] .ficha { background: rgb(28 28 30 / .78); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ficha { background: rgb(28 28 30 / .78); } }
 @media (max-width: 640px) {
@@ -307,16 +317,20 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
 
 /* Acessibilidade: sem transparência quando o sistema pede */
 @media (prefers-reduced-transparency: reduce) {
-  .vidro, .barra, .barra.escuro, .ia-barra, .b-numeros div, .ficha, .ia { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .vidro, .barra, .ia-barra { background: var(--superficie); } .barra.escuro, .ia-barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha, .ia { background: var(--fundo); }
+  .vidro, .ficha, .ia { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .vidro { background: var(--superficie); } .vidro.escuro, .b-numeros .vidro { background: #1C1C1E; } .ficha, .ia { background: var(--fundo); }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .vidro, .barra, .ia-barra { background: var(--superficie); } .barra.escuro, .ia-barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha, .ia { background: var(--fundo); }
+  .vidro { background: var(--superficie); } .vidro.escuro, .b-numeros .vidro { background: #1C1C1E; } .ficha, .ia { background: var(--fundo); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.leve .vidro, .leve .ia, .leve .ficha { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.leve .vidro { background: rgb(250 250 252 / .96); } .leve .vidro.escuro, .leve .b-numeros .vidro { background: rgb(28 28 30 / .94); }
+.leve .ia, .leve .ficha { background: var(--fundo); }
+.leve .anel::after, .leve .ia-ponto::after { animation: none; }
 </style>
 
-<nav class="barra vidro escuro" id="barra" aria-label="Faro">
+<nav class="barra vidro escuro" id="barra" data-lente="22" aria-label="Faro">
   <a class="marca" href="#boletim" aria-label="Faro, início"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 436.2 118.3" role="img" aria-label="Faro"><title>Faro</title><path d="M32.96666666666667 23.66666666666667V94.66666666666667H39.96666666666667V63.06666666666667H74.96666666666667V56.46666666666667H39.96666666666667V30.366666666666674H76.76666666666667V23.66666666666667ZM125.96666666666667 94.66666666666667H133.46666666666667L140.96666666666667 73.46666666666667H171.76666666666665L179.26666666666665 94.66666666666667H186.76666666666665L160.96666666666667 23.66666666666667H151.76666666666665ZM143.36666666666667 66.66666666666667 156.36666666666667 29.866666666666674 169.36666666666667 66.66666666666667ZM266.26666666666665 23.66666666666667H240.26666666666668V94.66666666666667H247.26666666666668V65.26666666666667H265.6666666666667C276.76666666666665 65.26666666666667 281.4666666666667 67.76666666666667 282.06666666666666 74.36666666666667L283.8666666666667 94.66666666666667H290.8666666666667L288.9666666666667 73.76666666666667C288.3666666666667 66.56666666666666 284.8666666666667 62.766666666666666 277.76666666666665 61.66666666666667C284.76666666666665 59.76666666666667 290.3666666666667 53.36666666666667 290.3666666666667 44.86666666666667C290.3666666666667 31.66666666666667 281.3666666666667 23.66666666666667 266.26666666666665 23.66666666666667ZM247.26666666666668 58.56666666666667V30.366666666666674H266.26666666666665C277.26666666666665 30.366666666666674 283.1666666666667 35.36666666666667 283.1666666666667 44.66666666666667C283.1666666666667 53.56666666666667 277.06666666666666 58.56666666666667 266.26666666666665 58.56666666666667ZM375.66666666666674 96.26666666666667C395.5666666666667 96.26666666666667 407.5666666666667 82.06666666666666 407.5666666666667 59.26666666666667C407.5666666666667 36.266666666666666 395.5666666666667 22.066666666666663 375.66666666666674 22.066666666666663C355.86666666666673 22.066666666666663 343.7666666666667 36.266666666666666 343.7666666666667 59.26666666666667C343.7666666666667 82.06666666666666 355.86666666666673 96.26666666666667 375.66666666666674 96.26666666666667ZM351.0666666666667 59.26666666666667C351.0666666666667 40.46666666666667 360.36666666666673 28.866666666666674 375.66666666666674 28.866666666666674C391.0666666666667 28.866666666666674 400.36666666666673 40.46666666666667 400.36666666666673 59.26666666666667C400.36666666666673 77.96666666666667 391.0666666666667 89.46666666666667 375.66666666666674 89.46666666666667C360.36666666666673 89.46666666666667 351.0666666666667 77.96666666666667 351.0666666666667 59.26666666666667Z" fill="currentColor"/></svg></a>
   <span class="barra-data" id="banda-data">São Paulo</span>
   <button type="button" class="barra-acao" id="abrir-ia">Perguntar</button>
@@ -366,7 +380,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
       </select></label>
     </div>
     <div class="mapa-box">
-      <svg id="mapa" role="img" aria-label="Mapa dos prédios HIS e HMP"></svg>
+      <canvas id="mapa" role="img" aria-label="Mapa dos prédios HIS e HMP. Toque num ponto para abrir a ficha."></canvas>
       <div class="legenda">
         <span><i style="background:var(--his)"></i>Só HIS</span>
         <span><i style="background:var(--hmp)"></i>Com HMP</span>
@@ -398,7 +412,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
   </footer>
 </div>
 
-<button type="button" class="ia-barra vidro escuro" id="ia-barra" aria-label="Pergunte ao Faro"><span class="ia-ponto" aria-hidden="true"></span><b>Pergunte ao Faro</b><span class="dica">contatos, preços, revendas, onde achar</span></button>
+<button type="button" class="ia-barra vidro escuro" id="ia-barra" data-lente="22" aria-label="Pergunte ao Faro"><span class="ia-ponto" aria-hidden="true"></span><b>Pergunte ao Faro</b><span class="dica">contatos, preços, revendas, onde achar</span></button>
 <aside class="ia" id="ia" hidden aria-label="Pergunte ao Faro">
   <div class="ia-cab"><div><b>Pergunte ao Faro</b><span class="nota">Busca nos dados oficiais e mostra os prédios com os contatos.</span></div><button type="button" id="ia-fechar">Fechar</button></div>
   <div class="ia-corpo" id="ia-corpo">
@@ -421,11 +435,16 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
 <div class="fundo" id="fundo" hidden></div>
 <aside class="ficha" id="ficha" hidden aria-label="Ficha do imóvel"></aside>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs id="lentes"></defs></svg>
 <script>
 (() => {
   const ARTEFATO = "https://claude.ai/artifact/56WB6o988QdYjeTVMtX5j9";
   const $ = (id) => document.getElementById(id);
+  // modo leve: quem pede menos movimento/transparência ou aparelho muito fraco
+  const LEVE = matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(prefers-reduced-transparency: reduce)").matches ||
+    (navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2;
+  document.documentElement.classList.toggle("leve", LEVE);
+  const adiar = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
   const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
   const num = new Intl.NumberFormat("pt-BR");
   const pct = (x, c = 0) => (x >= 0 ? "+" : "−") + Math.abs(x * 100).toLocaleString("pt-BR", { maximumFractionDigits: c, minimumFractionDigits: c }) + "%";
@@ -449,7 +468,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
   };
 
   let EMPS = [], POR_ID = {}, META = {}, IDX = { ipca: {}, cdi: {} }, DEST = {}, TX = {};
-  let DESTAQUES_DIA = [];
+  let DESTAQUES_DIA = [], PONTOS = [], TX4 = new Set(), BASE = null;
   let historico = [], cartoesResposta = [], fichaAtual = null;
   const usar = async (nome) => { try { return (await window.claude?.use?.(nome)) ?? null; } catch { return null; } };
 
@@ -535,7 +554,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     const q = normal(texto || "");
     let r = EMPS.filter((e) =>
       (!dists.size || dists.has(normal(e.dist))) &&
-      (!q || normal(e.end + " " + e.dist + " " + e.sub).includes(q)) &&
+      (!q || e._q.includes(q)) &&
       (!desde || (e.def1 && e.def1 >= desde)) &&
       (!filtro || (filtro === "revendas" && e.itbi.n_revendas) || (filtro === "vendas" && e.itbi.n_vendas) || (filtro === "acima_teto" && e.itbi.n_acima_teto)));
     const chave = { recentes: (e) => e.def1 || "", unidades: unidades, revendas: (e) => e.itbi.n_revendas, valorizacao: (e) => e.itbi.med_var_real ?? -9 }[ordenar || "recentes"] || ((e) => e.def1 || "");
@@ -546,8 +565,8 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     categorias: e.cat, vendas: e.itbi.n_vendas, revendas: e.itbi.n_revendas, preco_tipico_1a_venda: e.itbi.med_venda,
     valorizacao_real_tipica: e.itbi.med_var_real, vendas_acima_do_teto: e.itbi.n_acima_teto });
   async function transacoes(id) {
-    const lote = /^\d\d/.test(id) ? id.slice(0, 2) : "xx";
-    if (!TX[lote]) TX[lote] = fetch(`dados/tx_${lote}.json`).then((r) => r.ok ? r.json() : {}).catch(() => ({}));
+    const lote = !/^\d{3}/.test(id) ? "xxx" : TX4.has(id.slice(0, 3)) ? id.slice(0, 4) : id.slice(0, 3);
+    if (!TX[lote]) TX[lote] = fetch(`dados/tx/${lote}.json`).then((r) => r.ok ? r.json() : {}).catch(() => ({}));
     return (await TX[lote])[id] || [];
   }
   function unidadesDe(tx) {
@@ -597,34 +616,22 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
   }
 
   // ---------------- explorar + mapa
-  let pontos, explorados = [], expQtd = 8;
+  let explorados = [], expQtd = 8;
   function filtrarExplorar() {
     const d = $("f-dist").value, tipo = $("f-tipo").value;
     const desde = tipo === "novos" ? new Date(new Date(META.ultimo_deferimento).getTime() - 90 * 864e5).toISOString().slice(0, 10) : null;
     const filtro = { revendas: "revendas", vendas: "vendas", acima: "acima_teto" }[tipo];
     const q = normal($("f-busca").value.trim());
-    explorados = EMPS.filter((e) => (!d || e.dist === d) && (!q || normal(e.end + " " + e.dist).includes(q)) && (!desde || (e.def1 && e.def1 >= desde)) &&
+    explorados = EMPS.filter((e) => (!d || e.dist === d) && (!q || e._q.includes(q)) && (!desde || (e.def1 && e.def1 >= desde)) &&
       (!filtro || (filtro === "revendas" && e.itbi.n_revendas) || (filtro === "vendas" && e.itbi.n_vendas) || (filtro === "acima_teto" && e.itbi.n_acima_teto)));
     expQtd = 8; desenharExplorar();
-    if (pontos) { const ids = new Set(explorados.map((e) => e.id)); pontos.attr("display", (e) => ids.has(e.id) ? null : "none"); }
+    VISIVEIS = (d || q || tipo) ? new Set(explorados.map((e) => e.id)) : null; desenharMapa();
   }
   function desenharExplorar() {
     $("explorar-nota").textContent = `${num.format(explorados.length)} prédios. Toque num ponto ou num cartão para ver os contatos.`;
     $("lista").innerHTML = explorados.slice(0, expQtd).map((e) => cartaoEmp(e)).join("") || '<p class="vazio">Nenhum prédio com esses filtros.</p>';
     $("lista-mais").hidden = expQtd >= explorados.length;
   }
-  function mapa(distritos) {
-    const svg = d3.select("#mapa"), W = 600, H = 660;
-    svg.attr("viewBox", `0 0 ${W} ${H}`);
-    const proj = d3.geoMercator().fitExtent([[6, 6], [W - 6, H - 6]], distritos), path = d3.geoPath(proj);
-    svg.append("g").selectAll("path").data(distritos.features).join("path").attr("class", "dist").attr("d", path).append("title").text((d) => d.properties.nome);
-    const r = d3.scaleSqrt().domain([0, 2000]).range([1.8, 7.5]).clamp(true);
-    pontos = svg.append("g").selectAll("circle").data(EMPS).join("circle").attr("class", "pt")
-      .attr("cx", (e) => proj([e.lon, e.lat])[0]).attr("cy", (e) => proj([e.lon, e.lat])[1])
-      .attr("r", (e) => r(unidades(e))).attr("fill", corDe).attr("fill-opacity", .8).on("click", (ev, e) => abrirFicha(e.id));
-    pontos.append("title").text((e) => e.end);
-  }
-
   // ---------------- ficha com ações
   async function copiar(texto, botao) {
     try { await navigator.clipboard.writeText(texto); botao.textContent = "Copiado"; }
@@ -637,7 +644,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     return "https://wa.me/?text=" + encodeURIComponent(txt);
   }
   async function abrirFicha(id) {
-    const e = POR_ID[id]; if (!e) return;
+    let e = POR_ID[id]; if (!e && BASE) { await BASE.catch(() => {}); e = POR_ID[id]; } if (!e) return;
     const f = $("ficha"), s = e.itbi, alv = e.alv[e.alv.length - 1] || [];
     const rn = ruaNumero(e.end); fichaAtual = id;
     try { history.replaceState(null, "", "#imovel-" + id); } catch {}
@@ -823,7 +830,7 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
     $("b-titulo").textContent = b.titulo;
     $("b-resumo").textContent = b.resumo;
     $("banda-data").textContent = dataBR(b.data);
-    $("b-numeros").innerHTML = b.numeros.map((n) => `<div><b>${esc(n.valor)}</b><span>${esc(n.rotulo)}</span></div>`).join("");
+    $("b-numeros").innerHTML = b.numeros.map((n) => `<div class="vidro escuro" data-lente="18"><b>${esc(n.valor)}</b><span>${esc(n.rotulo)}</span></div>`).join("");
     $("b-secoes").innerHTML = (b.aviso ? `<p class="aviso-box ruim">${esc(b.aviso)}</p>` : "") + b.secoes.map((s) => `
       <div class="b-secao">
         <h2 class="rotulo">${esc(s.titulo)}</h2>
@@ -864,7 +871,8 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
   });
   $("destaques-mais").onclick = () => { abaQtd += 10; desenharDestaques(); };
   $("lista-mais").onclick = () => { expQtd += 12; desenharExplorar(); };
-  ["f-busca", "f-dist", "f-tipo"].forEach((id) => $(id).addEventListener("input", filtrarExplorar));
+  const filtrarDepois = adiar(filtrarExplorar, 120);
+  ["f-busca", "f-dist", "f-tipo"].forEach((id) => $(id).addEventListener("input", filtrarDepois));
   $("calc").addEventListener("input", calcularFormulario);
   $("calc").addEventListener("submit", (ev) => ev.preventDefault());
 
@@ -879,85 +887,155 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
     }).replace("S/Nº", "s/nº").replace("S/N", "s/n");
 
-  // ---------------- a cidade acesa (herói): cada prédio HIS/HMP é um ponto de luz; acendem na ordem do alvará
-  function cidade(distritos) {
-    const cv = $("cidade"); if (!cv || !cv.getContext) return;
-    const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const LAT0 = -23.57, LON0 = -46.60, COS = Math.cos(LAT0 * Math.PI / 180);
-    let base, W, H, dpr, proj, dens = 1, fortes = [], quadro = 0, visivel = true, animando = false;
-    const pts = EMPS.filter((e) => e.lat && e.lon).sort((a, b) => String(a.def1 || "").localeCompare(String(b.def1 || "")));
-    function medir() {
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-      const vao = W < 640 ? 0.26 : 0.5; dens = Math.min(1, Math.max(0.55, W / 1100));
-      const esc = Math.max(W / (vao * COS), H / 0.42);
-      proj = (lon, lat) => [W * 0.5 + (lon - LON0) * COS * esc, H * 0.5 - (lat - LAT0) * esc];
-      base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height;
-      const b = base.getContext("2d"); b.scale(dpr, dpr);
-      b.fillStyle = "#06080B"; b.fillRect(0, 0, W, H);
-      b.strokeStyle = "rgba(255,255,255,.045)"; b.lineWidth = 1;
-      for (const f of distritos.features) {
-        const polys = f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [f.geometry.coordinates];
-        for (const pol of polys) for (const anel of pol) { b.beginPath(); anel.forEach(([lo, la], k) => { const [x, y] = proj(lo, la); k ? b.lineTo(x, y) : b.moveTo(x, y); }); b.stroke(); }
-      }
-      b.globalCompositeOperation = "lighter"; b.fillStyle = "rgba(255,200,136,.28)";
-      for (const e of pts) { const [x, y] = proj(e.lon, e.lat); b.fillRect(x - .6, y - .6, 1.2, 1.2); }
-      const ids = new Set(DESTAQUES_DIA); fortes = pts.filter((e) => ids.has(e.id)).map((e) => proj(e.lon, e.lat));
-    }
-    function acender(de, ate) {
-      const b = base.getContext("2d"); b.save(); b.globalCompositeOperation = "lighter";
-      for (let k = de; k < ate; k++) {
-        const e = pts[k], [x, y] = proj(e.lon, e.lat); if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
-        const un = (e.his1 || 0) + (e.his2 || 0) + (e.hmp || 0), r = (0.7 + Math.min(1.5, Math.sqrt(Math.max(un, 1)) / 7)) * dens;
-        b.shadowColor = "rgba(255,190,120,.75)"; b.shadowBlur = 7 * dens; b.fillStyle = `rgba(255,212,160,${(0.42 + Math.min(0.4, un / 400)) * (0.6 + 0.4 * dens)})`;
-        b.beginPath(); b.arc(x, y, r, 0, 7); b.fill();
-      }
-      b.restore();
-    }
-    function desenhar(t) {
-      const c = cv.getContext("2d"); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(base, 0, 0); c.scale(dpr, dpr);
-      for (const [x, y] of fortes) {
-        const fase = reduzir ? 0.5 : ((t / 2400) % 1);
-        c.fillStyle = "#FFF6EA"; c.shadowColor = "rgba(255,220,180,.95)"; c.shadowBlur = 16; c.beginPath(); c.arc(x, y, 3, 0, 7); c.fill(); c.shadowBlur = 0;
-        c.strokeStyle = `rgba(255,255,255,${0.85 - fase * 0.75})`; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 9 + fase * 16, 0, 7); c.stroke();
-      }
-    }
-    function laco(t) {
-      if (!visivel) { animando = false; return; }
-      if (quadro < pts.length) { const prox = Math.min(pts.length, quadro + 48); acender(quadro, prox); quadro = prox; }
-      desenhar(t); if (!reduzir || quadro < pts.length) requestAnimationFrame(laco); else animando = false;
-    }
-    function iniciar() { medir(); quadro = 0; if (reduzir) { acender(0, pts.length); quadro = pts.length; desenhar(0); } else if (!animando) { animando = true; requestAnimationFrame(laco); } }
-    iniciar();
-    let rs; addEventListener("resize", () => { clearTimeout(rs); rs = setTimeout(() => { if (Math.abs(cv.clientWidth - W) > 40 || Math.abs(cv.clientHeight - H) > 120) iniciar(); }, 200); });
-    if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => { visivel = en.isIntersecting; if (visivel && !animando && !reduzir) { animando = true; requestAnimationFrame(laco); } }).observe(cv);
+  // ---------------- a cidade acesa (herói): desenhada uma vez, em pedaços, com um sprite de luz; nada roda depois
+  function sprite(t) {
+    const c = document.createElement("canvas"); c.width = c.height = t;
+    const g = c.getContext("2d"), gr = g.createRadialGradient(t / 2, t / 2, 0, t / 2, t / 2, t / 2);
+    gr.addColorStop(0, "rgba(255,240,220,1)"); gr.addColorStop(0.18, "rgba(255,214,160,.85)"); gr.addColorStop(0.45, "rgba(255,190,120,.22)"); gr.addColorStop(1, "rgba(255,180,110,0)");
+    g.fillStyle = gr; g.fillRect(0, 0, t, t); return c;
   }
-  // barra de vidro: variante escura sobre a cidade, clara sobre o conteúdo
-  function barra() {
-    const nav = $("barra"), heroi = $("boletim"); if (!nav || !heroi) return;
-    const ia = $("ia-barra");
-    const ajustar = () => { const r = heroi.getBoundingClientRect(); nav.classList.toggle("escuro", r.bottom > nav.getBoundingClientRect().bottom + 8); ia.classList.toggle("escuro", r.bottom > innerHeight - 40); };
-    addEventListener("scroll", ajustar, { passive: true }); ajustar();
+  const contornos = (geo, proj, c) => { for (const f of geo.features) for (const pol of (f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [f.geometry.coordinates])) for (const anel of pol) anel.forEach(([lo, la], k) => { const [x, y] = proj(lo, la); k ? c.lineTo(x, y) : c.moveTo(x, y); }); };
+  function cidade(distritos) {
+    const cv = $("cidade"), caixa = cv.parentElement; if (!cv.getContext) return;
+    const LAT0 = -23.57, LON0 = -46.60, COS = Math.cos(LAT0 * Math.PI / 180), luz = sprite(32);
+    let tarefa = 0, w0 = 0;
+    function desenhar() {
+      const W = caixa.clientWidth, H = caixa.clientHeight; if (!W || !H) return; w0 = W;
+      const dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const vao = W < 640 ? 0.26 : 0.5, dens = Math.min(1, Math.max(0.55, W / 1100)), esc = Math.max(W / (vao * COS), H / 0.42);
+      const proj = (lon, lat) => [W * 0.5 + (lon - LON0) * COS * esc, H * 0.5 - (lat - LAT0) * esc];
+      c.fillStyle = "#06080B"; c.fillRect(0, 0, W, H);
+      c.strokeStyle = "rgba(255,255,255,.045)"; c.lineWidth = 1; c.beginPath(); contornos(distritos, proj, c); c.stroke();
+      const vis = [];
+      for (const p of PONTOS) { const [x, y] = proj(p.lon, p.lat); if (x > -12 && y > -12 && x < W + 12 && y < H + 12) vis.push([x, y, p]); }
+      c.globalCompositeOperation = "lighter";
+      const um = ([x, y, p]) => { const t = (7 + Math.min(11, Math.sqrt(Math.max(p.un, 1)))) * dens; c.globalAlpha = 0.36 + Math.min(0.34, p.un / 600); c.drawImage(luz, x - t / 2, y - t / 2, t, t); };
+      cancelAnimationFrame(tarefa);
+      if (LEVE) vis.forEach(um);
+      else { let k = 0; const passo = () => { const fim = Math.min(vis.length, k + 90); for (; k < fim; k++) um(vis[k]); if (k < vis.length) tarefa = requestAnimationFrame(passo); }; tarefa = requestAnimationFrame(passo); }
+      caixa.querySelectorAll(".anel").forEach((a) => a.remove());
+      const ids = new Set(DESTAQUES_DIA);
+      for (const [x, y, p] of vis) if (ids.has(p.id) && y > H * 0.3 && y < H * 0.9) { const a = document.createElement("span"); a.className = "anel"; a.style.left = x + "px"; a.style.top = y + "px"; caixa.appendChild(a); }
+    }
+    desenhar();
+    new ResizeObserver(adiar(() => { if (Math.abs(caixa.clientWidth - w0) > 40) desenhar(); }, 150)).observe(caixa);
   }
 
-  // ---------------- carga
+  // ---------------- mapa em canvas: sem biblioteca e sem 5 mil elementos na página
+  let MAPA = null, VISIVEIS = null, quadroMapa = 0;
+  const corVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function mapa(distritos) {
+    const cv = $("mapa"), b = [180, 90, -180, -90];
+    for (const f of distritos.features) for (const pol of (f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [f.geometry.coordinates])) for (const anel of pol) for (const [lo, la] of anel) {
+      b[0] = Math.min(b[0], lo); b[1] = Math.min(b[1], la); b[2] = Math.max(b[2], lo); b[3] = Math.max(b[3], la); }
+    MAPA = { cv, distritos, b, COS: Math.cos(((b[1] + b[3]) / 2) * Math.PI / 180), pts: [] };
+    new ResizeObserver(() => desenharMapa()).observe(cv);
+    matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => desenharMapa());
+    cv.addEventListener("click", (ev) => {
+      const r = cv.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top; let melhor = null, d0 = 16 * 16;
+      for (const q of MAPA.pts) { if (VISIVEIS && !VISIVEIS.has(q.id)) continue; const d = (q.x - x) ** 2 + (q.y - y) ** 2; if (d < d0) { d0 = d; melhor = q; } }
+      if (melhor) abrirFicha(melhor.id);
+    });
+  }
+  function desenharMapa() {
+    if (!MAPA) return; cancelAnimationFrame(quadroMapa);
+    quadroMapa = requestAnimationFrame(() => {
+      const { cv, distritos, b, COS } = MAPA, W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
+      const dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+      const m = 8, esc = Math.min((W - 2 * m) / ((b[2] - b[0]) * COS), (H - 2 * m) / (b[3] - b[1]));
+      const ox = (W - (b[2] - b[0]) * COS * esc) / 2, oy = (H - (b[3] - b[1]) * esc) / 2;
+      const proj = (lo, la) => [ox + (lo - b[0]) * COS * esc, oy + (b[3] - la) * esc];
+      c.fillStyle = corVar("--superficie-2"); c.strokeStyle = corVar("--superficie"); c.lineWidth = 1;
+      for (const f of distritos.features) { c.beginPath(); contornos({ features: [f] }, proj, c); c.fill(); c.stroke(); }
+      const cores = ["--cat-sem", "--cat-his", "--cat-hmp", "--cat-livre"].map(corVar), lotes = [[], [], [], []], fora = [];
+      MAPA.pts = [];
+      const k = Math.max(0.45, Math.min(1, W / 640));
+      for (const p of PONTOS) { const [x, y] = proj(p.lon, p.lat), r = (1.3 + Math.min(4.5, Math.sqrt(p.un) / 6)) * k; MAPA.pts.push({ id: p.id, x, y }); (VISIVEIS && !VISIVEIS.has(p.id) ? fora : lotes[p.c]).push([x, y, r]); }
+      const pintar = (l, cor, a) => { c.fillStyle = cor; c.globalAlpha = a; c.beginPath(); for (const [x, y, r] of l) { c.moveTo(x + r, y); c.arc(x, y, r, 0, 6.2832); } c.fill(); };
+      pintar(fora, cores[0], 0.22); lotes.forEach((l, k) => pintar(l, cores[k], 0.85)); c.globalAlpha = 1;
+    });
+  }
+
+  // ---------------- Liquid Glass: lente nas bordas (Chrome e Edge aceitam filtro SVG no backdrop-filter)
+  const LENTE = !LEVE && /Chrome\/|Edg\//.test(navigator.userAgent) && !/Firefox\//.test(navigator.userAgent);
+  document.documentElement.classList.toggle("lente-on", LENTE);
+  let nLente = 0;
+  function mapaLente(w, h, r, borda) {
+    const c = document.createElement("canvas"); c.width = w; c.height = h;
+    const g = c.getContext("2d"), img = g.createImageData(w, h), d = img.data, hw = w / 2, hh = h / 2;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const vx = x + 0.5 - hw, vy = y + 0.5 - hh, ax = Math.abs(vx) - (hw - r), ay = Math.abs(vy) - (hh - r);
+      const dentro = -(Math.hypot(Math.max(ax, 0), Math.max(ay, 0)) + Math.min(Math.max(ax, ay), 0) - r);
+      let nx = 0, ny = 0;
+      if (dentro < borda) {
+        const t = 1 - Math.max(dentro, 0) / borda, f = t * t;
+        let gx = ax > 0 ? Math.sign(vx) * ax : 0, gy = ay > 0 ? Math.sign(vy) * ay : 0;
+        if (!gx && !gy) { if (ax > ay) gx = Math.sign(vx); else gy = Math.sign(vy); }
+        const L = Math.hypot(gx, gy) || 1; nx = (gx / L) * f; ny = (gy / L) * f;
+      }
+      const i = (y * w + x) * 4; d[i] = 128 + nx * 127; d[i + 1] = 128 + ny * 127; d[i + 2] = 128; d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0); return c.toDataURL();
+  }
+  function aplicarLentes() {
+    if (!LENTE) return;
+    const defs = $("lentes"), NS = "http://www.w3.org/2000/svg";
+    document.querySelectorAll("[data-lente]").forEach((el) => {
+      const w = Math.round(el.offsetWidth), h = Math.round(el.offsetHeight); if (!w || !h) return;
+      if (el.dataset.lenteTam === `${w}x${h}`) return; el.dataset.lenteTam = `${w}x${h}`;
+      const r = Math.min(parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0, h / 2, w / 2);
+      const id = el.dataset.lenteId || (el.dataset.lenteId = "lente" + ++nLente);
+      let f = document.getElementById(id); if (!f) { f = document.createElementNS(NS, "filter"); f.id = id; defs.appendChild(f); }
+      f.setAttribute("filterUnits", "userSpaceOnUse"); f.setAttribute("color-interpolation-filters", "sRGB");
+      f.setAttribute("x", "0"); f.setAttribute("y", "0"); f.setAttribute("width", w); f.setAttribute("height", h);
+      f.innerHTML = `<feImage href="${mapaLente(w, h, r, Math.min(16, h / 2))}" x="0" y="0" width="${w}" height="${h}" result="m"/><feDisplacementMap in="SourceGraphic" in2="m" scale="${el.dataset.lente}" xChannelSelector="R" yChannelSelector="G"/>`;
+      el.style.setProperty("--lente", `url(#${id})`);
+    });
+  }
+  if (LENTE) { const re = adiar(aplicarLentes, 200); addEventListener("resize", re); }
+
+  // barra "Pergunte ao Faro": variante escura enquanto está sobre a cidade (sem ouvir a rolagem)
+  function barraIA() {
+    const ia = $("ia-barra"), heroi = $("boletim"); let io;
+    const ligar = () => { io?.disconnect(); io = new IntersectionObserver(([en]) => ia.classList.toggle("escuro", en.isIntersecting), { rootMargin: `-${Math.max(0, innerHeight - 72)}px 0px 0px 0px` }); io.observe(heroi); };
+    ligar(); addEventListener("resize", adiar(ligar, 200));
+  }
+
+  // ---------------- carga: primeiro o boletim e a cidade (~80 KB); a base completa chega em segundo plano
   const opcional = (n) => fetch(`dados/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  Promise.all([...["meta", "indices", "empreendimentos", "distritos", "destaques"].map((n) => fetch(`dados/${n}.json`).then((r) => { if (!r.ok) throw new Error(n); return r.json(); })), opcional("boletim"), opcional("boletins")])
-    .then(([meta, idx, emps, dist, dest, boletim, historico]) => {
-      META = meta; IDX = idx; EMPS = emps; DEST = dest; EMPS.forEach((e) => { e.end = endereco(e.end); POR_ID[e.id] = e; });
-      Object.values(DEST).forEach((l) => (l || []).forEach((x) => { if (x && x.end) x.end = endereco(x.end); }));
-      const ult = META.itbi_ultimo_mes;
-      desenharBoletim(boletim, historico);
+  const pegar = (n) => fetch(`dados/${n}.json`).then((r) => { if (!r.ok) throw new Error(n); return r.json(); });
+  function hidratar(base) {
+    const K = base.campos, I = base.itbi; TX4 = new Set(base.tx4 || []);
+    return base.d.map((r) => {
+      const e = {}; K.forEach((k, i) => (e[k] = r[i]));
+      const it = e.itbi || []; e.itbi = {}; I.forEach((k, i) => (e.itbi[k] = it[i] ?? (i < 4 ? 0 : null)));
+      e.alv = e.alv ? [[e.alv[0], null, null, e.alv[1]]] : [];
+      e.end = endereco(e.end); e._q = normal(`${e.end} ${e.dist} ${e.sub}`);
+      return e;
+    });
+  }
+  Promise.all([opcional("boletim"), opcional("boletins"), pegar("meta"), pegar("pontos"), pegar("distritos")])
+    .then(([boletim, historico, meta, pts, dist]) => {
+      META = meta; PONTOS = pts.map(([id, la, lo, un, c]) => ({ id, lat: la / 1e4, lon: lo / 1e4, un, c }));
+      desenharBoletim(boletim, historico); aplicarLentes();
       try { cidade(dist); } catch (e) { console.warn(e); }
-      barra();
-      if (!boletim) $("fonte").textContent = `Dados oficiais: alvarás atualizados em ${dataBR(META.geosampa_atualizacao)} · vendas até ${ult.slice(0, 3).toLowerCase()}/${ult.slice(4)} · ${num.format(META.totais.empreendimentos)} prédios HIS/HMP na capital`;
+      barraIA();
+      if (!boletim) $("fonte").textContent = `Dados oficiais: alvarás atualizados em ${dataBR(META.geosampa_atualizacao)} · ${num.format(META.totais.empreendimentos)} prédios HIS/HMP na capital`;
       $("c-mes1").value = META.ipca_ultimo;
-      const ds = [...new Set(EMPS.map((e) => e.dist).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
-      $("f-dist").insertAdjacentHTML("beforeend", ds.map((d) => `<option>${esc(d)}</option>`).join(""));
-      desenharDestaques(); filtrarExplorar(); calcularFormulario();
-      try { mapa(dist); filtrarExplorar(); } catch { $("mapa").outerHTML = '<p class="vazio">O mapa não carregou. A lista continua funcionando.</p>'; }
+      BASE = Promise.all([pegar("base"), pegar("destaques"), pegar("indices")]).then(([base, dest, idx]) => {
+        EMPS = hidratar(base); EMPS.forEach((e) => (POR_ID[e.id] = e)); DEST = dest; IDX = idx;
+        Object.values(DEST).forEach((l) => (l || []).forEach((x) => { if (x && x.end) x.end = endereco(x.end); }));
+        const ds = [...new Set(EMPS.map((e) => e.dist).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+        $("f-dist").insertAdjacentHTML("beforeend", ds.map((d) => `<option>${esc(d)}</option>`).join(""));
+        desenharDestaques(); calcularFormulario();
+        try { mapa(dist); } catch { $("mapa").outerHTML = '<p class="vazio">O mapa não carregou. A lista continua funcionando.</p>'; }
+        filtrarExplorar();
+        ligarVoz();
+      });
       const m = location.hash.match(/^#imovel-([A-Za-z0-9-]+)$/); if (m) abrirFicha(m[1]);
-      ligarVoz();
+      return BASE;
     })
     .catch((err) => { $("fonte").textContent = `Não foi possível carregar os dados (${err.message}). Recarregue a página.`; });
 })();

@@ -48,3 +48,8 @@ Quem recebe o e-mail precisa ter acesso ao link do site (menu Share da página) 
 ## Imagem do e-mail (desde a v5)
 
 O Redator chama o Ilustrador, que salva `email/cidade-AAAA-MM-DD.jpg` com os imóveis do dia marcados. O e-mail aponta para essa imagem no repositório público (`url_imagens` em `config.json`). Por isso, **faça o commit e o push de `email/` antes de enviar o e-mail** (passo 7 antes do passo 6); sem o push, a imagem aparece quebrada.
+
+
+## Arquivos do site (desde a otimização de 23/11/2026)
+
+O Empacotador (`empacotar.py`) roda depois do Analista e gera os arquivos leves que o site carrega: `dados/pontos.json` (herói e mapa), `dados/base.json` (listas, busca e ficha, em formato de tabela) e `dados/tx/*.json` (vendas em pedaços). A lista exata para publicar está em `saida/boletim.json` (`site.files`); `empreendimentos.json` e `tx_XX.json` ficam só para os agentes e não vão para o site.

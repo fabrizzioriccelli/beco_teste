@@ -23,6 +23,7 @@ import sys
 import time
 
 import auditor
+import empacotar
 import redator
 
 AQUI = pathlib.Path(__file__).resolve().parent
@@ -61,6 +62,8 @@ def main():
         etapas.append(etapa("Coletor", [sys.executable, "coletar.py", "--dados", "_dados"]))
     if all(e["ok"] for e in etapas):
         etapas.append(etapa("Analista", [sys.executable, "processar.py", "--dados", "_dados", "--saida", "site/dados"]))
+    if all(e["ok"] for e in etapas):
+        etapas.append(etapa("Empacotador", [sys.executable, "empacotar.py"]))
 
     if not all(e["ok"] for e in etapas):
         auditoria = {"status": "bloqueado", "verificacoes": [{"verificacao": f"agente {e['agente']}", "ok": False, "gravidade": "bloqueio",
@@ -88,7 +91,7 @@ def main():
         "destinatarios": config.get("destinatarios", []), "copia": config.get("copia", []),
         "assunto": boletim and boletim["assunto"], "html": boletim and boletim["html"], "texto": boletim and boletim["texto"],
         "site": {"file_path": str(AQUI / "site" / "index.html"), "root": str(AQUI / "site"),
-                 "files": sorted(f"dados/{p.name}" for p in (AQUI / "site" / "dados").glob("*.json")), "url": config["link_radar"]},
+                 "files": empacotar.arquivos_do_site(), "url": config["link_radar"]},
     }
     (AQUI / "saida" / "boletim.json").write_text(json.dumps(saida, ensure_ascii=False, indent=1), encoding="utf-8")
     with open(estado / "execucoes.jsonl", "a", encoding="utf-8") as f:

@@ -1,5 +1,14 @@
 # Histórico de versões
 
+## [0.8.0] — 23/11/2026 — Site leve e Liquid Glass nítido
+
+### Alterado
+
+- Barra do topo deixa de ser fixa: rola com a página.
+- Liquid Glass no estilo da Apple: vidro nítido, borda que pega luz e lente de refração nas bordas (Chrome/Edge).
+- Desempenho: boletim e cidade carregam primeiro; base em tabela e vendas em pedaços pequenos (Empacotador); mapa em canvas sem a biblioteca d3; cidade desenhada uma vez, anéis em CSS; modo leve para aparelhos fracos.
+- Medido antes → depois: 3,9 → 1,6 MB; JavaScript 4,15 → 0,03 s; 17.584 → 1.465 elementos; rolagem 13 → 59 quadros/s.
+
 ## [0.7.1] — 23/11/2026 — Refinamento de layout, textos e assistente
 
 ### Alterado
