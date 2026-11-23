@@ -1,5 +1,10 @@
-"""Agente Redator: escreve o boletim diário ("o que mapeamos ontem") a partir da comparação
-com o snapshot da execução anterior. Gera HTML de e-mail (estilos inline) e texto puro."""
+"""Agente Redator: escreve o boletim diário ("O que rolou ontem").
+
+Compara os dados de hoje com o snapshot da execução anterior e gera um CONTEÚDO único
+(título, resumo, números e seções). O mesmo conteúdo vira:
+  - o e-mail (HTML com estilos inline, sem imagens) e a versão em texto;
+  - a seção "Boletim" do site (site/dados/boletim.json).
+"""
 import datetime as dt
 import html
 import json
@@ -7,55 +12,52 @@ import pathlib
 
 COR = {"placa": "#1F3F8B", "faixa": "#F2B705", "asfalto": "#171C1B", "grafite": "#59625F", "meio_fio": "#D6D9D3",
        "calcada": "#E5E7E2", "concreto": "#EFF0EC", "papel": "#FFFFFF", "ganho": "#1C6B45", "alerta": "#B42318",
-       "alerta_fundo": "#FBE4E1", "ganho_fundo": "#E2F1E7"}
+       "alerta_fundo": "#FBE4E1", "placa_clara": "#C9D6F2"}
 FONTE_MARCA = "Archivo, 'Helvetica Neue', Arial, sans-serif"
 FONTE_TEXTO = "'IBM Plex Sans', 'Segoe UI', Arial, sans-serif"
 FONTE_DADO = "'IBM Plex Mono', Menlo, Consolas, monospace"
 MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
+DIAS = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
 
 
+# ---------------------------------------------------------------- formatação
 def brl(v):
     return "R$ " + f"{v:,.0f}".replace(",", ".")
-
-
-def pct(x):
-    return ("+" if x >= 0 else "−") + f"{abs(x) * 100:.0f}%"
-
-
-def vs_inflacao(x):
-    return f"{abs(x) * 100:.0f}% {'acima' if x >= 0 else 'abaixo'} da inflação"
-
-
-def plural(n, um, varios):
-    return f"{n} {um if n == 1 else varios}"
-
-
-def oportunidade_plausivel(r):
-    """Para o boletim, só pares de compra e revenda com cara de negócio real de apartamento."""
-    return r["v0"] >= 100_000 and 0.6 <= r["v1"] / r["v0"] <= 1.8 and r["real"] >= 0.03
 
 
 def milhar(n):
     return f"{n:,}".replace(",", ".")
 
 
-def mes_extenso(aba_ou_ym):
-    """'SET-2026' ou '2026-11' -> 'set/2026'."""
-    if "-" in aba_ou_ym and aba_ou_ym[:3].isalpha():
-        return f"{aba_ou_ym[:3].lower()}/{aba_ou_ym[-4:]}"
-    return f"{MES[int(aba_ou_ym[5:7]) - 1]}/{aba_ou_ym[:4]}"
+def plural(n, um, varios):
+    return f"{n} {um if n == 1 else varios}"
+
+
+def pct_curto(x):
+    return ("+" if x >= 0 else "−") + f"{abs(x) * 100:.0f}%"
 
 
 def data_br(iso):
-    return "-".join(reversed(iso[:10].split("-"))).replace("-", "/") if iso else "—"
+    return "/".join(reversed(iso[:10].split("-"))) if iso else "—"
 
 
 def mes_ano(iso):
     return f"{MES[int(iso[5:7]) - 1]}/{iso[2:4]}" if iso else "—"
 
 
+def mes_extenso(aba_ou_ym):
+    """'SET-2026' ou '2026-11' -> 'set/2026'."""
+    if aba_ou_ym[:3].isalpha():
+        return f"{aba_ou_ym[:3].lower()}/{aba_ou_ym[-4:]}"
+    return f"{MES[int(aba_ou_ym[5:7]) - 1]}/{aba_ou_ym[:4]}"
+
+
+def _e(s):
+    return html.escape(str(s or ""))
+
+
+# ---------------------------------------------------------------- comparação com o dia anterior
 def snapshot(emps, meta):
-    """O que a próxima execução usa para saber o que é novo."""
     return {
         "gerado_em": meta["gerado_em"], "geosampa_atualizacao": meta["geosampa_atualizacao"],
         "itbi_ultimo_mes": meta["itbi_ultimo_mes"], "itbi_guias_lidas": meta["itbi_guias_lidas"],
@@ -64,32 +66,7 @@ def snapshot(emps, meta):
     }
 
 
-def comparar(emps, dest, meta, ant):
-    por_id = {e["id"]: e for e in emps}
-    if not ant:
-        return {"primeiro": True}
-    velhos = ant.get("emps", {})
-    novos_alv = sorted((e for e in emps if e["id"] not in velhos), key=lambda e: e["def1"] or "", reverse=True)
-    dv = {e["id"]: e["itbi"]["n_vendas"] - velhos[e["id"]][0] for e in emps if e["id"] in velhos}
-    dr = {e["id"]: e["itbi"]["n_revendas"] - velhos[e["id"]][1] for e in emps if e["id"] in velhos}
-    da = {e["id"]: e["itbi"]["n_acima_teto"] - velhos[e["id"]][2] for e in emps if e["id"] in velhos}
-    com_venda = sorted((i for i, d in dv.items() if d > 0), key=lambda i: -dv[i])
-    return {
-        "primeiro": False,
-        "novos_alvaras": novos_alv,
-        "vendas_novas": sum(d for d in dv.values() if d > 0),
-        "revendas_novas": sum(d for d in dr.values() if d > 0),
-        "acima_novas": sum(d for d in da.values() if d > 0),
-        "predios_com_venda": [por_id[i] for i in com_venda[:5]],
-        "revendas": _primeiros_por_predio(dest["revendas"], dr)[:5],
-        "acima": _agrupar_acima(_primeiros_por_predio(dest["acima_teto"], da))[:5],
-        "fonte_alvaras_mudou": meta["geosampa_atualizacao"] != ant.get("geosampa_atualizacao"),
-        "fonte_itbi_mudou": meta["itbi_ultimo_mes"] != ant.get("itbi_ultimo_mes"),
-        "desde": ant.get("gerado_em", "")[:10],
-    }
-
-
-def _primeiros_por_predio(lista, deltas):
+def _novos_por_predio(lista, deltas):
     """Só os itens novos: para cada prédio, os `delta` itens mais recentes."""
     usados, saida = {}, []
     for x in lista:
@@ -109,6 +86,29 @@ def _agrupar_acima(lista):
     return list(grupos.values())
 
 
+def comparar(emps, dest, ant):
+    if not ant:
+        return {"primeiro": True}
+    velhos = ant.get("emps", {})
+    campos = ("n_vendas", "n_revendas", "n_acima_teto")
+    delta = [{e["id"]: e["itbi"][campos[i]] - velhos[e["id"]][i] for e in emps if e["id"] in velhos} for i in range(3)]
+    dv, dr, da = delta
+    return {
+        "primeiro": False,
+        "novos_alvaras": sorted((e for e in emps if e["id"] not in velhos), key=lambda e: e["def1"] or "", reverse=True),
+        "vendas_novas": sum(x for x in dv.values() if x > 0),
+        "revendas_novas": sum(x for x in dr.values() if x > 0),
+        "acima_novas": sum(x for x in da.values() if x > 0),
+        "revendas": _novos_por_predio(dest["revendas"], dr)[:5],
+        "acima": _agrupar_acima(_novos_por_predio(dest["acima_teto"], da))[:5],
+    }
+
+
+def oportunidade_plausivel(r):
+    """Só pares de compra e revenda com cara de negócio real de apartamento e ganho acima da inflação."""
+    return r["v0"] >= 100_000 and 0.6 <= r["v1"] / r["v0"] <= 1.8 and r["real"] >= 0.03
+
+
 def rotativos(lista, n, hoje, excluir):
     """Escolhe n itens diferentes a cada dia, para o boletim nunca vir vazio."""
     lista = [x for x in lista if x["id"] not in excluir]
@@ -118,56 +118,179 @@ def rotativos(lista, n, hoje, excluir):
     return (lista[k:] + lista[:k])[:n]
 
 
-# ---------------------------------------------------------------- HTML
-def _e(s):
-    return html.escape(str(s or ""))
+# ---------------------------------------------------------------- conteúdo
+def _item_revenda(r):
+    return {"id": r["id"], "titulo": r["end"], "contexto": f"{r['dist']} · {r['un']}",
+            "detalhe": f"Comprou por {brl(r['v0'])} ({mes_ano(r['d0'])}) e revendeu por {brl(r['v1'])} ({mes_ano(r['d1'])}).",
+            "destaque": pct_curto(r["real"]), "destaque_rotulo": "acima da inflação" if r["real"] >= 0 else "abaixo da inflação",
+            "tom": "ganho" if r["real"] >= 0 else "alerta"}
 
 
-def item_html(link, titulo, linha1, linha2="", destaque=None):
-    cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(destaque, COR["asfalto"])
-    return f"""
-<tr><td style="padding:0 0 12px">
- <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['papel']};border:1px solid {COR['meio_fio']};border-radius:12px">
-  <tr><td style="padding:14px 16px">
-   <div style="font-family:{FONTE_MARCA};font-weight:700;font-size:16px;color:{COR['asfalto']};line-height:1.3">{_e(titulo)}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:2px">{linha1}</div>
-   {f'<div style="font-family:{FONTE_TEXTO};font-size:14px;color:{cor};padding-top:6px">{linha2}</div>' if linha2 else ''}
-   <div style="padding-top:10px"><a href="{link}" style="display:inline-block;background:{COR['placa']};color:#FFFFFF;font-family:{FONTE_TEXTO};font-size:14px;font-weight:600;text-decoration:none;padding:8px 14px;border-radius:8px">Ver contatos e detalhes</a></div>
-  </td></tr>
- </table>
-</td></tr>"""
+def _item_alvara(e):
+    u = e["his1"] + e["his2"] + e["hmp"]
+    partes = [f"{e['his1']} HIS-1" if e["his1"] else "", f"{e['his2']} HIS-2" if e["his2"] else "", f"{e['hmp']} HMP" if e["hmp"] else ""]
+    return {"id": e["id"], "titulo": e["end"], "contexto": f"{e['dist']} · alvará de {data_br(e['def1'])}",
+            "detalhe": " · ".join(p for p in partes if p) or "Unidades não informadas no alvará.",
+            "destaque": milhar(u), "destaque_rotulo": "unidades", "tom": "neutro"}
 
 
-def logo_html():
+def _item_acima(a):
+    return {"id": a["id"], "titulo": a["end"], "contexto": f"{a['dist']} · {', '.join(a['unidades'][:3])}{' e outras' if a['n'] > 3 else ''}",
+            "detalhe": f"{plural(a['n'], 'venda nova', 'vendas novas')} acima do teto {a['categoria']} de {brl(a['teto'])}.",
+            "destaque": "+" + brl(a["maior"]), "destaque_rotulo": "acima do teto", "tom": "alerta"}
+
+
+def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
+    c = comparar(emps, dest, ant)
+    t = meta["totais"]
+    secoes, vistos, partes = [], set(), []
+    if c["primeiro"]:
+        tipo, titulo = "panorama", "O mapa completo, para começar"
+        resumo = (f"Este é o primeiro boletim. O Radar acompanha {milhar(t['empreendimentos'])} prédios com alvará HIS/HMP na capital, "
+                  f"com {milhar(t['vendas'])} primeiras vendas e {milhar(t['revendas'])} revendas registradas no ITBI. "
+                  "A partir de amanhã, chega aqui só o que mudou de um dia para o outro.")
+        numeros = [{"valor": milhar(t["empreendimentos"]), "rotulo": "prédios HIS/HMP"},
+                   {"valor": milhar(t["revendas"]), "rotulo": "revendas registradas"},
+                   {"valor": milhar(t["acima_teto"]), "rotulo": "vendas acima do teto"}]
+        itens = [_item_alvara(e) for e in sorted(emps, key=lambda e: e["def1"] or "", reverse=True)[:3]]
+        secoes.append({"titulo": "Alvarás mais recentes", "nota": f"Últimos publicados pela Prefeitura (até {data_br(meta['ultimo_deferimento'])}).", "itens": itens})
+        vistos |= {i["id"] for i in itens}
+    else:
+        tipo, titulo = "diario", "O que rolou ontem"
+        n_alv = len(c["novos_alvaras"])
+        partes = [x for x in [
+            n_alv and plural(n_alv, "alvará HIS/HMP novo", "alvarás HIS/HMP novos"),
+            c["vendas_novas"] and plural(c["vendas_novas"], "venda nova", "vendas novas"),
+            c["revendas_novas"] and plural(c["revendas_novas"], "revenda", "revendas"),
+            c["acima_novas"] and plural(c["acima_novas"], "venda acima do teto", "vendas acima do teto")] if x]
+        if partes:
+            resumo = "Desde o último boletim: " + (", ".join(partes[:-1]) + " e " if len(partes) > 1 else "") + partes[-1] + "."
+        else:
+            resumo = (f"A Prefeitura não publicou dados novos desde o último boletim (alvarás de {data_br(meta['geosampa_atualizacao'])}; "
+                      f"vendas do ITBI até {mes_extenso(meta['itbi_ultimo_mes'])}). Separamos oportunidades da base que valem um contato hoje.")
+        numeros = [{"valor": str(n_alv), "rotulo": "alvarás novos"}, {"valor": str(c["revendas_novas"]), "rotulo": "revendas novas"},
+                   {"valor": str(c["acima_novas"]), "rotulo": "alertas de teto"}]
+        if n_alv:
+            itens = [_item_alvara(e) for e in c["novos_alvaras"][:5]]
+            secoes.append({"titulo": "Alvarás novos", "nota": "Prédios HIS/HMP licenciados que ainda não estavam no Radar.", "itens": itens})
+            vistos |= {i["id"] for i in itens}
+        if c["revendas"]:
+            secoes.append({"titulo": "Revendas registradas", "nota": "Unidades que trocaram de dono, com o ganho já descontada a inflação.",
+                           "itens": [_item_revenda(r) for r in c["revendas"]]})
+            vistos |= {r["id"] for r in c["revendas"]}
+        if c["acima"]:
+            secoes.append({"titulo": "Alertas de teto", "nota": "Vendas acima do preço máximo da lei. Pode ser erro de cadastro: confira antes de agir.",
+                           "itens": [_item_acima(a) for a in c["acima"]]})
+            vistos |= {a["id"] for a in c["acima"]}
+    opp = rotativos([r for r in dest["revendas"] + dest["maiores_ganhos"] if oportunidade_plausivel(r)], 3, hoje, vistos)
+    if opp:
+        secoes.append({"titulo": "Oportunidades do dia", "nota": "Unidades que já valorizaram acima da inflação. Toque para achar quem vende.",
+                       "itens": [_item_revenda(r) for r in opp]})
+    falhas = [v["verificacao"] for v in auditoria["verificacoes"] if not v["ok"]]
+    dia = data_br(hoje.isoformat())
+    if tipo == "panorama":
+        assunto = f"Radar HIS · {dia[:5]} · o mapa completo: {milhar(t['empreendimentos'])} prédios HIS/HMP"
+    else:
+        assunto = f"Radar HIS · {dia[:5]} · " + (", ".join(partes) if partes else "sem dados novos ontem · 3 oportunidades do dia")
+    return {
+        "data": hoje.isoformat(), "tipo": tipo, "assunto": assunto,
+        "rotulo": f"Boletim de {DIAS[hoje.weekday()]}, {dia}",
+        "titulo": titulo, "resumo": resumo, "numeros": numeros, "secoes": secoes,
+        "aviso": ("Aviso do Auditor: " + "; ".join(falhas) + ".") if auditoria["status"] == "alerta" else None,
+        "fontes": (f"Alvarás HIS/HMP do GeoSampa (atualizado em {data_br(meta['geosampa_atualizacao'])}); guias de ITBI da Secretaria da Fazenda "
+                   f"(até {mes_extenso(meta['itbi_ultimo_mes'])}); IPCA e CDI do Banco Central (até {mes_extenso(meta['cdi_ultimo'])}); "
+                   "teto de preço pelo Decreto 64.895/2026."),
+        "link": config["link_radar"], "link_boletim": config["link_radar"] + "#boletim",
+    }
+
+
+# ---------------------------------------------------------------- e-mail
+def logo_html(negativo=False):
     """Símbolo "H de quadra" em tabela (sem imagem): aparece mesmo com imagens bloqueadas."""
-    q = f'<td style="width:8px;height:26px;background:{COR["placa"]};font-size:0;line-height:0">&nbsp;</td>'
+    cq = COR["papel"] if negativo else COR["placa"]
+    ct = COR["papel"] if negativo else COR["asfalto"]
+    q = f'<td style="width:8px;height:26px;background:{cq};font-size:0;line-height:0">&nbsp;</td>'
     rua = '<td style="width:1px;font-size:0;line-height:0">&nbsp;</td>'
     lote = (f'<td style="width:8px;height:26px;vertical-align:middle;font-size:0;line-height:0">'
             f'<div style="width:8px;height:8px;background:{COR["faixa"]};font-size:0;line-height:0">&nbsp;</div></td>')
     return (f'<table role="presentation" cellspacing="0" cellpadding="0"><tr>{q}{rua}{lote}{rua}{q}'
-            f'<td style="padding-left:10px;font-family:{FONTE_MARCA};font-weight:800;font-size:22px;letter-spacing:-0.2px;color:{COR["asfalto"]}">Radar HIS</td>'
+            f'<td style="padding-left:10px;font-family:{FONTE_MARCA};font-weight:800;font-size:21px;letter-spacing:-0.2px;color:{ct}">Radar HIS</td>'
             f'</tr></table>')
 
 
-def secao(titulo, itens_html, nota=""):
-    if not itens_html:
-        return ""
-    return f"""
-<tr><td style="padding:22px 0 10px">
- <table role="presentation" cellspacing="0" cellpadding="0"><tr>
-  <td style="width:11px;height:11px;background:{COR['faixa']}"></td>
-  <td style="padding-left:10px;font-family:{FONTE_MARCA};font-weight:700;font-size:19px;color:{COR['asfalto']}">{_e(titulo)}</td>
+def _rotulo_secao(n, titulo):
+    return (f'<tr><td style="padding:30px 0 6px;font-family:{FONTE_DADO};font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:{COR["grafite"]}">'
+            f'{n:02d} &mdash; {_e(titulo)}</td></tr><tr><td style="border-top:1px solid {COR["asfalto"]};font-size:0;line-height:0;height:1px">&nbsp;</td></tr>')
+
+
+def _item_email(i, link):
+    cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(i["tom"], COR["placa"])
+    return f"""<tr><td style="padding:14px 0;border-bottom:1px solid {COR['meio_fio']}">
+ <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
+  <td valign="top" style="width:16px;padding-top:6px"><div style="width:9px;height:9px;background:{COR['faixa']};font-size:0;line-height:0">&nbsp;</div></td>
+  <td valign="top">
+   <div style="font-family:{FONTE_MARCA};font-weight:700;font-size:16px;line-height:1.3;color:{COR['asfalto']}">{_e(i['titulo'])}</div>
+   <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:2px">{_e(i['contexto'])}</div>
+   <div style="font-family:{FONTE_TEXTO};font-size:14px;line-height:1.45;color:{COR['asfalto']};padding-top:6px">{_e(i['detalhe'])}</div>
+   <div style="padding-top:8px"><a href="{link}#imovel-{i['id']}" style="font-family:{FONTE_TEXTO};font-size:14px;font-weight:600;color:{COR['placa']};text-decoration:none">Ver contatos e detalhes &rarr;</a></div>
+  </td>
+  <td valign="top" align="right" style="width:120px;padding-left:12px">
+   <div style="font-family:{FONTE_MARCA};font-weight:800;font-size:24px;line-height:1.1;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
+   <div style="font-family:{FONTE_TEXTO};font-size:11.5px;color:{COR['grafite']};padding-top:2px">{_e(i['destaque_rotulo'])}</div>
+  </td>
  </tr></table>
- {f'<div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR["grafite"]};padding-top:4px">{nota}</div>' if nota else ''}
-</td></tr>{''.join(itens_html)}"""
+</td></tr>"""
 
 
-def numeros_html(pares):
-    cel = "".join(f"""<td width="{100 // len(pares)}%" style="padding:4px">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['papel']};border:1px solid {COR['meio_fio']};border-radius:10px"><tr><td style="padding:10px 12px">
-   <div style="font-family:{FONTE_MARCA};font-weight:800;font-size:24px;color:{COR['placa']}">{v}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:12.5px;color:{COR['grafite']}">{_e(r)}</div></td></tr></table></td>""" for v, r in pares)
-    return f'<tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{cel}</tr></table></td></tr>'
+def render_email(c):
+    nums = "".join(
+        f"""<td width="{100 // len(c['numeros'])}%" valign="top" style="padding:14px 12px 14px {'14px;border-left:1px solid ' + COR['meio_fio'] if k else '0'}">
+   <div style="font-family:{FONTE_MARCA};font-weight:800;font-size:36px;line-height:1;letter-spacing:-0.5px;white-space:nowrap;color:{COR['placa']}">{_e(n['valor'])}</div>
+   <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:6px">{_e(n['rotulo'])}</div></td>"""
+        for k, n in enumerate(c["numeros"]))
+    secoes = "".join(_rotulo_secao(k + 1, s["titulo"]) +
+                     (f'<tr><td style="padding:8px 0 2px;font-family:{FONTE_TEXTO};font-size:13px;color:{COR["grafite"]}">{_e(s["nota"])}</td></tr>' if s.get("nota") else "") +
+                     "".join(_item_email(i, c["link"]) for i in s["itens"]) for k, s in enumerate(c["secoes"]))
+    aviso = (f'<tr><td style="padding:12px 14px;background:{COR["alerta_fundo"]};color:{COR["alerta"]};font-family:{FONTE_TEXTO};font-size:13px">{_e(c["aviso"])}</td></tr>'
+             if c.get("aviso") else "")
+    return f"""<!doctype html><html><body style="margin:0;padding:0;background:{COR['concreto']}">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['concreto']}"><tr><td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%">
+ <tr><td style="background:{COR['placa']};padding:16px 22px">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
+   <td>{logo_html(negativo=True)}</td>
+   <td align="right" style="font-family:{FONTE_DADO};font-size:12px;color:{COR['placa_clara']}">{data_br(c['data'])}</td>
+  </tr></table>
+ </td></tr>
+ <tr><td style="background:{COR['papel']};padding:26px 24px 8px">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+   <tr><td style="font-family:{FONTE_DADO};font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:{COR['grafite']}">&mdash; {_e(c['rotulo'])}</td></tr>
+   <tr><td style="padding:10px 0 8px;font-family:{FONTE_MARCA};font-weight:800;font-size:34px;line-height:1.08;letter-spacing:-0.5px;color:{COR['asfalto']}">{_e(c['titulo'])}</td></tr>
+   <tr><td style="padding:0 0 12px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.55;color:{COR['asfalto']}">{_e(c['resumo'])}</td></tr>
+   {aviso}
+   <tr><td style="border-top:1px solid {COR['asfalto']};border-bottom:1px solid {COR['asfalto']}"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
+   {secoes}
+   <tr><td align="left" style="padding:28px 0 26px">
+    <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['placa']};color:#FFFFFF;font-family:{FONTE_TEXTO};font-weight:600;font-size:15px;text-decoration:none;padding:13px 22px">Abrir o Radar e perguntar</a>
+    <span style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-left:12px">mapa, fichas e contatos de cada prédio</span>
+   </td></tr>
+  </table>
+ </td></tr>
+ <tr><td style="padding:16px 4px 0;font-family:{FONTE_DADO};font-size:11px;line-height:1.6;color:{COR['grafite']}">
+  {_e(c['fontes'])}<br>Os dados públicos não trazem nome nem telefone de proprietários. Inteligência de mercado; não substitui consulta jurídica nem certidão de matrícula.
+ </td></tr>
+</table></td></tr></table></body></html>"""
+
+
+def render_texto(c):
+    linhas = [f"{c['titulo'].upper()} — {data_br(c['data'])}", "", c["resumo"], ""]
+    linhas += [f"{n['valor']} {n['rotulo']}" for n in c["numeros"]] + [""]
+    for k, s in enumerate(c["secoes"], 1):
+        linhas.append(f"{k:02d} — {s['titulo'].upper()}")
+        linhas += [f"- {i['titulo']} ({i['contexto']}): {i['detalhe']} {i['destaque']} {i['destaque_rotulo']}. {c['link']}#imovel-{i['id']}" for i in s["itens"]]
+        linhas.append("")
+    linhas += [f"Abrir o Radar: {c['link_boletim']}", "", c["fontes"]]
+    return "\n".join(linhas)
 
 
 def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
@@ -176,91 +299,6 @@ def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
     emps = json.loads((pasta / "empreendimentos.json").read_text(encoding="utf-8"))
     dest = json.loads((pasta / "destaques.json").read_text(encoding="utf-8"))
     meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
-    link = config["link_radar"]
-    ficha = lambda i: f"{link}#imovel-{i}"
-    c = comparar(emps, dest, meta, snapshot_anterior)
-    dia = data_br(hoje.isoformat())[:5]
-
-    blocos, texto = [], []
-    vistos = set()
-    if c["primeiro"]:
-        titulo = "Panorama do Radar HIS"
-        resumo = (f"Primeiro boletim. Estamos acompanhando {milhar(meta['totais']['empreendimentos'])} prédios com alvará HIS/HMP na capital, "
-                  f"com {milhar(meta['totais']['vendas'])} primeiras vendas e {milhar(meta['totais']['revendas'])} revendas registradas.")
-        numeros = [(milhar(meta['totais']['empreendimentos']), "prédios HIS/HMP"),
-                   (milhar(meta['totais']['revendas']), "revendas registradas"),
-                   (f"{meta['totais']['acima_teto']}", "vendas acima do teto")]
-        novos = dest["novos"][:3]
-        blocos.append(secao("Alvarás mais recentes", [item_html(ficha(n["id"]), n["end"], f"{_e(n['dist'])} · alvará de {data_br(n['data'])}",
-                                                                 f"{n['his1'] + n['his2'] + n['hmp']} unidades HIS/HMP") for n in novos]))
-        vistos |= {n["id"] for n in novos}
-        assunto = f"Radar HIS · {dia} · panorama de {milhar(meta['totais']['empreendimentos'])} prédios HIS/HMP"
-    else:
-        n_alv, vn, rn, an = len(c["novos_alvaras"]), c["vendas_novas"], c["revendas_novas"], c["acima_novas"]
-        titulo = "O que mapeamos ontem"
-        partes = []
-        if n_alv: partes.append(plural(n_alv, "alvará HIS/HMP novo", "alvarás HIS/HMP novos"))
-        if vn: partes.append(plural(vn, "venda nova", "vendas novas"))
-        if rn: partes.append(plural(rn, "revenda", "revendas"))
-        if an: partes.append(plural(an, "venda acima do teto", "vendas acima do teto"))
-        if partes:
-            resumo = "Desde o último boletim: " + ", ".join(partes) + "."
-        else:
-            resumo = (f"A Prefeitura não publicou dados novos desde o último boletim. Alvarás atualizados em "
-                      f"{data_br(meta['geosampa_atualizacao'])}; vendas do ITBI até {mes_extenso(meta['itbi_ultimo_mes'])}. "
-                      "Abaixo, oportunidades da base que valem um contato hoje.")
-        numeros = [(str(n_alv), "alvarás novos"), (str(vn), "vendas novas"), (str(rn), "revendas novas")]
-        blocos.append(secao("Alvarás novos", [item_html(ficha(e["id"]), e["end"], f"{_e(e['dist'])} · alvará de {data_br(e['def1'])}",
-                                                         f"{e['his1'] + e['his2'] + e['hmp']} unidades HIS/HMP") for e in c["novos_alvaras"][:5]]))
-        blocos.append(secao("Revendas registradas", [item_html(ficha(r["id"]), r["end"], f"{_e(r['dist'])} · {_e(r['un'])}",
-                                                                f"Comprou por {brl(r['v0'])} ({mes_ano(r['d0'])}) e revendeu por {brl(r['v1'])} ({mes_ano(r['d1'])}) · <b>{vs_inflacao(r['real'])}</b>",
-                                                                "ganho" if r["real"] >= 0 else "alerta") for r in c["revendas"]]))
-        blocos.append(secao("Alertas: venda acima do teto", [item_html(ficha(a["id"]), a["end"], f"{_e(a['dist'])} · {_e(', '.join(a['unidades'][:3]))}{' e outras' if a['n'] > 3 else ''}",
-                                                                        f"{plural(a['n'], 'venda nova', 'vendas novas')} acima do teto {a['categoria']} de {brl(a['teto'])} · <b>até {brl(a['maior'])} acima</b>", "alerta") for a in c["acima"]],
-                            "Pode ser erro de cadastro. Confira antes de agir."))
-        vistos |= {e["id"] for e in c["novos_alvaras"][:5]} | {r["id"] for r in c["revendas"]} | {a["id"] for a in c["acima"]}
-        assunto = f"Radar HIS · {dia} · " + (", ".join(partes) if partes else "sem dados novos ontem · 3 oportunidades do dia")
-
-    opp = rotativos([r for r in dest["revendas"] + dest["maiores_ganhos"] if oportunidade_plausivel(r)], 3, hoje, vistos)
-    blocos.append(secao("Oportunidades do dia", [item_html(ficha(r["id"]), r["end"], f"{_e(r['dist'])} · {_e(r['un'])}",
-                                                          f"{brl(r['v0'])} ({mes_ano(r['d0'])}) → {brl(r['v1'])} ({mes_ano(r['d1'])}) · <b>{vs_inflacao(r['real'])}</b>",
-                                                          "ganho" if r["real"] >= 0 else "alerta") for r in opp],
-                         "Unidades que já mostraram valorização. Toque para achar quem vende, ver a fachada ou pedir a certidão."))
-
-    aviso = ""
-    if auditoria["status"] == "alerta":
-        itens = "; ".join(v["verificacao"] for v in auditoria["verificacoes"] if not v["ok"])
-        aviso = f'<tr><td style="padding:12px 14px;background:{COR["alerta_fundo"]};color:{COR["alerta"]};font-family:{FONTE_TEXTO};font-size:13px;border-radius:8px">Aviso do Auditor: {_e(itens)}.</td></tr>'
-
-    html_mail = f"""<!doctype html><html><body style="margin:0;padding:0;background:{COR['concreto']}">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['concreto']}"><tr><td align="center" style="padding:24px 12px">
-<table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%">
- <tr><td style="padding:0 0 14px;border-bottom:2px solid {COR['asfalto']}">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-   <td>{logo_html()}</td>
-   <td align="right" style="font-family:{FONTE_DADO};font-size:12px;color:{COR['grafite']}">{data_br(hoje.isoformat())}</td>
-  </tr></table>
- </td></tr>
- <tr><td style="padding:22px 0 6px;font-family:{FONTE_MARCA};font-weight:800;font-size:28px;line-height:1.15;color:{COR['asfalto']}">{_e(titulo)}</td></tr>
- <tr><td style="padding:0 0 14px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.5;color:{COR['asfalto']}">{_e(resumo)}</td></tr>
- {aviso}
- {numeros_html(numeros)}
- {''.join(blocos)}
- <tr><td align="center" style="padding:26px 0 10px"><a href="{link}" style="display:inline-block;background:{COR['asfalto']};color:#FFFFFF;font-family:{FONTE_TEXTO};font-weight:600;font-size:15px;text-decoration:none;padding:12px 22px;border-radius:10px">Abrir o Radar e perguntar</a></td></tr>
- <tr><td style="padding:18px 0 0;border-top:1px solid {COR['meio_fio']};font-family:{FONTE_DADO};font-size:11.5px;line-height:1.6;color:{COR['grafite']}">
-  Fontes: alvarás HIS/HMP do GeoSampa (atualizado em {data_br(meta['geosampa_atualizacao'])}), guias de ITBI da Secretaria da Fazenda (até {mes_extenso(meta['itbi_ultimo_mes'])}), IPCA e CDI do Banco Central (até {mes_extenso(meta['cdi_ultimo'])}). Teto de preço: Decreto 64.895/2026.<br>
-  Os dados públicos não trazem nome nem telefone de proprietários. Inteligência de mercado; não substitui consulta jurídica nem certidão de matrícula.
- </td></tr>
-</table></td></tr></table></body></html>"""
-
-    texto.append(f"{titulo} — {data_br(hoje.isoformat())}\n\n{resumo}\n")
-    for nome, lista in ([("Oportunidades do dia", opp)] if c["primeiro"] else
-                        [("Revendas registradas", c["revendas"]), ("Oportunidades do dia", opp)]):
-        if lista:
-            texto.append(nome.upper())
-            texto += [f"- {r['end']} ({r['dist']}), {r['un']}: {brl(r['v0'])} → {brl(r['v1'])}, {vs_inflacao(r['real'])}. {ficha(r['id'])}" for r in lista]
-            texto.append("")
-    texto.append(f"Abrir o Radar: {link}")
-    return {"assunto": assunto, "titulo": titulo, "resumo": resumo, "html": html_mail, "texto": "\n".join(texto),
-            "comparacao": {k: (len(v) if isinstance(v, list) else v) for k, v in c.items()},
+    c = conteudo_do_dia(emps, dest, meta, snapshot_anterior, auditoria, config, hoje)
+    return {"assunto": c["assunto"], "conteudo": c, "html": render_email(c), "texto": render_texto(c),
             "snapshot_novo": snapshot(emps, meta)}

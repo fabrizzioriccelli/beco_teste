@@ -28,6 +28,10 @@ import redator
 AQUI = pathlib.Path(__file__).resolve().parent
 
 
+def escrever_json(caminho, obj):
+    caminho.write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
+
 def etapa(nome, comando):
     t = time.time()
     r = subprocess.run(comando, cwd=AQUI, capture_output=True, text=True)
@@ -72,13 +76,17 @@ def main():
         snap["boletim"] = hoje.isoformat()
         arq_snap.write_text(json.dumps(snap, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         (AQUI / "boletins" / f"{hoje.isoformat()}.html").write_text(boletim["html"], encoding="utf-8")
+        escrever_json(AQUI / "boletins" / f"{hoje.isoformat()}.json", boletim["conteudo"])
+        escrever_json(AQUI / "site" / "dados" / "boletim.json", boletim["conteudo"])
+        historico = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((AQUI / "boletins").glob("*.json"), reverse=True)[:30]]
+        escrever_json(AQUI / "site" / "dados" / "boletins.json",
+                      [{k: b[k] for k in ("data", "assunto", "titulo", "resumo", "numeros")} for b in historico])
         print(f"[Redator] {boletim['assunto']}")
 
     saida = {
         "data": hoje.isoformat(), "status": auditoria["status"], "auditoria": auditoria,
         "destinatarios": config.get("destinatarios", []), "copia": config.get("copia", []),
         "assunto": boletim and boletim["assunto"], "html": boletim and boletim["html"], "texto": boletim and boletim["texto"],
-        "comparacao": boletim and boletim["comparacao"],
         "site": {"file_path": str(AQUI / "site" / "index.html"), "root": str(AQUI / "site"),
                  "files": sorted(f"dados/{p.name}" for p in (AQUI / "site" / "dados").glob("*.json")), "url": config["link_radar"]},
     }

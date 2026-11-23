@@ -1,4 +1,4 @@
-# Design system — Radar HIS (v1.0)
+# Design system — Radar HIS (v1.1)
 
 Base visual do produto, usada no site e no boletim por e-mail. Os tokens estão em [tokens.css](tokens.css) e o logo em [03_BRAND_IDENTITY/logo](../03_BRAND_IDENTITY/logo/).
 
@@ -69,6 +69,22 @@ As três têm licença OFL: uso comercial gratuito, inclusive em app e impressos
 | **Marcador "lote"** | Quadrado Faixa de 8 a 12 px antes de títulos de seção. Repete o lote do símbolo e é o elemento gráfico próprio da marca |
 | **Selo de procedência** | Texto em Plex Mono 13 px, cor Grafite, com a fonte e a data ("GeoSampa · 13/09/2026"). Aparece junto de todo número |
 | **Mapa** | Distritos em Calçada com borda Meio-fio; pontos nas cores de categoria (HIS, HMP, mercado livre) |
+
+## Boletim diário (v1.1)
+
+Componentes que vieram do [benchmark visual do Behance](../01_RESEARCH_BENCHMARK/BENCHMARK_VISUAL_BEHANCE.md) (23/11/2026). O boletim usa o mesmo conteúdo no e-mail e no site (`site/dados/boletim.json`), então os dois têm o mesmo desenho.
+
+| Componente | Regra | Referência |
+|---|---|---|
+| **Banda de marca** | Faixa em Placa no topo, com o logo em negativo (quadras brancas, lote amarelo) e a data em Plex Mono | Cor única forte sobre base neutra (Astrix) |
+| **Rótulo editorial** | Plex Mono 12 px, caixa-alta, espaçamento 0,12 em, cor Grafite: "— BOLETIM DE TERÇA-FEIRA, 24/11/2026" | Rótulos com traço (Lumen) |
+| **Título do boletim** | Archivo 800, 34 a 42 px, entrelinha 1,06: "O que rolou ontem" | — |
+| **Herói numérico** | Três números do dia em Archivo 800 (36 px no e-mail, até 48 px no site) em Placa, entre duas linhas Asfalto, separados por linhas Meio-fio | Números gigantes (Alliance, Lumen) |
+| **Seção numerada** | "01 — ALVARÁS NOVOS" em rótulo editorial, com linha Asfalto embaixo. A numeração segue a ordem de leitura do boletim | — |
+| **Item do boletim** | Marcador lote (quadrado Faixa de 9 px), endereço em Archivo 700, contexto em Grafite, detalhe em texto, "Ver contatos e detalhes →" em Placa; à direita, o número do item em Archivo 800 24 px (verde se ganho, vermelho se alerta, azul se neutro) | Número como protagonista (Alliance) |
+| **Rodapé de fontes** | Plex Mono 11 px com a fonte e a data de cada dado | Selo de procedência |
+
+**E-mail:** tabelas com estilos inline, largura 600 px, sem imagens (o logo é desenhado com células), para funcionar no Gmail e no Outlook com imagens bloqueadas.
 
 ## Voz
 

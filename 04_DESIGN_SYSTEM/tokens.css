@@ -1,4 +1,4 @@
-/* Radar HIS — tokens do design system (v1.0, 23/11/2026)
+/* Radar HIS — tokens do design system (v1.1, 23/11/2026)
    Paleta tirada da sinalização urbana de São Paulo: azul das placas de rua, amarelo das faixas,
    asfalto e concreto. Uso: copie este bloco para o topo do CSS da página. */
 :root {
@@ -29,6 +29,7 @@
   --fonte-marca: "Archivo", "Helvetica Neue", Arial, sans-serif;        /* títulos e números grandes */
   --fonte-texto: "IBM Plex Sans", system-ui, -apple-system, sans-serif; /* interface e texto */
   --fonte-dado: "IBM Plex Mono", ui-monospace, Menlo, monospace;        /* SQL, matrícula, datas, fontes */
+  --t-heroi: 48px; /* números do boletim */
   --t-1: 34px; --t-2: 24px; --t-3: 19px; --t-corpo: 16px; --t-apoio: 14px; --t-nota: 13px;
 
   /* Espaço, raio e sombra */

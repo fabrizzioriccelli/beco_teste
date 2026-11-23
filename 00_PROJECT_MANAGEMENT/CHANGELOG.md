@@ -1,5 +1,13 @@
 # Histórico de versões
 
+## [0.4.0] — 23/11/2026 — Boletim editorial e benchmark visual
+
+### Adicionado
+
+- Benchmark visual de 24 projetos "real estate" do Behance (`01_RESEARCH_BENCHMARK/BENCHMARK_VISUAL_BEHANCE.md`).
+- Design system v1.1: banda de marca, rótulo editorial, herói numérico, seção numerada e item do boletim.
+- Boletim "O que rolou ontem" com conteúdo único para e-mail e site (seção `#boletim`), mais histórico dos boletins anteriores.
+
 ## [0.3.0] — 23/11/2026 — Identidade, design system e boletim diário
 
 ### Adicionado
