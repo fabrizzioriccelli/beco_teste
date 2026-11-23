@@ -23,16 +23,17 @@ Disparada todo dia às 7h38 (horário de São Paulo), para o e-mail chegar por v
    - `file_path` = `site.file_path`; `root` = `site.root`; `files` = `[{"path": p} for p in site.files]`
    - sem `capabilities` (mantém as que a página já tem); sem `icon`.
    - Se a publicação for recusada porque esta conversa não leu o artefato, faça `read` de `site.url` e publique de novo passando `url` = `site.url`.
-6. **Enviar o e-mail.**
-   - Se `destinatarios` tiver endereços: `mcp__Gmail__send_message` com `to` = `destinatarios`, `cc` = `copia`, `subject` = `assunto`, `htmlBody` = `html`, `body` = `texto` (sem anexos: o logo é desenhado no próprio HTML).
-   - Se `destinatarios` estiver vazio: `mcp__Gmail__create_draft` com os mesmos campos (sem `to`) e avise que falta o e-mail do Diogo em `config.json`.
-7. **Registrar.** `git add 11_APPLICATION/radar_his/estado 11_APPLICATION/radar_his/boletins`, commit `Faro: boletim AAAA-MM-DD` (com as linhas de atribuição da sessão) e `git push origin claude/beco-real-estate-intelligence-i322uf`.
+6. **Registrar e enviar as imagens.** `git add 11_APPLICATION/radar_his/estado 11_APPLICATION/radar_his/boletins 11_APPLICATION/radar_his/email`, commit `Faro: boletim AAAA-MM-DD` (com as linhas de atribuição da sessão) e `git push origin claude/beco-real-estate-intelligence-i322uf`. Tem que vir **antes** do e-mail: a foto da cidade do dia é servida pelo repositório.
+7. **Enviar o e-mail.**
+   - Destinatários: os que a **tarefa agendada** informar (o repositório é público, então o e-mail do Diogo não fica em `config.json`) mais os de `destinatarios` em `config.json`, se houver.
+   - Com destinatários: `mcp__Gmail__send_message` com `to` = destinatários, `cc` = `copia`, `subject` = `assunto`, `htmlBody` = `html`, `body` = `texto` (sem anexos).
+   - Sem nenhum destinatário: `mcp__Gmail__create_draft` com os mesmos campos (sem `to`) e avise.
 8. **Responder** em até 3 linhas: status do Auditor, assunto do e-mail, e se foi enviado ou ficou como rascunho.
 
 ## Configuração
 
-`config.json`:
-- `destinatarios`: e-mails que recebem o boletim (ex.: o do Diogo).
+`config.json` (repositório público: não coloque e-mails pessoais aqui):
+- `destinatarios`: e-mails extras que recebem o boletim. O do Diogo está na tarefa agendada, que é privada.
 - `copia`: cópias.
 - `link_radar`: link do site; os botões do e-mail abrem a ficha do imóvel (`#imovel-<id>`).
 
