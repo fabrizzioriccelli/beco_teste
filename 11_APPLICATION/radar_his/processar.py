@@ -222,7 +222,7 @@ def carregar_itbi(pasta, chaves):
             num_f = lambda k: float(g(r, k)) if isinstance(g(r, k), (int, float)) else None
             linhas.append({
                 "emp": emp_ids, "sql": sql, "data": d, "valor": valor, "nat": str(g(r, "nat") or "").strip(),
-                "compl": str(g(r, "compl") or "").strip(), "fin_tipo": str(g(r, "fin_tipo") or "").strip(),
+                "compl": (str(int(g(r, "compl"))) if isinstance(g(r, "compl"), float) and g(r, "compl").is_integer() else str(g(r, "compl") or "")).strip(), "fin_tipo": str(g(r, "fin_tipo") or "").strip(),
                 "fin_valor": num_f("fin_valor") or 0.0, "cartorio": norm(g(r, "cartorio")), "matricula": mat,
                 "fracao": num_f("fracao"), "area": num_f("area"), "uso": str(g(r, "uso") or ""),
                 "acc": int(num_f("acc") or 0), "aba": aba,

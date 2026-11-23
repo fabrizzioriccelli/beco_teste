@@ -9,7 +9,16 @@ Relatório de imóveis HIS/HMP na capital, montado só com dados oficiais:
 | Banco Central (SGS 433 e 4391) | IPCA e CDI mensais | Mensal |
 | Decretos 64.244/2025 e 64.895/2026 (texto oficial) | Tetos de preço de venda por categoria | Anual (janeiro) |
 
-## Como rodar
+## Agentes e rotina diária
+
+Todo dia às 7h38 (São Paulo) uma tarefa agendada dispara a rotina: Coletor → Analista → Auditor → Redator → Distribuidor. O resultado é o site atualizado no mesmo link e o boletim "O que mapeamos ontem" por e-mail. Passo a passo em [ROTINA_DIARIA.md](ROTINA_DIARIA.md); destinatários em `config.json`.
+
+```bash
+python3 rotina_diaria.py              # roda os agentes e gera saida/boletim.json
+python3 rotina_diaria.py --sem-coleta # reusa os dados já baixados
+```
+
+## Como rodar só o processamento
 
 ```bash
 pip install python-calamine shapely

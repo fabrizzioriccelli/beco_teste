@@ -1,0 +1,56 @@
+/* Radar HIS — tokens do design system (v1.0, 23/11/2026)
+   Paleta tirada da sinalização urbana de São Paulo: azul das placas de rua, amarelo das faixas,
+   asfalto e concreto. Uso: copie este bloco para o topo do CSS da página. */
+:root {
+  /* Marca */
+  --placa: #1F3F8B;        /* cor primária: links, botões principais, símbolo */
+  --placa-tinta: #FFFFFF;  /* texto sobre --placa */
+  --placa-suave: #E4EAF6;  /* fundo de seleção e destaque leve */
+  --faixa: #F2B705;        /* destaque: o "lote encontrado". Só como preenchimento, nunca texto sobre claro */
+  --faixa-tinta: #171C1B;  /* texto sobre --faixa */
+
+  /* Neutros */
+  --asfalto: #171C1B;      /* texto principal */
+  --grafite: #59625F;      /* texto secundário */
+  --meio-fio: #D6D9D3;     /* bordas */
+  --calcada: #E5E7E2;      /* fundos de apoio, chips */
+  --concreto: #EFF0EC;     /* fundo da página */
+  --papel: #FFFFFF;        /* superfícies (cartões, fichas) */
+
+  /* Estados */
+  --ganho: #1C6B45;   --ganho-fundo: #E2F1E7;
+  --atencao: #8A5A00; --atencao-fundo: #F7EDD7;
+  --alerta: #B42318;  --alerta-fundo: #FBE4E1;
+
+  /* Categorias de unidade */
+  --cat-his: #1C6B45; --cat-hmp: #1F3F8B; --cat-livre: #AD6912; --cat-sem: #9AA39F;
+
+  /* Tipografia (todas OFL, uso comercial livre) */
+  --fonte-marca: "Archivo", "Helvetica Neue", Arial, sans-serif;        /* títulos e números grandes */
+  --fonte-texto: "IBM Plex Sans", system-ui, -apple-system, sans-serif; /* interface e texto */
+  --fonte-dado: "IBM Plex Mono", ui-monospace, Menlo, monospace;        /* SQL, matrícula, datas, fontes */
+  --t-1: 34px; --t-2: 24px; --t-3: 19px; --t-corpo: 16px; --t-apoio: 14px; --t-nota: 13px;
+
+  /* Espaço, raio e sombra */
+  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 24px; --e-6: 32px; --e-7: 48px;
+  --raio-1: 6px; --raio-2: 10px; --raio-3: 14px; --raio-pilula: 999px;
+  --sombra-ficha: -8px 0 24px rgb(23 28 27 / .16);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --placa: #9DB8F2; --placa-tinta: #0E1A33; --placa-suave: #1B2740;
+    --faixa: #F5C431; --faixa-tinta: #171C1B;
+    --asfalto: #E6EAE8; --grafite: #9DA8A4; --meio-fio: #2E3634; --calcada: #242B29; --concreto: #121615; --papel: #1A1F1E;
+    --ganho: #80D0A0; --ganho-fundo: #17301F; --atencao: #E7B95D; --atencao-fundo: #33280F; --alerta: #F1948D; --alerta-fundo: #3A1C1A;
+    --cat-his: #61C697; --cat-hmp: #9DB8F2; --cat-livre: #E2A651; --cat-sem: #5F6966;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --placa: #9DB8F2; --placa-tinta: #0E1A33; --placa-suave: #1B2740;
+  --faixa: #F5C431; --faixa-tinta: #171C1B;
+  --asfalto: #E6EAE8; --grafite: #9DA8A4; --meio-fio: #2E3634; --calcada: #242B29; --concreto: #121615; --papel: #1A1F1E;
+  --ganho: #80D0A0; --ganho-fundo: #17301F; --atencao: #E7B95D; --atencao-fundo: #33280F; --alerta: #F1948D; --alerta-fundo: #3A1C1A;
+  --cat-his: #61C697; --cat-hmp: #9DB8F2; --cat-livre: #E2A651; --cat-sem: #5F6966;
+  color-scheme: dark;
+}
