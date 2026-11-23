@@ -64,3 +64,12 @@ Decisões estratégicas irreversíveis (nome, identidade, arquitetura de dados, 
 - **Alternativas descartadas:** Preto com dourado brilhante (clichê do luxo); marrom e cobre (muito próximo da Brickell); Cormorant e Marcellus (números de estilo antigo, ruins para dados); moldura em placa e raios finos para o monograma (testados em prancha).
 - **Consequências:** Site, e-mail, tokens e manual já usam a v3. O nome Faro continua (DEC-0006).
 
+## DEC-0008 — Identidade Faro v5: só o nome, preto e branco
+
+- **Data:** 23/11/2026
+- **Estado:** Aprovada ("show! é isso!")
+- **Contexto:** As versões com símbolo (círculo com F, facho, torre) e a v3 com Bodoni e latão foram consideradas pouco modernas ou clichê de luxo. Pedido: moderno, minimalista, alto padrão sem clichê, fonte SF e Liquid Glass.
+- **Decisão:** Logotipo FARO em Geist Light, maiúsculas espaçadas, preto e branco; a cidade acesa como imagem da marca; interface no estilo Apple com SF Pro (fonte do sistema) e Liquid Glass na camada de navegação.
+- **Alternativas descartadas:** Símbolos das direções Torre, Facho e Lente e a fusão das três; "o" aceso (v4); Bodoni com verde e latão (v3).
+- **Consequências:** Site, e-mail, tokens e manual já usam a v5. Faltam fotos de arquitetura licenciadas para as aplicações. Supersede a DEC-0007.
+

@@ -11,14 +11,12 @@ import json
 import pathlib
 import re
 
-# Paleta e tipografia da marca Faro v3 (04_DESIGN_SYSTEM/tokens.css)
-COR = {"tinta": "#17302A", "tinta_texto": "#F4EFE6", "facho": "#B08D57", "facho_claro": "#C9A878", "facho_escuro": "#7D5F38",
-       "texto": "#1A2622", "grafite": "#5B625D", "linha": "#DDD5C7", "pedra": "#E7E0D3", "travertino": "#EFEAE1", "papel": "#FBF9F5",
-       "ganho": "#2D6A4F", "alerta": "#9E2B25", "alerta_fundo": "#F5E3DF"}
-FONTE_MARCA = "'Bodoni Moda', 'Bodoni 72', Didot, 'Bodoni MT', Georgia, 'Times New Roman', serif"
-FONTE_TEXTO = "Jost, Futura, 'Century Gothic', 'Helvetica Neue', Arial, sans-serif"
-FONTE_DADO = FONTE_TEXTO
-ROMANOS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
+# Paleta e tipografia da marca Faro v5 (04_DESIGN_SYSTEM/tokens.css): preto e branco, fonte do sistema
+COR = {"preto": "#0B0B0C", "noite": "#06080B", "branco": "#FFFFFF", "fundo": "#F5F5F7", "texto": "#0B0B0C", "texto_2": "#6E6E73",
+       "texto_3": "#AEAEB2", "separador": "#E5E5EA", "claro_2": "#A1A1A6", "ganho": "#1E7A34", "alerta": "#D70015", "alerta_fundo": "#FDE7E9"}
+FONTE = "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+FONTE_TITULO = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+FONTE_MARCA = "Geist, 'Helvetica Neue', Helvetica, Arial, sans-serif"
 MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
 DIAS = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
 
@@ -228,79 +226,79 @@ def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
 
 
 # ---------------------------------------------------------------- e-mail
-ROTULO = f"font-family:{FONTE_DADO};font-size:11px;font-weight:500;letter-spacing:2.4px;text-transform:uppercase"
+def logo_html(cor=None):
+    """FARO em texto: maiúsculas finas e espaçadas, como o logotipo (sem imagem, funciona com imagens bloqueadas)."""
+    return (f'<span style="font-family:{FONTE_MARCA};font-weight:300;font-size:17px;letter-spacing:7px;color:{cor or COR["branco"]}">FARO</span>')
 
 
-def logo_html(negativo=True):
-    """Assinatura Faro em texto (sem imagem): FARO em Bodoni com versais espaçadas e o descritor em latão."""
-    cor = COR["tinta_texto"] if negativo else COR["tinta"]
-    desc = COR["facho_claro"] if negativo else COR["facho_escuro"]
-    return (f'<div style="font-family:{FONTE_MARCA};font-weight:500;font-size:27px;line-height:1;letter-spacing:7px;color:{cor}">FARO</div>'
-            f'<div style="{ROTULO};font-size:8.5px;letter-spacing:3px;color:{desc};padding-top:7px">Inteligência imobiliária</div>')
+def _secao(s, link):
+    itens = "".join(_item_email(i, link, k > 0) for k, i in enumerate(s["itens"]))
+    nota = (f'<tr><td style="padding:0 4px 12px;font-family:{FONTE};font-size:14px;line-height:1.45;color:{COR["texto_2"]}">{_e(s["nota"])}</td></tr>'
+            if s.get("nota") else "")
+    return (f'<tr><td style="padding:36px 4px 8px;font-family:{FONTE_TITULO};font-weight:600;font-size:22px;letter-spacing:-.4px;color:{COR["texto"]}">{_e(s["titulo"])}</td></tr>'
+            f'{nota}<tr><td style="background:{COR["branco"]};border-radius:20px;padding:0 18px">'
+            f'<table role="presentation" width="100%" cellspacing="0" cellpadding="0">{itens}</table></td></tr>')
 
 
-def _rotulo_secao(n, titulo):
-    num = ROMANOS[n - 1] if n <= len(ROMANOS) else str(n)
-    return (f'<tr><td style="padding:34px 0 8px;{ROTULO};color:{COR["facho_escuro"]};border-bottom:1px solid {COR["linha"]}">'
-            f'<span style="font-family:{FONTE_MARCA};font-size:15px;letter-spacing:0;text-transform:none">{num}</span> &nbsp;·&nbsp; {_e(titulo)}</td></tr>')
-
-
-def _item_email(i, link):
-    cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(i["tom"], COR["tinta"])
-    return f"""<tr><td style="padding:18px 0;border-bottom:1px solid {COR['linha']}">
+def _item_email(i, link, separador):
+    cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(i["tom"], COR["texto"])
+    borda = f"border-top:1px solid {COR['separador']};" if separador else ""
+    url = f"{link}#imovel-{i['id']}"
+    return f"""<tr><td style="{borda}padding:16px 0">
  <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-  <td valign="top" style="width:18px;padding-top:4px;font-size:9px;line-height:14px;color:{COR['facho']}">&#9670;</td>
   <td valign="top">
-   <div style="font-family:{FONTE_MARCA};font-weight:500;font-size:18px;line-height:1.3;color:{COR['tinta']}">{_e(i['titulo'])}</div>
-   <div style="{ROTULO};font-size:10.5px;letter-spacing:1.6px;color:{COR['grafite']};padding-top:4px">{_e(i['contexto'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:14.5px;line-height:1.5;color:{COR['texto']};padding-top:8px">{_e(i['detalhe'])}</div>
-   <div style="padding-top:10px"><a href="{link}#imovel-{i['id']}" style="{ROTULO};font-size:11px;letter-spacing:1.8px;color:{COR['facho_escuro']};text-decoration:none">Ver contatos e detalhes &rarr;</a></div>
+   <a href="{url}" style="text-decoration:none;color:{COR['texto']};font-family:{FONTE};font-weight:600;font-size:16px;line-height:1.3">{_e(i['titulo'])}</a>
+   <div style="font-family:{FONTE};font-size:14px;color:{COR['texto_2']};padding-top:2px">{_e(i['contexto'])}</div>
+   <div style="font-family:{FONTE};font-size:14px;line-height:1.45;color:{COR['texto']};padding-top:6px">{_e(i['detalhe'])}</div>
+   <div style="padding-top:8px"><a href="{url}" style="font-family:{FONTE};font-size:13px;color:{COR['texto_2']};text-decoration:underline">Ver contatos e detalhes</a></div>
   </td>
-  <td valign="top" align="right" style="width:120px;padding-left:12px">
-   <div style="font-family:{FONTE_MARCA};font-weight:500;font-size:28px;line-height:1.05;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:11.5px;color:{COR['grafite']};padding-top:4px">{_e(i['destaque_rotulo'])}</div>
+  <td valign="top" align="right" style="width:110px;padding-left:12px">
+   <div style="font-family:{FONTE_TITULO};font-weight:600;font-size:22px;line-height:1.1;letter-spacing:-.5px;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
+   <div style="font-family:{FONTE};font-size:12px;color:{COR['texto_2']};padding-top:3px">{_e(i['destaque_rotulo'])}</div>
   </td>
  </tr></table>
 </td></tr>"""
 
 
 def render_email(c):
+    n = len(c["numeros"])
     nums = "".join(
-        f"""<td width="{100 // len(c['numeros'])}%" valign="top" style="padding:18px 12px 18px {'16px;border-left:1px solid ' + COR['linha'] if k else '0'}">
-   <div style="font-family:{FONTE_MARCA};font-weight:500;font-size:42px;line-height:1;white-space:nowrap;color:{COR['tinta']}">{_e(n['valor'])}</div>
-   <div style="{ROTULO};font-size:10px;letter-spacing:1.8px;color:{COR['grafite']};padding-top:8px">{_e(n['rotulo'])}</div></td>"""
-        for k, n in enumerate(c["numeros"]))
-    secoes = "".join(_rotulo_secao(k + 1, s["titulo"]) +
-                     (f'<tr><td style="padding:10px 0 2px;font-family:{FONTE_TEXTO};font-size:13px;color:{COR["grafite"]}">{_e(s["nota"])}</td></tr>' if s.get("nota") else "") +
-                     "".join(_item_email(i, c["link"]) for i in s["itens"]) for k, s in enumerate(c["secoes"]))
-    aviso = (f'<tr><td style="padding:12px 14px;background:{COR["alerta_fundo"]};color:{COR["alerta"]};font-family:{FONTE_TEXTO};font-size:13px">{_e(c["aviso"])}</td></tr>'
+        f"""<td width="{100 // n}%" valign="top" style="padding:{'0 0 0 8px' if k else '0'}">
+   <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td bgcolor="#1A1C20" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);border-radius:16px;padding:14px 14px 12px">
+   <div style="font-family:{FONTE_TITULO};font-weight:600;font-size:30px;line-height:1;letter-spacing:-1px;white-space:nowrap;color:{COR['branco']}">{_e(x['valor'])}</div>
+   <div style="font-family:{FONTE};font-size:12px;line-height:1.3;color:{COR['claro_2']};padding-top:6px">{_e(x['rotulo'])}</div></td></tr></table></td>"""
+        for k, x in enumerate(c["numeros"]))
+    imagem = (f'<tr><td style="padding:22px 0 0"><img src="{c["imagem"]}" width="552" alt="São Paulo à noite: cada luz é um prédio HIS/HMP com alvará; os anéis marcam os imóveis deste boletim" '
+              f'style="display:block;width:100%;max-width:552px;height:auto;border-radius:14px;border:0;color:{COR["claro_2"]};font-family:{FONTE};font-size:12px"></td></tr>'
+              if c.get("imagem") else "")
+    secoes = "".join(_secao(s, c["link"]) for s in c["secoes"])
+    aviso = (f'<tr><td style="padding:24px 0 0"><div style="padding:12px 14px;border-radius:14px;background:{COR["alerta_fundo"]};color:{COR["alerta"]};font-family:{FONTE};font-size:13px">{_e(c["aviso"])}</div></td></tr>'
              if c.get("aviso") else "")
-    return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet"></head>
-<body style="margin:0;padding:0;background:{COR['travertino']}">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['travertino']}"><tr><td align="center" style="padding:24px 12px">
+    return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="color-scheme" content="light only">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300&display=swap" rel="stylesheet"></head>
+<body style="margin:0;padding:0;background:{COR['fundo']}">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['fundo']}"><tr><td align="center" style="padding:20px 12px 32px">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%">
- <tr><td style="background:{COR['tinta']};padding:24px 28px;border-bottom:1px solid {COR['facho']}">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-   <td valign="middle">{logo_html(negativo=True)}</td>
-   <td align="right" valign="middle" style="{ROTULO};font-size:10.5px;color:{COR['facho_claro']}">{data_br(c['data'])}</td>
-  </tr></table>
- </td></tr>
- <tr><td style="background:{COR['papel']};padding:36px 32px 10px">
+ <tr><td bgcolor="{COR['noite']}" style="background:{COR['noite']};border-radius:24px;padding:22px 24px 24px">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-   <tr><td style="{ROTULO};color:{COR['facho_escuro']}">{_e(c['rotulo'])}</td></tr>
-   <tr><td style="padding:14px 0 12px;font-family:{FONTE_MARCA};font-weight:500;font-size:42px;line-height:1.04;color:{COR['tinta']}">{_e(c['titulo'])}</td></tr>
-   <tr><td style="padding:0 0 18px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.6;color:{COR['texto']}">{_e(c['resumo'])}</td></tr>
-   {aviso}
-   <tr><td style="border-top:1px solid {COR['facho']};border-bottom:1px solid {COR['linha']}"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
-   {secoes}
-   <tr><td align="left" style="padding:32px 0 30px">
-    <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['tinta']};color:{COR['tinta_texto']};{ROTULO};font-size:12px;letter-spacing:2.4px;text-decoration:none;padding:16px 26px">Abrir o Faro &rarr;</a>
-    <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:10px">Mapa, fichas e contatos de cada prédio. Pergunte o que quiser.</div>
-   </td></tr>
+   <tr><td><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
+     <td valign="middle">{logo_html()}</td>
+     <td align="right" valign="middle" style="font-family:{FONTE};font-size:12px;color:{COR['claro_2']}">{data_br(c['data'])}</td></tr></table></td></tr>
+   {imagem}
+   <tr><td style="padding:24px 0 0;font-family:{FONTE_MARCA};font-size:11px;letter-spacing:3px;text-transform:uppercase;color:{COR['claro_2']}">{_e(c['rotulo'])}</td></tr>
+   <tr><td style="padding:10px 0 0;font-family:{FONTE_TITULO};font-weight:600;font-size:36px;line-height:1.06;letter-spacing:-1.2px;color:{COR['branco']}">{_e(c['titulo'])}</td></tr>
+   <tr><td style="padding:12px 0 0;font-family:{FONTE};font-size:16px;line-height:1.5;color:{COR['claro_2']}">{_e(c['resumo'])}</td></tr>
+   <tr><td style="padding:22px 0 0"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
   </table>
  </td></tr>
- <tr><td style="padding:18px 6px 0;font-family:{FONTE_TEXTO};font-size:11px;line-height:1.7;color:{COR['grafite']}">
+ {aviso}
+ <tr><td style="padding:0 8px"><table role="presentation" width="100%" cellspacing="0" cellpadding="0">{secoes}</table></td></tr>
+ <tr><td align="center" style="padding:36px 0 8px">
+  <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['preto']};color:{COR['branco']};font-family:{FONTE};font-weight:500;font-size:16px;text-decoration:none;padding:14px 28px;border-radius:999px">Abrir o Faro</a>
+  <div style="font-family:{FONTE};font-size:13px;color:{COR['texto_2']};padding-top:10px">Mapa, fichas e contatos de cada prédio. Pergunte o que quiser.</div>
+ </td></tr>
+ <tr><td align="center" style="padding:28px 24px 0">{logo_html(COR['texto_3'])}</td></tr>
+ <tr><td style="padding:14px 16px 0;font-family:{FONTE};font-size:11px;line-height:1.6;color:{COR['texto_2']};text-align:center">
   {_e(c['fontes'])}<br>Os dados públicos não trazem nome nem telefone de proprietários. Inteligência de mercado; não substitui consulta jurídica nem certidão de matrícula.
  </td></tr>
 </table></td></tr></table></body></html>"""
@@ -317,6 +315,22 @@ def render_texto(c):
     return "\n".join(linhas)
 
 
+def imagem_do_dia(emps, pasta, c, config, hoje):
+    """Agente Ilustrador: a cidade acesa com os imóveis do boletim marcados. Fica em email/ e é servida pelo repositório."""
+    try:
+        import ilustrador
+        destino = pathlib.Path(__file__).resolve().parent / "email" / f"cidade-{hoje.isoformat()}.jpg"
+        destino.parent.mkdir(exist_ok=True)
+        ids = [i["id"] for s in c["secoes"] for i in s["itens"]]
+        distritos = json.loads((pasta / "distritos.json").read_text(encoding="utf-8"))
+        ilustrador.gerar(emps, distritos, ids, str(destino))
+        base = config.get("url_imagens")
+        return base + destino.name if base else None
+    except Exception as erro:            # a imagem é enfeite: o boletim sai sem ela
+        print("[Ilustrador] sem imagem:", erro)
+        return None
+
+
 def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
     hoje = hoje or dt.date.today()
     pasta = pathlib.Path(pasta_dados)
@@ -324,5 +338,6 @@ def redigir(pasta_dados, snapshot_anterior, auditoria, config, hoje=None):
     dest = json.loads((pasta / "destaques.json").read_text(encoding="utf-8"))
     meta = json.loads((pasta / "meta.json").read_text(encoding="utf-8"))
     c = conteudo_do_dia(emps, dest, meta, snapshot_anterior, auditoria, config, hoje)
+    c["imagem"] = imagem_do_dia(emps, pasta, c, config, hoje)
     return {"assunto": c["assunto"], "conteudo": c, "html": render_email(c), "texto": render_texto(c),
             "snapshot_novo": snapshot(emps, meta)}

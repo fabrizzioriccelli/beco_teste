@@ -1,5 +1,20 @@
 # Histórico de versões
 
+## [0.7.0] — 23/11/2026 — Faro v5 (proposta aprovada)
+
+### Alterado
+
+- Identidade: só o nome, FARO em Geist Light com espaçamento largo, preto e branco. Sem símbolo e sem cor de destaque.
+- Imagem da marca: a cidade acesa (`ilustrador.py`), São Paulo à noite com os 5.250 prédios HIS/HMP como pontos de luz.
+- Design system v5: fonte do sistema (SF Pro) com Geist de reserva, escala e cores de sistema da Apple, Liquid Glass só na navegação.
+- Site: barra de vidro flutuante, herói com a cidade acendendo na ordem dos alvarás, números em vidro, listas agrupadas, ficha de vidro.
+- E-mail: topo preto com FARO e a imagem da cidade do dia (servida pelo repositório), números em painéis, listas brancas, botão cápsula.
+- Boletim automático pausado: nada é enviado ao Diogo até a aprovação do conjunto.
+
+### Arquivado
+
+- v3 (Bodoni, verde e latão) e v4 recusada (logotipo com o "o" aceso) em `03_BRAND_IDENTITY/arquivo/`.
+
 ## [0.6.0] — 23/11/2026 — Faro v3: direção alto padrão
 
 ### Alterado

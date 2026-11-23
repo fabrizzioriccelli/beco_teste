@@ -43,3 +43,8 @@ Quem recebe o e-mail precisa ter acesso ao link do site (menu Share da página) 
 - `estado/snapshot.json`: o que já foi mapeado; base de comparação do dia seguinte.
 - `estado/execucoes.jsonl`: uma linha por execução, com a duração de cada agente, o status e as falhas.
 - `boletins/AAAA-MM-DD.html`: cópia de cada boletim enviado.
+
+
+## Imagem do e-mail (desde a v5)
+
+O Redator chama o Ilustrador, que salva `email/cidade-AAAA-MM-DD.jpg` com os imóveis do dia marcados. O e-mail aponta para essa imagem no repositório público (`url_imagens` em `config.json`). Por isso, **faça o commit e o push de `email/` antes de enviar o e-mail** (passo 7 antes do passo 6); sem o push, a imagem aparece quebrada.

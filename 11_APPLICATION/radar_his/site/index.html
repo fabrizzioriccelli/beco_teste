@@ -2,74 +2,77 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&display=swap">
 <style>
-/* Layout: herói escuro com a cidade acesa e os números do dia em vidro; depois listas agrupadas no estilo do iPhone sobre fundo claro.
+/* Layout: herói escuro com a cidade acesa, o nome FARO e os números do dia em vidro; depois listas agrupadas no estilo do iPhone sobre fundo claro.
    Navegação, controles e ficha em Liquid Glass, flutuando sobre o conteúdo (Apple HIG: o vidro é a camada de navegação, nunca o conteúdo). */
-/* Tokens do design system Faro v4 (04_DESIGN_SYSTEM/tokens.css) */
+/* Tokens do design system Faro v5 (04_DESIGN_SYSTEM/tokens.css) */
 :root {
-  /* Marca */
-  --luz: #FFC888;           /* luz quente: miolo do logotipo, pontos da cidade, brilhos. Só sobre fundo escuro ou como preenchimento */
-  --luz-clara: #FFF6EA;
-  --noite: #0A0C10;         /* fundo do herói (a cidade à noite) */
-  --noite-2: #1B2029;
+  /* Marca: preto e branco. A luz quente existe só na imagem da cidade */
+  --preto: #0B0B0C;
+  --branco: #FFFFFF;
+  --pedra: #F4F3F1;         /* fundo quente de apoio (cartões, áreas de respiro) */
+  --grafite: #3A3A3C;
+  --cinza: #8E8E93;
+  --luz: #FFC888;           /* só nos pontos da cidade acesa; nunca em texto ou botão */
+  --noite: #06080B;         /* fundo do herói */
 
-  /* Neutros (escala de cinzas da Apple) */
-  --texto: #1D1D1F;         /* 16,8:1 no branco */
+  /* Interface (escala de cinzas da Apple) */
+  --texto: #0B0B0C;         /* 19,8:1 no branco */
   --texto-2: #6E6E73;       /* secundário, 5,1:1 no branco */
-  --texto-3: #86868B;       /* terciário: só ícones e setas */
-  --separador: rgb(60 60 67 / .18);
-  --fundo: #F5F5F7;         /* fundo da página */
-  --superficie: #FFFFFF;    /* cartões, listas e fichas */
-  --superficie-2: #E8E8ED;  /* campos, controle segmentado, chips */
-  --link: #0066CC;          /* 5,6:1 no branco */
-  --acao: #1D1D1F;          /* botão principal (cápsula preta) */
+  --texto-3: #AEAEB2;       /* só setas e ícones */
+  --separador: rgb(60 60 67 / .14);
+  --fundo: #F5F5F7;
+  --superficie: #FFFFFF;
+  --superficie-2: #EDEDF0;  /* campos, controle segmentado, chips */
+  --link: #0B0B0C;          /* links em preto, sublinhados */
+  --acao: #0B0B0C;          /* botão principal: cápsula preta */
   --acao-texto: #FFFFFF;
 
-  /* Estados (cores de sistema da Apple, versões acessíveis) */
-  --ganho: #1E7A34;   --ganho-fundo: #E3F4E6;
-  --atencao: #B25000; --atencao-fundo: #FDEEDC;
-  --alerta: #D70015;  --alerta-fundo: #FDE6E8;
-
-  /* Categorias de unidade (mapa) */
+  /* Estados (cores de sistema da Apple, versões acessíveis). Só para dado, nunca como enfeite */
+  --ganho: #1E7A34;   --ganho-fundo: #E6F4E9;
+  --atencao: #B25000; --atencao-fundo: #FDEFDF;
+  --alerta: #D70015;  --alerta-fundo: #FDE7E9;
   --cat-his: #34C759; --cat-hmp: #007AFF; --cat-livre: #FF9500; --cat-sem: #AEAEB2;
 
-  /* Liquid Glass (camada de navegação e controles; nunca no conteúdo) */
-  --vidro-claro: rgb(255 255 255 / .62);
-  --vidro-claro-borda: rgb(255 255 255 / .75);
-  --vidro-escuro: rgb(255 255 255 / .08);     /* variante "clear" sobre a cidade, com camada de escurecimento */
-  --vidro-escuro-borda: rgb(255 255 255 / .16);
+  /* Liquid Glass */
+  --vidro-claro: rgb(255 255 255 / .64);
+  --vidro-claro-borda: rgb(255 255 255 / .78);
+  --vidro-escuro: rgb(255 255 255 / .09);     /* variante "clear" sobre a cidade, com camada de escurecimento */
+  --vidro-escuro-borda: rgb(255 255 255 / .17);
   --vidro-desfoque: blur(24px) saturate(180%);
-  --vidro-brilho: inset 0 1px 0 rgb(255 255 255 / .5), inset 0 -1px 0 rgb(255 255 255 / .08);
-  --vidro-sombra: 0 8px 32px rgb(0 0 0 / .12);
+  --vidro-brilho: inset 0 1px 0 rgb(255 255 255 / .45);
+  --vidro-sombra: 0 8px 32px rgb(0 0 0 / .1);
 
-  /* Tipografia: SF Pro nos aparelhos Apple (fonte do sistema), Inter nos demais */
-  --fonte: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
-  --fonte-titulo: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
-  /* Escala do iOS (Dynamic Type, tamanho padrão) + títulos de página */
-  --t-heroi: 64px; --t-titulo-grande: 34px; --t-titulo-1: 28px; --t-titulo-2: 22px; --t-titulo-3: 20px;
-  --t-destaque: 17px; --t-corpo: 17px; --t-chamada: 16px; --t-subtitulo: 15px; --t-nota: 13px; --t-legenda: 12px;
+  /* Tipografia */
+  --fonte: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Geist", "Helvetica Neue", Arial, sans-serif;
+  --fonte-titulo: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Geist", "Helvetica Neue", Arial, sans-serif;
+  --fonte-marca: "Geist", "Helvetica Neue", Arial, sans-serif;   /* só o logotipo e rótulos em versais espaçadas */
+  --rastreio-marca: .42em;
+  /* Escala do iOS (Dynamic Type) + título de página */
+  --t-heroi: 72px; --t-titulo-grande: 34px; --t-titulo-1: 28px; --t-titulo-2: 22px; --t-titulo-3: 20px;
+  --t-corpo: 17px; --t-chamada: 16px; --t-subtitulo: 15px; --t-nota: 13px; --t-legenda: 12px;
 
-  /* Forma: cantos concêntricos (raio de dentro = raio de fora − espaçamento) */
-  --raio-cartao: 28px; --raio-grupo: 22px; --raio-campo: 12px; --raio-capsula: 999px;
-  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 20px; --e-6: 24px; --e-7: 32px; --e-8: 48px;
+  /* Forma: cantos concêntricos (raio de dentro = raio de fora − margem) */
+  --raio-cartao: 28px; --raio-grupo: 22px; --raio-interno: 14px; --raio-campo: 12px; --raio-capsula: 999px;
+  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 20px; --e-6: 24px; --e-7: 32px; --e-8: 48px; --e-9: 64px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #6E6E73; --separador: rgb(84 84 88 / .6);
-    --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #2997FF; --acao: #F5F5F7; --acao-texto: #000000;
+    --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #636366; --separador: rgb(84 84 88 / .55);
+    --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #F5F5F7; --acao: #F5F5F7; --acao-texto: #000000; --pedra: #1C1C1E;
     --ganho: #30D158; --ganho-fundo: #0F2E19; --atencao: #FF9F0A; --atencao-fundo: #33230A; --alerta: #FF453A; --alerta-fundo: #3A1312;
     --cat-his: #30D158; --cat-hmp: #0A84FF; --cat-livre: #FF9F0A; --cat-sem: #636366;
-    --vidro-claro: rgb(40 40 44 / .55); --vidro-claro-borda: rgb(255 255 255 / .12); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .45);
+    --vidro-claro: rgb(36 36 38 / .6); --vidro-claro-borda: rgb(255 255 255 / .1); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .5);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #6E6E73; --separador: rgb(84 84 88 / .6);
-  --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #2997FF; --acao: #F5F5F7; --acao-texto: #000000;
+  --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #636366; --separador: rgb(84 84 88 / .55);
+  --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #F5F5F7; --acao: #F5F5F7; --acao-texto: #000000; --pedra: #1C1C1E;
   --ganho: #30D158; --ganho-fundo: #0F2E19; --atencao: #FF9F0A; --atencao-fundo: #33230A; --alerta: #FF453A; --alerta-fundo: #3A1312;
   --cat-his: #30D158; --cat-hmp: #0A84FF; --cat-livre: #FF9F0A; --cat-sem: #636366;
-  --vidro-claro: rgb(40 40 44 / .55); --vidro-claro-borda: rgb(255 255 255 / .12); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .45);
+  --vidro-claro: rgb(36 36 38 / .6); --vidro-claro-borda: rgb(255 255 255 / .1); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .5);
   color-scheme: dark;
 }
 
@@ -89,9 +92,9 @@ h1, h2, h3 { font-family: var(--fonte-titulo); font-weight: 600; letter-spacing:
 h2 { font-size: var(--t-titulo-1); line-height: 1.14; margin-bottom: 16px; }
 h3 { font-size: var(--t-titulo-3); }
 p { margin: 0; }
-a { color: var(--link); text-decoration: none; }
-a:hover { text-decoration: underline; }
-:focus-visible { outline: 3px solid rgb(0 125 250 / .6); outline-offset: 2px; }
+a { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { opacity: .7; }
+:focus-visible { outline: 2px solid var(--texto); outline-offset: 2px; }
 input, select, button, textarea { font: inherit; color: var(--texto); letter-spacing: inherit; }
 input, select { background: var(--superficie); border: 0; border-radius: var(--raio-campo); padding: 11px 14px; min-width: 0; width: 100%; font-size: 16px; box-shadow: inset 0 0 0 1px var(--separador); }
 button { cursor: pointer; border: 0; border-radius: var(--raio-capsula); background: var(--superficie-2); padding: 9px 16px; }
@@ -109,23 +112,26 @@ button:disabled { opacity: .5; cursor: default; }
   padding: 7px 7px 7px 18px; border-radius: var(--raio-capsula); color: var(--texto); transition: background .35s, color .35s, border-color .35s, box-shadow .35s; }
 .barra.escuro { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #F5F5F7; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 8px 32px rgb(0 0 0 / .3); }
 .barra .marca { display: block; color: inherit; line-height: 0; }
-.barra .marca svg { height: 22px; width: auto; }
+.barra .marca svg { height: 15px; width: auto; }
 .barra-data { margin-left: auto; font-size: 13px; opacity: .72; white-space: nowrap; }
 .barra-acao { background: var(--acao); color: var(--acao-texto); border-radius: var(--raio-capsula); padding: 7px 15px; font-size: 14px; font-weight: 500; white-space: nowrap; }
-.barra-acao:hover { text-decoration: none; }
+.barra-acao, .barra .marca { text-decoration: none; }
 .barra.escuro .barra-acao { background: #F5F5F7; color: #000; }
 
 /* Herói: a cidade acesa */
 .heroi { position: relative; background: var(--noite); color: #F5F5F7; overflow: hidden; isolation: isolate; }
 .heroi canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; display: block; }
 .heroi::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(180deg, rgb(10 12 16 / .7) 0%, rgb(10 12 16 / .15) 38%, rgb(10 12 16 / .1) 62%, rgb(10 12 16 / .78) 100%); }
-.heroi-in { max-width: 880px; margin: 0 auto; padding-top: 128px; padding-bottom: 36px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; }
-.heroi .rotulo { font-size: 15px; font-weight: 600; color: var(--luz); }
-.heroi h1 { font-size: clamp(40px, 8vw, 76px); line-height: 1.03; letter-spacing: -.03em; max-width: 13ch; }
+  background: linear-gradient(180deg, rgb(6 8 11 / .92) 0%, rgb(6 8 11 / .78) 30%, rgb(6 8 11 / .2) 58%, rgb(6 8 11 / .25) 78%, rgb(6 8 11 / .85) 100%); }
+@media (max-width: 640px) {
+  .heroi::after { background: linear-gradient(180deg, rgb(6 8 11 / .94) 0%, rgb(6 8 11 / .86) 52%, rgb(6 8 11 / .3) 72%, rgb(6 8 11 / .85) 100%); }
+}
+.heroi-in { max-width: 880px; margin: 0 auto; padding-top: 112px; padding-bottom: 36px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; }
+.heroi .rotulo { font-family: var(--fonte-marca); font-size: 12px; font-weight: 400; letter-spacing: .32em; text-transform: uppercase; color: rgb(235 235 245 / .7); }
+.heroi h1 { font-size: clamp(40px, 6.6vw, 72px); line-height: 1.03; letter-spacing: -.035em; max-width: 15ch; }
 .b-resumo { font-size: clamp(17px, 2.1vw, 21px); line-height: 1.4; color: rgb(235 235 245 / .72); max-width: 42ch; }
 /* números do dia: Liquid Glass "clear" sobre fundo rico, com a camada de escurecimento do herói */
-.b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: clamp(96px, 20vw, 230px); }
+.b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: clamp(120px, 16vw, 200px); }
 .b-numeros div { position: relative; overflow: hidden; min-width: 0; display: grid; gap: 6px; padding: 18px 18px 16px; border-radius: var(--raio-grupo);
   background: var(--vidro-escuro); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
   border: 1px solid var(--vidro-escuro-borda); box-shadow: inset 0 1px 0 rgb(255 255 255 / .2), 0 10px 30px rgb(0 0 0 / .25); }
@@ -134,7 +140,7 @@ button:disabled { opacity: .5; cursor: default; }
 .b-numeros b { font-family: var(--fonte-titulo); font-size: clamp(28px, 6.4vw, 50px); font-weight: 600; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
 .b-numeros span { font-size: 13px; line-height: 1.3; color: rgb(235 235 245 / .62); }
 .heroi-legenda { font-size: 12px; color: rgb(235 235 245 / .48); display: flex; gap: 8px; align-items: center; }
-.heroi-legenda i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .8); flex: none; }
+.heroi-legenda i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .75); flex: none; }
 
 /* Conteúdo */
 .wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 44px 88px; display: grid; gap: 64px; }
@@ -159,7 +165,7 @@ button:disabled { opacity: .5; cursor: default; }
 .b-dest span { font-size: 12px; color: var(--texto-2); white-space: nowrap; }
 .b-chev { color: var(--texto-3); font-size: 22px; line-height: 1; font-weight: 300; }
 .b-historico { margin-top: 20px; }
-.b-historico summary { cursor: pointer; font-size: 15px; color: var(--link); }
+.b-historico summary { cursor: pointer; font-size: 15px; color: var(--texto-2); }
 .b-hist-item { display: grid; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--separador); }
 .b-hist-item .rotulo { font-size: 13px; color: var(--texto-2); }
 #fonte { margin-top: 14px; }
@@ -172,9 +178,7 @@ button:disabled { opacity: .5; cursor: default; }
 
 /* Pergunte ao Faro */
 .pergunta { position: relative; background: var(--superficie); border-radius: var(--raio-cartao); padding: clamp(22px, 4vw, 34px); display: grid; gap: 16px; }
-.pergunta::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none;
-  background: linear-gradient(120deg, rgb(255 200 136 / .95), rgb(255 200 136 / 0) 38%, rgb(255 200 136 / 0) 62%, rgb(255 168 96 / .8));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
 .pergunta h2 { margin: 0; }
 .pergunta form { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; align-items: center; background: var(--superficie-2); border-radius: var(--raio-capsula); padding: 5px; }
 .pergunta input { background: transparent; box-shadow: none; font-size: 17px; padding: 9px 14px; }
@@ -199,13 +203,13 @@ button:disabled { opacity: .5; cursor: default; }
 .cartao .t { font-size: 17px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .cartao .s { color: var(--texto-2); font-size: 15px; }
 .cartao .v { font-size: 15px; font-variant-numeric: tabular-nums; }
-.cartao .ir { color: var(--link); font-size: 15px; }
+.cartao .ir { color: var(--texto-2); font-size: 15px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .tag { font-size: 13px; padding: 3px 10px; border-radius: var(--raio-capsula); background: var(--superficie-2); color: var(--texto); white-space: nowrap; }
 .tag.bom { background: var(--good-bg); color: var(--good); }
 .tag.ruim { background: var(--bad-bg); color: var(--bad); }
 .tag.aviso { background: var(--warn-bg); color: var(--warn); }
-.mais { margin-top: 12px; width: 100%; background: var(--superficie); color: var(--link); font-size: 15px; font-weight: 500; padding: 13px; }
+.mais { margin-top: 12px; width: 100%; background: var(--superficie); color: var(--texto); font-size: 15px; font-weight: 500; padding: 13px; }
 .vazio { color: var(--texto-2); }
 
 /* Explorar */
@@ -242,8 +246,8 @@ details.calc input, details.calc select { background: var(--fundo); box-shadow: 
 .aviso-box.neutro { background: var(--superficie-2); }
 
 /* Ficha: folha de vidro flutuante (cantos concêntricos: 28 por fora, 14 por dentro, 14 de margem) */
-.fundo { position: fixed; inset: 0; background: rgb(0 0 0 / .28); z-index: 20; }
-.ficha { position: fixed; z-index: 21; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+.fundo { position: fixed; inset: 0; background: rgb(0 0 0 / .32); z-index: 40; }
+.ficha { position: fixed; z-index: 41; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   width: min(470px, calc(100% - 24px)); border-radius: var(--raio-cartao); overflow-y: auto; padding: 14px; display: grid; gap: 12px; align-content: start;
   background: rgb(245 245 247 / .78); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%);
   border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), 0 30px 80px rgb(0 0 0 / .28); }
@@ -258,7 +262,7 @@ details.calc input, details.calc select { background: var(--fundo); box-shadow: 
 #fechar { font-size: 14px; padding: 7px 14px; background: rgb(120 120 128 / .16); flex: none; }
 .acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .acao { display: grid; gap: 1px; color: var(--texto); background: var(--superficie); border-radius: 14px; padding: 12px 14px; text-align: left; font-size: 15px; }
-.acao:hover { text-decoration: none; filter: brightness(.98); }
+.acao, .acao * { text-decoration: none; } .acao:hover { opacity: 1; filter: brightness(.96); }
 .acao b { font-weight: 600; }
 .acao span { font-size: 13px; color: var(--texto-2); }
 .acao.prim { background: var(--acao); color: var(--acao-texto); }
@@ -289,7 +293,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
 </style>
 
 <nav class="barra vidro escuro" id="barra" aria-label="Faro">
-  <a class="marca" href="#boletim" aria-label="Faro, início"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 103.5 51.3" role="img" aria-label="Faro"><title>Faro</title><defs><radialGradient id="luz-barra" cx="0.5" cy="0.42" r="0.62"><stop offset="0" stop-color="#FFFBF4"/><stop offset="0.6" stop-color="#FFE3BC"/><stop offset="1" stop-color="#FFC888"/></radialGradient></defs><ellipse cx="83.57" cy="31.48" rx="7.98" ry="10.55" fill="url(#luz-barra)"/><path d="M22.18359375 16.0859375V21.6640625H15.8125V46.65625H8.6484375V21.6640625H4.1640625V16.0859375H8.6484375V13.21484375Q8.6484375 10.125 9.93359375 8.07421875Q11.21875 6.0234375 13.392578125 5.01171875Q15.56640625 4.0 18.19140625 4.0Q20.078125 4.0 21.541015625 4.30078125Q23.00390625 4.6015625 23.6875 4.84765625L22.2109375 10.42578125Q21.7734375 10.26171875 21.08984375 10.111328125Q20.40625 9.9609375 19.53125 9.9609375Q17.53515625 9.9609375 16.673828125 10.9453125Q15.8125 11.9296875 15.8125 13.734375V16.0859375ZM32.6103125 47.28515625Q29.68453125 47.28515625 27.3603125 46.232421875Q25.03609375 45.1796875 23.69625 43.12890625Q22.35640625 41.078125 22.35640625 38.0703125Q22.35640625 35.5 23.3134375 33.8046875Q24.27046875 32.109375 25.924765625 31.09765625Q27.5790625 30.0859375 29.6571875 29.552734375Q31.7353125 29.01953125 33.95015625 28.80078125Q36.6571875 28.5 38.32515625 28.28125Q39.993125 28.0625 40.745078125 27.5703125Q41.49703125 27.078125 41.49703125 26.0390625V25.90234375Q41.49703125 23.6875 40.18453125 22.45703125Q38.87203125 21.2265625 36.35640625 21.2265625Q33.7040625 21.2265625 32.159140625 22.375Q30.61421875 23.5234375 30.06734375 25.08203125L23.368125 24.125Q24.16109375 21.3359375 25.993125 19.462890625Q27.82515625 17.58984375 30.463828125 16.646484375Q33.1025 15.703125 36.30171875 15.703125Q38.48921875 15.703125 40.67671875 16.208984375Q42.86421875 16.71484375 44.69625 17.91796875Q46.52828125 19.12109375 47.62203125 21.14453125Q48.71578125 23.16796875 48.71578125 26.203125V46.65625H41.7978125V42.4453125H41.5790625Q40.9228125 43.703125 39.733359375 44.810546875Q38.54390625 45.91796875 36.780234375 46.6015625Q35.0165625 47.28515625 32.6103125 47.28515625ZM34.44234375 41.98046875Q36.62984375 41.98046875 38.21578125 41.119140625Q39.80171875 40.2578125 40.67671875 38.822265625Q41.55171875 37.38671875 41.55171875 35.69140625V32.109375Q41.19625 32.3828125 40.40328125 32.615234375Q39.6103125 32.84765625 38.59859375 33.0390625Q37.586875 33.23046875 36.616171875 33.3671875Q35.64546875 33.50390625 34.93453125 33.5859375Q33.32125 33.8046875 32.049765625 34.310546875Q30.77828125 34.81640625 30.04 35.69140625Q29.30171875 36.56640625 29.30171875 37.9609375Q29.30171875 39.95703125 30.7509375 40.96875Q32.20015625 41.98046875 34.44234375 41.98046875ZM52.0878125 46.65625V16.0859375H59.06046875V21.2265625H59.38859375Q60.20890625 18.546875 62.2596875 17.111328125Q64.31046875 15.67578125 66.93546875 15.67578125Q67.5096875 15.67578125 68.261640625 15.73046875Q69.01359375 15.78515625 69.50578125 15.8671875V22.484375Q69.0409375 22.3203125 68.0565625 22.2109375Q67.0721875 22.1015625 66.16984375 22.1015625Q64.17375 22.1015625 62.61515625 22.94921875Q61.0565625 23.796875 60.167890625 25.2734375Q59.27921875 26.75 59.27921875 28.71875V46.65625ZM83.56921875 47.2578125Q79.08484375 47.2578125 75.80359375 45.2890625Q72.52234375 43.3203125 70.731328125 39.765625Q68.9403125 36.2109375 68.9403125 31.5078125Q68.9403125 26.77734375 70.731328125 23.208984375Q72.52234375 19.640625 75.80359375 17.671875Q79.08484375 15.703125 83.56921875 15.703125Q88.05359375 15.703125 91.33484375 17.671875Q94.61609375 19.640625 96.42078125 23.208984375Q98.22546875 26.77734375 98.22546875 31.5078125Q98.22546875 36.2109375 96.42078125 39.765625Q94.61609375 43.3203125 91.33484375 45.2890625Q88.05359375 47.2578125 83.56921875 47.2578125ZM83.56921875 41.4609375Q86.0575 41.4609375 87.67078125 40.134765625Q89.2840625 38.80859375 90.090703125 36.5390625Q90.89734375 34.26953125 90.89734375 31.5078125Q90.89734375 28.69140625 90.090703125 26.421875Q89.2840625 24.15234375 87.67078125 22.826171875Q86.0575 21.5 83.56921875 21.5Q81.135625 21.5 79.495 22.826171875Q77.854375 24.15234375 77.047734375 26.421875Q76.24109375 28.69140625 76.24109375 31.5078125Q76.24109375 34.26953125 77.047734375 36.5390625Q77.854375 38.80859375 79.495 40.134765625Q81.135625 41.4609375 83.56921875 41.4609375Z" fill="currentColor"/></svg></a>
+  <a class="marca" href="#boletim" aria-label="Faro, início"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 436.2 118.3" role="img" aria-label="Faro"><title>Faro</title><path d="M32.96666666666667 23.66666666666667V94.66666666666667H39.96666666666667V63.06666666666667H74.96666666666667V56.46666666666667H39.96666666666667V30.366666666666674H76.76666666666667V23.66666666666667ZM125.96666666666667 94.66666666666667H133.46666666666667L140.96666666666667 73.46666666666667H171.76666666666665L179.26666666666665 94.66666666666667H186.76666666666665L160.96666666666667 23.66666666666667H151.76666666666665ZM143.36666666666667 66.66666666666667 156.36666666666667 29.866666666666674 169.36666666666667 66.66666666666667ZM266.26666666666665 23.66666666666667H240.26666666666668V94.66666666666667H247.26666666666668V65.26666666666667H265.6666666666667C276.76666666666665 65.26666666666667 281.4666666666667 67.76666666666667 282.06666666666666 74.36666666666667L283.8666666666667 94.66666666666667H290.8666666666667L288.9666666666667 73.76666666666667C288.3666666666667 66.56666666666666 284.8666666666667 62.766666666666666 277.76666666666665 61.66666666666667C284.76666666666665 59.76666666666667 290.3666666666667 53.36666666666667 290.3666666666667 44.86666666666667C290.3666666666667 31.66666666666667 281.3666666666667 23.66666666666667 266.26666666666665 23.66666666666667ZM247.26666666666668 58.56666666666667V30.366666666666674H266.26666666666665C277.26666666666665 30.366666666666674 283.1666666666667 35.36666666666667 283.1666666666667 44.66666666666667C283.1666666666667 53.56666666666667 277.06666666666666 58.56666666666667 266.26666666666665 58.56666666666667ZM375.66666666666674 96.26666666666667C395.5666666666667 96.26666666666667 407.5666666666667 82.06666666666666 407.5666666666667 59.26666666666667C407.5666666666667 36.266666666666666 395.5666666666667 22.066666666666663 375.66666666666674 22.066666666666663C355.86666666666673 22.066666666666663 343.7666666666667 36.266666666666666 343.7666666666667 59.26666666666667C343.7666666666667 82.06666666666666 355.86666666666673 96.26666666666667 375.66666666666674 96.26666666666667ZM351.0666666666667 59.26666666666667C351.0666666666667 40.46666666666667 360.36666666666673 28.866666666666674 375.66666666666674 28.866666666666674C391.0666666666667 28.866666666666674 400.36666666666673 40.46666666666667 400.36666666666673 59.26666666666667C400.36666666666673 77.96666666666667 391.0666666666667 89.46666666666667 375.66666666666674 89.46666666666667C360.36666666666673 89.46666666666667 351.0666666666667 77.96666666666667 351.0666666666667 59.26666666666667Z" fill="currentColor"/></svg></a>
   <span class="barra-data" id="banda-data">São Paulo</span>
   <a class="barra-acao" href="#pergunta">Perguntar</a>
 </nav>
@@ -841,7 +845,7 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       dpr = Math.min(2, window.devicePixelRatio || 1);
       W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       const esc = Math.max(W / (0.46 * COS), H / 0.44);
-      proj = (lon, lat) => [W * 0.56 + (lon - LON0) * COS * esc, H * 0.52 - (lat - LAT0) * esc];
+      const fy = W < 640 ? 0.8 : 0.62; proj = (lon, lat) => [W * 0.56 + (lon - LON0) * COS * esc, H * fy - (lat - LAT0) * esc];
       base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height;
       const b = base.getContext("2d"); b.scale(dpr, dpr);
       const g = b.createRadialGradient(W * 0.56, H * 0.5, 0, W * 0.56, H * 0.5, Math.hypot(W, H) * 0.6);
@@ -851,7 +855,7 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
         const polys = f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [f.geometry.coordinates];
         for (const pol of polys) for (const anel of pol) { b.beginPath(); anel.forEach(([lo, la], k) => { const [x, y] = proj(lo, la); k ? b.lineTo(x, y) : b.moveTo(x, y); }); b.stroke(); }
       }
-      b.globalCompositeOperation = "lighter"; b.fillStyle = "rgba(255,200,136,.18)";
+      b.globalCompositeOperation = "lighter"; b.fillStyle = "rgba(255,200,136,.28)";
       for (const e of pts) { const [x, y] = proj(e.lon, e.lat); b.fillRect(x - .6, y - .6, 1.2, 1.2); }
       const ids = new Set(DESTAQUES_DIA); fortes = pts.filter((e) => ids.has(e.id)).map((e) => proj(e.lon, e.lat));
     }
@@ -859,8 +863,8 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       const b = base.getContext("2d"); b.save(); b.globalCompositeOperation = "lighter";
       for (let k = de; k < ate; k++) {
         const e = pts[k], [x, y] = proj(e.lon, e.lat); if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
-        const un = (e.his1 || 0) + (e.his2 || 0) + (e.hmp || 0), r = 0.7 + Math.min(1.5, Math.sqrt(Math.max(un, 1)) / 8);
-        b.shadowColor = "rgba(255,190,120,.9)"; b.shadowBlur = 8; b.fillStyle = `rgba(255,205,150,${0.35 + Math.min(0.5, un / 500)})`;
+        const un = (e.his1 || 0) + (e.his2 || 0) + (e.hmp || 0), r = 0.8 + Math.min(1.6, Math.sqrt(Math.max(un, 1)) / 7);
+        b.shadowColor = "rgba(255,190,120,.95)"; b.shadowBlur = 10; b.fillStyle = `rgba(255,212,160,${0.5 + Math.min(0.45, un / 400)})`;
         b.beginPath(); b.arc(x, y, r, 0, 7); b.fill();
       }
       b.restore();

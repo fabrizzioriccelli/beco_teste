@@ -90,5 +90,6 @@
  "aviso": null,
  "fontes": "Alvarás HIS/HMP do GeoSampa (atualizado em 13/09/2026); guias de ITBI da Secretaria da Fazenda (até set/2026); IPCA e CDI do Banco Central (até nov/2026); teto de preço pelo Decreto 64.895/2026.",
  "link": "https://claude.ai/artifact/56WB6o988QdYjeTVMtX5j9",
- "link_boletim": "https://claude.ai/artifact/56WB6o988QdYjeTVMtX5j9#boletim"
+ "link_boletim": "https://claude.ai/artifact/56WB6o988QdYjeTVMtX5j9#boletim",
+ "imagem": "https://raw.githubusercontent.com/fabrizzioriccelli/beco_teste/claude/beco-real-estate-intelligence-i322uf/11_APPLICATION/radar_his/email/cidade-2026-11-23.jpg"
 }
