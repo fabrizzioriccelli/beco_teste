@@ -1,5 +1,14 @@
 # Histórico de versões
 
+## [0.7.1] — 23/11/2026 — Refinamento de layout, textos e assistente
+
+### Alterado
+
+- Herói: texto sobre preto liso; a cidade acesa passa a ser uma faixa sangrada própria, sem luz atrás do texto; menos brilho no celular.
+- Grade única de 920 px para barra, herói, listas e rodapé; 72 px entre seções; títulos das seções não ficam sob a barra.
+- Textos mais curtos e diretos no site, na ficha e no boletim (e-mail e site).
+- "Pergunte ao Faro" virou barra de vidro fixa no pé da tela com painel de conversa; nova ação para levar às seções do app.
+
 ## [0.7.0] — 23/11/2026 — Faro v5 (proposta aprovada)
 
 ### Alterado

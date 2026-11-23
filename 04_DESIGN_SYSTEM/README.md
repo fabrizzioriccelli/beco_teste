@@ -40,7 +40,8 @@ A licença da SF não permite embuti-la na web nem usá-la em logotipo; por isso
 | Componente | Regra |
 |---|---|
 | **Barra** | Cápsula de vidro flutuante: FARO, data e botão "Perguntar". Variante escura sobre a cidade, clara sobre o conteúdo |
-| **Herói** | Cidade acesa (canvas) com camada de escurecimento; rótulo em versais, título em SF 600, resumo em cinza; três números em vidro transparente |
+| **Herói** | Texto sempre sobre preto liso (rótulo em versais, título em SF 600, resumo em cinza). A cidade acesa fica numa faixa própria, sangrada de ponta a ponta, embaixo do texto; os três números do dia em vidro escuro sobrepõem o pé da faixa. Nenhum ponto de luz atrás de texto corrido |
+| **Pergunte ao Faro** | Barra de vidro fixa no pé da tela ("Pergunte ao Faro"), também aberta pelo botão da barra do topo. Abre um painel de vidro com sugestões, a conversa em balões e os prédios como cartões; leva a pessoa às seções do app (boletim, destaques, mapa, calculadora) |
 | **Lista agrupada** | Título da seção em 22 px; grupo branco com raio 22; linhas com título 17 semibold, contexto 15 cinza, valor à direita e seta › |
 | **Ficha do imóvel** | Folha de vidro flutuante (raio 28, margem 14, blocos internos com raio 14); no celular, folha que sobe de baixo |
 | **Botão** | Cápsula preta (principal) ou cinza-claro; texto com verbo ("Achar quem vende") |
@@ -48,3 +49,11 @@ A licença da SF não permite embuti-la na web nem usá-la em logotipo; por isso
 | **E-mail** | Tabelas com estilos inline, 600 px. Topo preto com FARO em texto, a imagem da cidade do dia, números em painéis; listas brancas; botão cápsula |
 
 Com "reduzir transparência" ligado no aparelho, todo vidro vira superfície sólida.
+
+## Grade
+
+Uma coluna de 920 px no máximo, com margens laterais de 20 px (ou a área segura do aparelho). Barra do topo, herói, números, listas, cartões e rodapé usam as mesmas bordas. Espaçamento em múltiplos de 8; 72 px entre seções.
+
+## Voz
+
+Direta e completa: número, contexto e próximo passo, em frases curtas. Termo técnico só quando ele é o certo (ITBI, alvará, matrícula, teto), sem explicar o óbvio para quem é do ramo.

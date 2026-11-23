@@ -77,6 +77,7 @@
 }
 
 :root {
+  --largura: 920px;       /* coluna única: barra, herói, listas e rodapé usam as mesmas bordas */
   /* aliases usados pelos componentes da página */
   --bg: var(--fundo); --paper: var(--superficie); --ink: var(--texto); --muted: var(--texto-2); --rule: var(--separador); --soft: var(--superficie-2);
   --accent: var(--link); --his: var(--cat-his); --hmp: var(--cat-hmp); --misto: var(--cat-livre); --sem: var(--cat-sem);
@@ -108,42 +109,39 @@ button:disabled { opacity: .5; cursor: default; }
 
 /* Barra flutuante */
 .barra { position: fixed; z-index: 25; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 50%; transform: translateX(-50%);
-  width: min(880px, calc(100% - 2 * max(16px, env(safe-area-inset-left, 0px)))); display: flex; align-items: center; gap: 12px;
-  padding: 7px 7px 7px 18px; border-radius: var(--raio-capsula); color: var(--texto); transition: background .35s, color .35s, border-color .35s, box-shadow .35s; }
+  width: calc(min(var(--largura), 100%) - 2 * max(20px, env(safe-area-inset-left, 0px))); display: flex; align-items: center; gap: 12px;
+  padding: 7px 7px 7px 20px; border-radius: var(--raio-capsula); color: var(--texto); transition: background .35s, color .35s, border-color .35s, box-shadow .35s; }
 .barra.escuro { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #F5F5F7; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 8px 32px rgb(0 0 0 / .3); }
 .barra .marca { display: block; color: inherit; line-height: 0; }
 .barra .marca svg { height: 15px; width: auto; }
 .barra-data { margin-left: auto; font-size: 13px; opacity: .72; white-space: nowrap; }
-.barra-acao { background: var(--acao); color: var(--acao-texto); border-radius: var(--raio-capsula); padding: 7px 15px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.barra-acao { background: var(--acao); color: var(--acao-texto); border-radius: var(--raio-capsula); padding: 7px 15px; font-size: 14px; font-weight: 500; white-space: nowrap; border: 0; }
 .barra-acao, .barra .marca { text-decoration: none; }
 .barra.escuro .barra-acao { background: #F5F5F7; color: #000; }
 
-/* Herói: a cidade acesa */
+/* Herói: texto sobre preto liso; a cidade numa faixa própria, de ponta a ponta, sem luz atrás do texto */
 .heroi { position: relative; background: var(--noite); color: #F5F5F7; overflow: hidden; isolation: isolate; }
-.heroi canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; display: block; }
-.heroi::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(180deg, rgb(6 8 11 / .92) 0%, rgb(6 8 11 / .78) 30%, rgb(6 8 11 / .2) 58%, rgb(6 8 11 / .25) 78%, rgb(6 8 11 / .85) 100%); }
-@media (max-width: 640px) {
-  .heroi::after { background: linear-gradient(180deg, rgb(6 8 11 / .94) 0%, rgb(6 8 11 / .86) 52%, rgb(6 8 11 / .3) 72%, rgb(6 8 11 / .85) 100%); }
-}
-.heroi-in { max-width: 880px; margin: 0 auto; padding-top: 112px; padding-bottom: 36px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; }
-.heroi .rotulo { font-family: var(--fonte-marca); font-size: 12px; font-weight: 400; letter-spacing: .32em; text-transform: uppercase; color: rgb(235 235 245 / .7); }
-.heroi h1 { font-size: clamp(40px, 6.6vw, 72px); line-height: 1.03; letter-spacing: -.035em; max-width: 15ch; }
-.b-resumo { font-size: clamp(17px, 2.1vw, 21px); line-height: 1.4; color: rgb(235 235 245 / .72); max-width: 42ch; }
-/* números do dia: Liquid Glass "clear" sobre fundo rico, com a camada de escurecimento do herói */
-.b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: clamp(120px, 16vw, 200px); }
-.b-numeros div { position: relative; overflow: hidden; min-width: 0; display: grid; gap: 6px; padding: 18px 18px 16px; border-radius: var(--raio-grupo);
-  background: var(--vidro-escuro); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid var(--vidro-escuro-borda); box-shadow: inset 0 1px 0 rgb(255 255 255 / .2), 0 10px 30px rgb(0 0 0 / .25); }
-.b-numeros div::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(140deg, rgb(255 255 255 / .16) 0%, rgb(255 255 255 / 0) 42%); }
-.b-numeros b { font-family: var(--fonte-titulo); font-size: clamp(28px, 6.4vw, 50px); font-weight: 600; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
-.b-numeros span { font-size: 13px; line-height: 1.3; color: rgb(235 235 245 / .62); }
-.heroi-legenda { font-size: 12px; color: rgb(235 235 245 / .48); display: flex; gap: 8px; align-items: center; }
+.heroi-in, .heroi-base { max-width: var(--largura); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.heroi-in { padding-top: 120px; display: grid; gap: 16px; }
+.heroi .rotulo { font-family: var(--fonte-marca); font-size: 12px; font-weight: 400; letter-spacing: .3em; text-transform: uppercase; color: rgb(235 235 245 / .62); }
+.heroi h1 { font-size: clamp(38px, 6.2vw, 68px); line-height: 1.04; letter-spacing: -.035em; max-width: 16ch; }
+.b-resumo { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.45; color: rgb(235 235 245 / .72); max-width: 46ch; }
+.cidade { position: relative; height: clamp(260px, 34vw, 440px); margin-top: 8px; }
+.cidade canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, transparent 10%, #000 40%, #000 72%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, transparent 10%, #000 40%, #000 72%, transparent 100%); }
+.heroi-base { position: relative; z-index: 1; margin-top: -96px; padding-bottom: 40px; display: grid; gap: 14px; }
+/* números do dia: vidro sobre a cidade, mais denso para a leitura não depender do fundo */
+.b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.b-numeros div { position: relative; overflow: hidden; min-width: 0; display: grid; gap: 6px; padding: 18px 20px 16px; border-radius: var(--raio-grupo);
+  background: rgb(18 20 24 / .62); -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--vidro-escuro-borda); box-shadow: inset 0 1px 0 rgb(255 255 255 / .14), 0 12px 32px rgb(0 0 0 / .35); }
+.b-numeros b { font-family: var(--fonte-titulo); font-size: clamp(28px, 5.4vw, 48px); font-weight: 600; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+.b-numeros span { font-size: 13px; line-height: 1.3; color: rgb(235 235 245 / .7); }
+.heroi-legenda { position: absolute; z-index: 1; top: 10px; left: 50%; transform: translateX(-50%); width: calc(min(var(--largura), 100%) - 2 * max(20px, env(safe-area-inset-left, 0px))); font-size: 12px; color: rgb(235 235 245 / .6); display: flex; gap: 8px; align-items: center; }
 .heroi-legenda i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .75); flex: none; }
 
 /* Conteúdo */
-.wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 44px 88px; display: grid; gap: 64px; }
+.wrap { max-width: var(--largura); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); padding-block: 48px 140px; display: grid; gap: 72px; }
 .wrap > * { min-width: 0; }
 /* listas agrupadas no estilo do iPhone */
 .b-secao { display: grid; gap: 6px; }
@@ -176,22 +174,48 @@ button:disabled { opacity: .5; cursor: default; }
   .b-numeros { gap: 6px; } .b-numeros div { padding: 14px 12px 12px; border-radius: 18px; } .b-numeros span { font-size: 11.5px; }
 }
 
-/* Pergunte ao Faro */
-.pergunta { position: relative; background: var(--superficie); border-radius: var(--raio-cartao); padding: clamp(22px, 4vw, 34px); display: grid; gap: 16px; }
-
-.pergunta h2 { margin: 0; }
-.pergunta form { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; align-items: center; background: var(--superficie-2); border-radius: var(--raio-capsula); padding: 5px; }
-.pergunta input { background: transparent; box-shadow: none; font-size: 17px; padding: 9px 14px; }
-.pergunta .mic { background: transparent; color: var(--texto-2); padding: 9px 12px; }
+/* Pergunte ao Faro: barra de vidro flutuante + painel de vidro */
+.ia-barra { position: fixed; z-index: 26; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  width: min(560px, calc(100% - 2 * max(20px, env(safe-area-inset-left, 0px)))); min-height: 52px; display: flex; align-items: center; gap: 12px;
+  padding: 0 20px; border-radius: var(--raio-capsula); font-size: 16px; color: var(--texto); text-align: left; transition: background .35s, color .35s, border-color .35s; }
+.ia-barra.escuro { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #F5F5F7; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 8px 32px rgb(0 0 0 / .35); }
+.ia-barra b { font-weight: 600; white-space: nowrap; } .ia-barra .dica { color: inherit; opacity: .55; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.ia-ponto { position: relative; width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex: none; }
+.ia-ponto::after { content: ""; position: absolute; inset: -5px; border-radius: 50%; border: 1.5px solid currentColor; opacity: .5; animation: anel 2.4s ease-out infinite; }
+@media (max-width: 520px) { .ia-barra .dica { display: none; } .ia-barra { width: auto; min-width: 220px; justify-content: center; } }
+@keyframes anel { from { transform: scale(.6); opacity: .8; } to { transform: scale(1.6); opacity: 0; } }
+.ia { position: fixed; z-index: 41; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  width: min(470px, calc(100% - 24px)); border-radius: var(--raio-cartao); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  background: rgb(245 245 247 / .8); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), 0 30px 80px rgb(0 0 0 / .28); }
+:root[data-theme="dark"] .ia { background: rgb(28 28 30 / .8); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ia { background: rgb(28 28 30 / .8); } }
+@media (max-width: 640px) { .ia { top: calc(env(safe-area-inset-top, 0px) + 44px); left: 0; right: 0; bottom: 0; width: 100%; border-radius: var(--raio-cartao) var(--raio-cartao) 0 0; } }
+.ia-cab { display: flex; justify-content: space-between; gap: 12px; align-items: start; padding: 20px 20px 12px; }
+.ia-cab b { display: block; font-family: var(--fonte-titulo); font-size: var(--t-titulo-2); font-weight: 600; letter-spacing: -.02em; }
+.ia-cab .nota { display: block; margin-top: 2px; }
+#ia-fechar { font-size: 14px; padding: 7px 14px; background: rgb(120 120 128 / .16); flex: none; }
+.ia-corpo { overflow-y: auto; padding: 4px 14px 16px; display: grid; gap: 14px; align-content: start; }
+.ia-form { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; align-items: center; margin: 0 14px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  background: var(--superficie); border-radius: var(--raio-capsula); padding: 5px; box-shadow: 0 1px 3px rgb(0 0 0 / .08); }
+.ia-form input { background: transparent; box-shadow: none; font-size: 17px; padding: 9px 14px; }
+.ia-form input:focus-visible { outline: none; } .ia-form:focus-within { box-shadow: 0 0 0 2px rgb(120 120 128 / .35); }
+section[id], header[id], details[id] { scroll-margin-top: 88px; }
+.ia-form .mic { background: transparent; color: var(--texto-2); padding: 9px 12px; }
 #mic[hidden] { display: none; }
 .mic.ouvindo { background: var(--bad-bg); color: var(--bad); }
-.sugestoes { display: flex; flex-wrap: wrap; gap: 8px; }
-.sugestoes button { font-size: 15px; padding: 8px 14px; text-align: left; }
+.sugestoes { display: grid; gap: 8px; }
+.sugestoes p { font-size: 13px; color: var(--texto-2); margin: 0 6px; }
+.sugestoes button { background: var(--superficie); font-size: 15px; padding: 12px 16px; text-align: left; border-radius: 14px; }
 .resposta { display: grid; gap: 12px; }
-.resposta .texto { white-space: pre-wrap; font-size: 17px; }
-.resposta .estado { color: var(--texto-2); font-size: 15px; }
+.resposta:empty { display: none; }
+.resposta .pergunta-feita { justify-self: end; background: var(--acao); color: var(--acao-texto); border-radius: 18px 18px 4px 18px; padding: 10px 14px; font-size: 15px; max-width: 85%; }
+.resposta .texto { white-space: pre-wrap; font-size: 16px; line-height: 1.5; background: var(--superficie); border-radius: 18px 18px 18px 4px; padding: 14px 16px; }
+.resposta .texto:empty { display: none; }
+.resposta .estado { color: var(--texto-2); font-size: 15px; margin: 0 6px; }
 .resposta .linha-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
-.resposta .linha-acoes button { font-size: 15px; }
+.resposta .linha-acoes button { font-size: 15px; background: var(--superficie); }
+.resposta .cartoes .cartao { padding: 16px 18px; }
 
 /* Destaques: controle segmentado + cartões */
 .abas { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: var(--raio-capsula); background: var(--superficie-2); margin-bottom: 14px; }
@@ -247,7 +271,7 @@ details.calc input, details.calc select { background: var(--fundo); box-shadow: 
 
 /* Ficha: folha de vidro flutuante (cantos concêntricos: 28 por fora, 14 por dentro, 14 de margem) */
 .fundo { position: fixed; inset: 0; background: rgb(0 0 0 / .32); z-index: 40; }
-.ficha { position: fixed; z-index: 41; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+.ficha { position: fixed; z-index: 42; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   width: min(470px, calc(100% - 24px)); border-radius: var(--raio-cartao); overflow-y: auto; padding: 14px; display: grid; gap: 12px; align-content: start;
   background: rgb(245 245 247 / .78); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%);
   border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), 0 30px 80px rgb(0 0 0 / .28); }
@@ -283,28 +307,29 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
 
 /* Acessibilidade: sem transparência quando o sistema pede */
 @media (prefers-reduced-transparency: reduce) {
-  .vidro, .barra, .barra.escuro, .b-numeros div, .ficha { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .vidro, .barra { background: var(--superficie); } .barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha { background: var(--fundo); }
+  .vidro, .barra, .barra.escuro, .ia-barra, .b-numeros div, .ficha, .ia { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .vidro, .barra, .ia-barra { background: var(--superficie); } .barra.escuro, .ia-barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha, .ia { background: var(--fundo); }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .vidro, .barra { background: var(--superficie); } .barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha { background: var(--fundo); }
+  .vidro, .barra, .ia-barra { background: var(--superficie); } .barra.escuro, .ia-barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha, .ia { background: var(--fundo); }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
 <nav class="barra vidro escuro" id="barra" aria-label="Faro">
   <a class="marca" href="#boletim" aria-label="Faro, início"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 436.2 118.3" role="img" aria-label="Faro"><title>Faro</title><path d="M32.96666666666667 23.66666666666667V94.66666666666667H39.96666666666667V63.06666666666667H74.96666666666667V56.46666666666667H39.96666666666667V30.366666666666674H76.76666666666667V23.66666666666667ZM125.96666666666667 94.66666666666667H133.46666666666667L140.96666666666667 73.46666666666667H171.76666666666665L179.26666666666665 94.66666666666667H186.76666666666665L160.96666666666667 23.66666666666667H151.76666666666665ZM143.36666666666667 66.66666666666667 156.36666666666667 29.866666666666674 169.36666666666667 66.66666666666667ZM266.26666666666665 23.66666666666667H240.26666666666668V94.66666666666667H247.26666666666668V65.26666666666667H265.6666666666667C276.76666666666665 65.26666666666667 281.4666666666667 67.76666666666667 282.06666666666666 74.36666666666667L283.8666666666667 94.66666666666667H290.8666666666667L288.9666666666667 73.76666666666667C288.3666666666667 66.56666666666666 284.8666666666667 62.766666666666666 277.76666666666665 61.66666666666667C284.76666666666665 59.76666666666667 290.3666666666667 53.36666666666667 290.3666666666667 44.86666666666667C290.3666666666667 31.66666666666667 281.3666666666667 23.66666666666667 266.26666666666665 23.66666666666667ZM247.26666666666668 58.56666666666667V30.366666666666674H266.26666666666665C277.26666666666665 30.366666666666674 283.1666666666667 35.36666666666667 283.1666666666667 44.66666666666667C283.1666666666667 53.56666666666667 277.06666666666666 58.56666666666667 266.26666666666665 58.56666666666667ZM375.66666666666674 96.26666666666667C395.5666666666667 96.26666666666667 407.5666666666667 82.06666666666666 407.5666666666667 59.26666666666667C407.5666666666667 36.266666666666666 395.5666666666667 22.066666666666663 375.66666666666674 22.066666666666663C355.86666666666673 22.066666666666663 343.7666666666667 36.266666666666666 343.7666666666667 59.26666666666667C343.7666666666667 82.06666666666666 355.86666666666673 96.26666666666667 375.66666666666674 96.26666666666667ZM351.0666666666667 59.26666666666667C351.0666666666667 40.46666666666667 360.36666666666673 28.866666666666674 375.66666666666674 28.866666666666674C391.0666666666667 28.866666666666674 400.36666666666673 40.46666666666667 400.36666666666673 59.26666666666667C400.36666666666673 77.96666666666667 391.0666666666667 89.46666666666667 375.66666666666674 89.46666666666667C360.36666666666673 89.46666666666667 351.0666666666667 77.96666666666667 351.0666666666667 59.26666666666667Z" fill="currentColor"/></svg></a>
   <span class="barra-data" id="banda-data">São Paulo</span>
-  <a class="barra-acao" href="#pergunta">Perguntar</a>
+  <button type="button" class="barra-acao" id="abrir-ia">Perguntar</button>
 </nav>
 <header class="heroi" id="boletim" aria-label="Boletim do dia">
-  <canvas id="cidade" aria-hidden="true"></canvas>
   <div class="heroi-in">
     <p class="rotulo" id="b-rotulo">Boletim do dia</p>
     <h1 id="b-titulo">Carregando o boletim…</h1>
     <p class="b-resumo" id="b-resumo"></p>
+  </div>
+  <div class="cidade"><canvas id="cidade" aria-hidden="true"></canvas><p class="heroi-legenda"><i aria-hidden="true"></i>Cada ponto é um prédio HIS/HMP com alvará. Os anéis são os imóveis deste boletim.</p></div>
+  <div class="heroi-base">
     <div class="b-numeros" id="b-numeros"></div>
-    <p class="heroi-legenda"><i aria-hidden="true"></i>Cada luz é um prédio HIS/HMP com alvará. Os anéis marcam os imóveis do boletim de hoje.</p>
   </div>
 </header>
 <div class="wrap">
@@ -314,26 +339,10 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     <details class="b-historico" id="b-historico" hidden><summary>Boletins anteriores</summary><div id="b-lista"></div></details>
   </section>
 
-  <section class="pergunta" id="pergunta" aria-label="Pergunte ao Faro">
-    <h2>Pergunte ao Faro</h2>
-    <form id="form-pergunta">
-      <input id="q" autocomplete="off" placeholder="Ex.: o que saiu de novo em Itaquera?" aria-label="Sua pergunta">
-      <button id="mic" class="mic" type="button" hidden aria-label="Falar a pergunta">Falar</button>
-      <button class="btn-prim" type="submit">Perguntar</button>
-    </form>
-    <div class="sugestoes" id="sugestoes">
-      <button type="button">O que saiu de novo este mês?</button>
-      <button type="button">Revendas com lucro na Zona Leste</button>
-      <button type="button">Quais prédios venderam acima do teto?</button>
-      <button type="button">Comprei HIS por 200 mil em 2010 e hoje vale 1 milhão. Foi bom?</button>
-    </div>
-    <div class="resposta" id="resposta" aria-live="polite"></div>
-  </section>
-
-  <section aria-label="Hoje no radar">
-    <h2>Destaques da base</h2>
+  <section id="destaques-sec" aria-label="Destaques">
+    <h2>Destaques</h2>
     <div class="abas" role="tablist" id="abas">
-      <button role="tab" data-aba="novos" aria-selected="true">Prédios novos</button>
+      <button role="tab" data-aba="novos" aria-selected="true">Novos</button>
       <button role="tab" data-aba="revendas" aria-selected="false">Revendas</button>
       <button role="tab" data-aba="maiores_ganhos" aria-selected="false">Maiores ganhos</button>
       <button role="tab" data-aba="acima_teto" aria-selected="false">Acima do teto</button>
@@ -343,8 +352,8 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     <button type="button" class="mais" id="destaques-mais">Ver mais</button>
   </section>
 
-  <section class="explorar" aria-label="Explorar">
-    <h2>Explorar por região</h2>
+  <section class="explorar" id="mapa-sec" aria-label="Mapa">
+    <h2>Mapa</h2>
     <div class="filtros">
       <label class="busca">Endereço ou bairro<input id="f-busca" placeholder="Rua, número ou bairro"></label>
       <label>Distrito<select id="f-dist"><option value="">Todos</option></select></label>
@@ -361,7 +370,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
       <div class="legenda">
         <span><i style="background:var(--his)"></i>Só HIS</span>
         <span><i style="background:var(--hmp)"></i>Com HMP</span>
-        <span><i style="background:var(--misto)"></i>Com unidades de mercado livre</span>
+        <span><i style="background:var(--misto)"></i>Com unidades de mercado</span>
       </div>
     </div>
     <p class="nota" id="explorar-nota"></p>
@@ -370,7 +379,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
   </section>
 
   <details class="calc" id="calc-box">
-    <summary>Calcular: foi um bom negócio? (antes × agora)</summary>
+    <summary>Antes × agora: foi um bom negócio?</summary>
     <form id="calc" class="campos" novalidate>
       <label>Valor de compra (R$)<input id="c-valor0" inputmode="numeric" value="200.000"></label>
       <label>Mês da compra<input id="c-mes0" type="month" value="2010-01" min="2006-01"></label>
@@ -384,12 +393,31 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
   </details>
 
   <footer>
-    <span>Fontes: alvarás HIS/HMP do GeoSampa (Prefeitura de São Paulo), guias de ITBI pagas (Secretaria da Fazenda), IPCA e CDI (Banco Central), Decretos 64.244/2025 e 64.895/2026.</span>
-    <span>Os dados públicos não trazem nome nem telefone de proprietários. Os botões de cada ficha levam aos caminhos legais para chegar a quem vende, à incorporadora e ao dono.</span>
-    <span>Inteligência de mercado: não substitui consulta jurídica nem a certidão de matrícula.</span>
+    <span>Fontes oficiais: alvarás HIS/HMP do GeoSampa (Prefeitura de São Paulo), guias de ITBI pagas (Secretaria da Fazenda), IPCA e CDI (Banco Central), Decretos 64.244/2025 e 64.895/2026.</span>
+    <span>Os dados públicos não trazem nome nem telefone de proprietário. Cada ficha mostra o caminho legal para chegar a quem vende, à incorporadora e ao dono. Não substitui consulta jurídica nem a certidão de matrícula.</span>
   </footer>
 </div>
 
+<button type="button" class="ia-barra vidro escuro" id="ia-barra" aria-label="Pergunte ao Faro"><span class="ia-ponto" aria-hidden="true"></span><b>Pergunte ao Faro</b><span class="dica">contatos, preços, revendas, onde achar</span></button>
+<aside class="ia" id="ia" hidden aria-label="Pergunte ao Faro">
+  <div class="ia-cab"><div><b>Pergunte ao Faro</b><span class="nota">Busca nos dados oficiais e mostra os prédios com os contatos.</span></div><button type="button" id="ia-fechar">Fechar</button></div>
+  <div class="ia-corpo" id="ia-corpo">
+    <div class="sugestoes" id="sugestoes">
+      <p>Experimente</p>
+      <button type="button">O que saiu de novo este mês?</button>
+      <button type="button">Revendas com lucro na Zona Leste</button>
+      <button type="button">Quais prédios venderam acima do teto?</button>
+      <button type="button">Comprei HIS por 200 mil em 2010 e hoje vale 1 milhão. Foi bom?</button>
+      <button type="button">Onde vejo o mapa?</button>
+    </div>
+    <div class="resposta" id="resposta" aria-live="polite"></div>
+  </div>
+  <form id="form-pergunta" class="ia-form">
+    <input id="q" autocomplete="off" placeholder="Pergunte sobre imóveis HIS em SP" aria-label="Sua pergunta">
+    <button id="mic" class="mic" type="button" hidden aria-label="Falar a pergunta">Falar</button>
+    <button class="btn-prim" type="submit">Enviar</button>
+  </form>
+</aside>
 <div class="fundo" id="fundo" hidden></div>
 <aside class="ficha" id="ficha" hidden aria-label="Ficha do imóvel"></aside>
 
@@ -537,7 +565,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
   function cartaoEmp(e, linha) {
     const s = e.itbi, tags = [];
     tags.push(`<span class="tag">${num.format(unidades(e))} unidades</span>`);
-    if (s.n_revendas) tags.push(`<span class="tag">${num.format(s.n_revendas)} revendas</span>`);
+    if (s.n_revendas) tags.push(`<span class="tag">${num.format(s.n_revendas)} ${s.n_revendas === 1 ? "revenda" : "revendas"}</span>`);
     if (s.n_com_revenda && s.med_var_real != null) tags.push(`<span class="tag ${s.med_var_real >= 0 ? "bom" : "aviso"}">${vsInfl(s.med_var_real)}</span>`);
     if (s.n_acima_teto) tags.push(`<span class="tag ruim">${s.n_acima_teto} acima do teto</span>`);
     return `<button type="button" class="cartao" data-id="${esc(e.id)}">
@@ -545,20 +573,20 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
       <span class="s">${esc(e.dist)} · alvará de ${dataBR(e.def1)}${s.med_venda ? ` · venda típica ${brl.format(s.med_venda)}` : ""}</span>
       ${linha ? `<span class="v">${linha}</span>` : ""}
       <span class="tags">${tags.join("")}</span>
-      <span class="ir">Ver contatos e detalhes →</span>
+      <span class="ir">Ver contatos ›</span>
     </button>`;
   }
   const LINHA = {
     novos: (d) => `Alvará novo em ${dataBR(d.data)}: ${[d.his1 && `${d.his1} HIS-1`, d.his2 && `${d.his2} HIS-2`, d.hmp && `${d.hmp} HMP`].filter(Boolean).join(" · ") || "unidades não informadas"}`,
-    revendas: (d) => `<b>${esc(d.un)}</b>: comprou por ${brl.format(d.v0)} (${mesAno(d.d0)}) e revendeu por ${brl.format(d.v1)} (${mesAno(d.d1)}) · <b style="color:${d.real >= 0 ? "var(--good)" : "var(--bad)"}">${vsInfl(d.real)}</b>`,
+    revendas: (d) => `<b>${esc(d.un)}</b>: comprada por ${brl.format(d.v0)} (${mesAno(d.d0)}), revendida por ${brl.format(d.v1)} (${mesAno(d.d1)}) · <b style="color:${d.real >= 0 ? "var(--good)" : "var(--bad)"}">${vsInfl(d.real)}</b>`,
     maiores_ganhos: (d) => `<b>${esc(d.un)}</b>: ${brl.format(d.v0)} (${mesAno(d.d0)}) → ${brl.format(d.v1)} (${mesAno(d.d1)}) · <b style="color:var(--good)">${vsInfl(d.real)}</b>`,
     acima_teto: (d) => `<b>${esc(d.un)}</b> vendida por ${brl.format(d.valor)} em ${dataBR(d.data)} · teto ${d.categoria} ${brl.format(d.teto)} · <b style="color:var(--bad)">${brl.format(d.valor - d.teto)} acima</b>`,
   };
   const NOTA = {
-    novos: () => `Alvarás mais recentes publicados pela Prefeitura (último em ${dataBR(META.ultimo_deferimento)}).`,
-    revendas: () => "Unidades revendidas mais recentemente, com o ganho já descontada a inflação.",
-    maiores_ganhos: () => "Maiores ganhos acima da inflação entre unidades mantidas por pelo menos 1 ano.",
-    acima_teto: () => "Vendas registradas acima do teto legal, desde que ele passou a valer (28/05/2025), em prédios 100% HIS/HMP. Pode ser erro de cadastro: confira antes de agir.",
+    novos: () => `Alvarás mais recentes da Prefeitura. Último em ${dataBR(META.ultimo_deferimento)}.`,
+    revendas: () => "Revendas mais recentes. O ganho já desconta a inflação (IPCA).",
+    maiores_ganhos: () => "Maiores ganhos acima da inflação, em unidades mantidas por 1 ano ou mais.",
+    acima_teto: () => "Vendas acima do teto de preço da lei desde 28/05/2025, em prédios 100% HIS/HMP. Pode ser erro de cadastro: confira a matrícula.",
   };
   let abaAtual = "novos", abaQtd = 6;
   function desenharDestaques() {
@@ -581,7 +609,7 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     if (pontos) { const ids = new Set(explorados.map((e) => e.id)); pontos.attr("display", (e) => ids.has(e.id) ? null : "none"); }
   }
   function desenharExplorar() {
-    $("explorar-nota").textContent = `${num.format(explorados.length)} prédios. Toque num ponto do mapa ou num cartão.`;
+    $("explorar-nota").textContent = `${num.format(explorados.length)} prédios. Toque num ponto ou num cartão para ver os contatos.`;
     $("lista").innerHTML = explorados.slice(0, expQtd).map((e) => cartaoEmp(e)).join("") || '<p class="vazio">Nenhum prédio com esses filtros.</p>';
     $("lista-mais").hidden = expQtd >= explorados.length;
   }
@@ -618,17 +646,17 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
         <button type="button" id="fechar" aria-label="Fechar">Fechar</button></div>
       <div class="acoes">
         <a class="acao prim" target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent(`"${rn}" São Paulo apartamento à venda`)}"><b>Achar quem vende</b><span>Anúncios, stand e incorporadora</span></a>
-        <a class="acao prim" target="_blank" rel="noopener" href="${linkWhats(e)}"><b>Mandar no WhatsApp</b><span>Resumo com link desta ficha</span></a>
+        <a class="acao prim" target="_blank" rel="noopener" href="${linkWhats(e)}"><b>Enviar no WhatsApp</b><span>Resumo e link desta ficha</span></a>
         <a class="acao" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${e.lat},${e.lon}"><b>Ver no mapa</b><span>Google Maps</span></a>
-        <a class="acao" target="_blank" rel="noopener" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${e.lat},${e.lon}"><b>Ver a fachada</b><span>Street View: placa do stand</span></a>
+        <a class="acao" target="_blank" rel="noopener" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${e.lat},${e.lon}"><b>Ver a fachada</b><span>Street View: placa e stand</span></a>
       </div>
       <div class="bloco">
-        <h3>Quem procurar</h3>
-        <div><b>Incorporadora ou dono da obra</b><p class="nota">O processo do alvará na Prefeitura identifica quem pediu a obra.</p>
+        <h3>Contatos</h3>
+        <div><b>Incorporadora</b><p class="nota">Quem pediu o alvará. O nome está no processo da Prefeitura.</p>
           <div class="reg-linha"><span>Processo <b>${esc(alv[3] || "—")}</b></span>
           ${alv[3] ? `<button type="button" class="copiar" data-copiar="${esc(alv[3])}">Copiar</button>` : ""}
-          <a target="_blank" rel="noopener" href="https://processos.prefeitura.sp.gov.br/Forms/consultarProcessos.aspx">Abrir consulta da Prefeitura</a></div></div>
-        <div><b>Dono de uma unidade</b><p class="nota">Cada unidade abaixo mostra cartório e matrícula. A certidão de matrícula (paga, online) traz o nome do proprietário.</p></div>
+          <a target="_blank" rel="noopener" href="https://processos.prefeitura.sp.gov.br/Forms/consultarProcessos.aspx">Consultar processo</a></div></div>
+        <div><b>Dono de uma unidade</b><p class="nota">A certidão de matrícula (paga, pela internet) traz o nome. Cartório e matrícula de cada unidade estão abaixo.</p></div>
       </div>
       <div class="numeros">
         <div><b>${num.format(unidades(e))}</b><span>unidades HIS/HMP</span></div>
@@ -636,26 +664,26 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
         <div><b>${s.n_com_revenda && s.med_var_real != null ? pct(s.med_var_real) : "—"}</b><span>ganho real típico</span></div>
       </div>
       <p class="nota">HIS-1: ${num.format(e.his1)} · HIS-2: ${num.format(e.his2)} · HMP: ${num.format(e.hmp)} · Categorias no alvará: ${esc(e.cat || "não informadas")} · Alvará ${esc(alv[0] || "")}, ${dataBR(e.def1)}.</p>
-      <div class="bloco" id="ficha-unidades"><h3>Unidades vendidas</h3><p class="vazio">Carregando vendas…</p></div>`;
+      <div class="bloco" id="ficha-unidades"><h3>Vendas</h3><p class="vazio">Carregando…</p></div>`;
     $("fundo").hidden = false; f.hidden = false; f.scrollTop = 0; $("fechar").focus();
     const tx = await transacoes(id);
     if (f.hidden || fichaAtual !== id) return;
     const us = unidadesDe(tx);
     const terreno = s.terreno ? `<p class="nota">Compra do terreno registrada: ${brl.format(s.terreno[1])} em ${dataBR(s.terreno[0])}.</p>` : "";
-    $("ficha-unidades").innerHTML = `<h3>Unidades vendidas (${num.format(us.length)})</h3>${terreno}` + (us.length ? us.slice(0, 15).map((u) => `
+    $("ficha-unidades").innerHTML = `<h3>Vendas por unidade (${num.format(us.length)})</h3>${terreno}` + (us.length ? us.slice(0, 15).map((u) => `
       <div class="unidade">
         <span class="u">${esc(u.nome)}</span>
         <span>${u.revenda
-          ? `Comprou por ${brl.format(u.compra[1])} (${mesAno(u.compra[0])}) e revendeu por ${brl.format(u.revenda[1])} (${mesAno(u.revenda[0])}) · <b style="color:${u.real >= 0 ? "var(--good)" : "var(--bad)"}">${vsInfl(u.real)}</b>`
+          ? `Comprada por ${brl.format(u.compra[1])} (${mesAno(u.compra[0])}), revendida por ${brl.format(u.revenda[1])} (${mesAno(u.revenda[0])}) · <b style="color:${u.real >= 0 ? "var(--good)" : "var(--bad)"}">${vsInfl(u.real)}</b>`
           : `Vendida por ${brl.format(u.compra[1])} em ${dataBR(u.compra[0])}${u.compra[6] ? ' · <span class="tag ruim">acima do teto</span>' : ""}`}</span>
         <span class="reg">${u.cartorio ? `${u.cartorio}º Registro de Imóveis` : "Cartório não informado"} · matrícula ${esc(u.matricula || "—")}
           ${u.matricula ? `<button type="button" class="copiar" data-copiar="Matrícula ${esc(u.matricula)} - ${u.cartorio}º Registro de Imóveis de São Paulo">Copiar</button>` : ""}
           <a target="_blank" rel="noopener" href="https://registradores.onr.org.br/">Pedir certidão</a></span>
       </div>`).join("") + (us.length > 15 ? `<p class="nota">Mostrando as 15 unidades com movimento mais recente.</p>` : "")
-      : '<p class="vazio">Nenhuma venda deste endereço no ITBI ainda. Prédios novos aparecem quando as unidades são entregues e registradas.</p>');
+      : '<p class="vazio">Ainda sem vendas no ITBI. Prédios novos aparecem quando as unidades são entregues e registradas.</p>');
   }
   function fecharFicha() {
-    $("ficha").hidden = true; $("fundo").hidden = true; fichaAtual = null;
+    $("ficha").hidden = true; if ($("ia").hidden) $("fundo").hidden = true; fichaAtual = null;
     try { history.replaceState(null, "", location.pathname + location.search); } catch {}
   }
 
@@ -680,18 +708,29 @@ footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border
     { name: "calcular_investimento", description: "Antes × agora: valor e mês de compra (AAAA-MM), valor atual e mês atual (opcional). Para HIS, passe categoria (HIS-1, HIS-2, HMP) e mês do habite-se. Retorna valorização, valor corrigido pela inflação (IPCA), ganho real, quanto daria no CDI e a situação do prazo de 10 anos e do teto.",
       inputSchema: { type: "object", properties: { valor_compra: { type: "number" }, mes_compra: { type: "string" }, valor_atual: { type: "number" }, mes_atual: { type: "string" }, categoria: { type: "string", enum: ["HIS-1", "HIS-2", "HMP"] }, mes_habite_se: { type: "string" } }, required: ["valor_compra", "mes_compra", "valor_atual"] },
       execute: (i) => { const r = calcular(i); cartoesResposta.push({ calculo: r }); const { classe, ...resto } = r; return resto; } },
+    { name: "ir_para", description: "Leva a pessoa a uma parte do app: 'boletim' (o boletim do dia), 'destaques' (novos, revendas, maiores ganhos, acima do teto), 'mapa' (mapa e busca por região) ou 'calculadora' (antes × agora). Fecha o painel e rola a página.",
+      inputSchema: { type: "object", properties: { secao: { type: "string", enum: ["boletim", "destaques", "mapa", "calculadora"] } }, required: ["secao"] },
+      execute: (i) => { setTimeout(() => irPara(i.secao), 900); return { ok: true, secao: i.secao }; } },
   ];
+  function irPara(secao) {
+    const alvo = { boletim: "boletim", destaques: "destaques-sec", mapa: "mapa-sec", calculadora: "calc-box" }[secao];
+    if (!alvo) return; fecharIA();
+    if (secao === "calculadora") $("calc-box").open = true;
+    $(alvo).scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  function abrirIA() { $("ia").hidden = false; $("fundo").hidden = false; $("ia-barra").hidden = true; setTimeout(() => $("q").focus(), 50); }
+  function fecharIA() { $("ia").hidden = true; $("ia-barra").hidden = false; if ($("ficha").hidden) $("fundo").hidden = true; }
   function instrucoes() {
     const t = META.tetos?.[META.tetos.length - 1]?.valores || {};
-    return `Você é o Faro, assistente de inteligência imobiliária do Diogo, que acompanha imóveis HIS e HMP em São Paulo para prospectar negócios. Responda em português do Brasil, em até 5 frases curtas, com números, e diga o que ele pode fazer em seguida. Use as ferramentas para buscar dados; nunca invente imóvel, valor, nome ou telefone. Os prédios que você buscar aparecem como cartões abaixo da sua resposta, com botões para achar quem vende, ver a fachada, mandar no WhatsApp e pedir a certidão da matrícula; mencione isso quando ajudar.
+    return `Você é o Faro, assistente de inteligência imobiliária do Diogo, que acompanha imóveis HIS e HMP em São Paulo para prospectar negócios. Responda em português do Brasil, em até 5 frases curtas, com números, e diga o que ele pode fazer em seguida. Use as ferramentas para buscar dados; nunca invente imóvel, valor, nome ou telefone. Os prédios que você buscar aparecem como cartões abaixo da sua resposta; tocar num cartão abre a ficha com os contatos (quem vende, incorporadora, matrícula). Se a pessoa quiser ir a uma parte do app (boletim, destaques, mapa, calculadora), use ir_para.
 Dados: alvarás HIS/HMP da Prefeitura de ${dataBR(META.geosampa_atualizacao)} (último alvará ${dataBR(META.ultimo_deferimento)}); vendas do ITBI de 2006 até ${META.itbi_ultimo_mes}; IPCA e CDI até ${META.cdi_ultimo}. Os dados públicos não têm nome nem telefone de proprietário; para o dono, o caminho é a certidão de matrícula (paga); para a incorporadora, o processo do alvará.
 Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R$ 16.210. Teto de venda HIS-1 ${brl.format(t["HIS-1"] || 0)}, HIS-2 ${brl.format(t["HIS-2"] || 0)}, HMP ${brl.format(t["HMP"] || 0)} (vale desde 28/05/2025). Nos 10 anos após o habite-se, só pode vender ou alugar para família com renda na faixa e até o teto; locação por temporada é proibida. Não sugira comprar HIS como investimento para quem não tem renda na faixa. Hoje é ${new Date().toLocaleDateString("pt-BR")}. Zonas: leste, sul, norte, oeste e centro podem ser passadas em 'distrito'.`;
   }
   let tts = null, ditado = null, controle = null;
   async function perguntar(pergunta) {
     pergunta = pergunta.trim(); if (!pergunta) return;
-    const box = $("resposta"); cartoesResposta = [];
-    box.innerHTML = `<p class="estado" id="estado">Pensando…</p><div class="texto" id="texto"></div><div class="cartoes" id="cartoes-resposta"></div>`;
+    const box = $("resposta"); cartoesResposta = []; $("sugestoes").hidden = true; $("q").value = "";
+    box.innerHTML = `<p class="pergunta-feita">${esc(pergunta)}</p><p class="estado" id="estado">Procurando nos dados…</p><div class="texto" id="texto"></div><div class="cartoes" id="cartoes-resposta"></div>`;
     const sample = await usar("sample");
     if (sample) {
       controle?.abort(); controle = new AbortController();
@@ -720,12 +759,14 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
     }
     $("cartoes-resposta").innerHTML = html.join("");
     if (tts && texto) {
-      $("resposta").insertAdjacentHTML("beforeend", `<div class="linha-acoes"><button type="button" id="ouvir">🔊 Ouvir resposta</button></div>`);
+      $("resposta").insertAdjacentHTML("beforeend", `<div class="linha-acoes"><button type="button" id="ouvir">Ouvir resposta</button></div>`);
       $("ouvir").onclick = () => tts.speak(texto.slice(0, 2000), { language: "pt-BR" }).catch(() => {});
     }
   }
   function respostaLocal(p) {
     const t = normal(p);
+    const nav = /\b(onde|como|ir|abrir|ver|mostrar)\b/.test(t) && [["mapa", /mapa|regiao|explorar/], ["calculadora", /calcul|antes|bom negocio/], ["destaques", /destaque/], ["boletim", /boletim/]].find(([, r]) => r.test(t));
+    if (nav) { $("texto").textContent = { mapa: "Abrindo o mapa. Filtre por distrito ou endereço e toque num ponto para ver os contatos.", calculadora: "Abrindo a calculadora antes × agora.", destaques: "Abrindo os destaques: novos, revendas, maiores ganhos e acima do teto.", boletim: "Voltando ao boletim do dia." }[nav[0]]; setTimeout(() => irPara(nav[0]), 900); return; }
     const valores = [...t.matchAll(/(\d+(?:[.,]\d+)?)\s*(mil|milhao|milhoes|mi|k)\b/g)].map((m) => parseFloat(m[1].replace(",", ".")) * (m[2].startsWith("mil") && m[2] !== "milhao" && m[2] !== "milhoes" ? 1e3 : m[2] === "k" ? 1e3 : 1e6));
     const anos = [...t.matchAll(/\b(19[9]\d|20[0-2]\d)\b/g)].map((m) => m[1]);
     const dist = acharDistritos(p), filtroDist = dist.size ? [...dist][0] : null;
@@ -738,17 +779,18 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       } catch (e) { texto = e.message; }
     } else {
       if (/teto|irregular|acima/.test(t)) tipo = "acima_teto";
-      else if (/ganho|lucro|valoriz|revend/.test(t)) tipo = /maior|melhor|top/.test(t) ? "maiores_ganhos" : "revendas";
+      else if (/ganho|lucro|valoriz|melhor|maior/.test(t)) tipo = "maiores_ganhos";
+      else if (/revend/.test(t)) tipo = "revendas";
       else if (/novo|saiu|lancament|alvara|semana|mes/.test(t)) tipo = "novos";
       if (tipo) {
         const l = (DEST[tipo] || []).filter((d) => !dist.size || dist.has(normal(d.dist))).slice(0, 6);
         l.forEach((d) => cartoesResposta.push({ id: d.id, tipo, d }));
-        texto = l.length ? `${{ novos: "Alvarás mais recentes", revendas: "Revendas mais recentes", maiores_ganhos: "Maiores ganhos", acima_teto: "Vendas acima do teto" }[tipo]}${dist.size ? " na região que você pediu" : ""}: ${l.length} resultado(s) abaixo. Toque num cartão para ver quem procurar.`
+        texto = l.length ? `${{ novos: "Alvarás mais recentes", revendas: "Revendas mais recentes", maiores_ganhos: "Maiores ganhos", acima_teto: "Vendas acima do teto" }[tipo]}${dist.size ? " na região que você pediu" : ""}: ${l.length === 1 ? "1 resultado" : l.length + " resultados"} abaixo. Toque num cartão para ver os contatos.`
           : "Não achei destaques recentes nessa região. Tente outra região ou use Explorar.";
       } else {
         const r = buscar({ texto: dist.size ? "" : p, distrito: filtroDist || "", ordenar: "recentes", limite: 6 });
         r.lista.forEach((e) => cartoesResposta.push({ id: e.id }));
-        texto = r.total ? `Achei ${num.format(r.total)} prédio(s). Os mais recentes estão abaixo.` : "Não achei prédios com isso. Tente o nome de um bairro ou distrito.";
+        texto = r.total ? `Achei ${num.format(r.total)} ${r.total === 1 ? "prédio" : "prédios"}. Os mais recentes estão abaixo.` : "Não achei prédios com isso. Tente o nome de um bairro ou distrito.";
       }
     }
     $("texto").textContent = texto;
@@ -806,8 +848,11 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
     const cp = ev.target.closest("[data-copiar]"); if (cp) copiar(cp.dataset.copiar, cp);
   });
   $("ficha").addEventListener("click", (ev) => { if (ev.target.id === "fechar") fecharFicha(); });
-  $("fundo").addEventListener("click", fecharFicha);
-  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !$("ficha").hidden) fecharFicha(); });
+  $("fundo").addEventListener("click", () => { if (!$("ficha").hidden) fecharFicha(); else fecharIA(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key !== "Escape") return; if (!$("ficha").hidden) fecharFicha(); else if (!$("ia").hidden) fecharIA(); });
+  $("abrir-ia").addEventListener("click", abrirIA);
+  $("ia-barra").addEventListener("click", abrirIA);
+  $("ia-fechar").addEventListener("click", fecharIA);
   window.addEventListener("hashchange", () => { const m = location.hash.match(/^#imovel-([A-Za-z0-9-]+)$/); if (m) abrirFicha(m[1]); });
   $("form-pergunta").addEventListener("submit", (ev) => { ev.preventDefault(); perguntar($("q").value); });
   $("sugestoes").addEventListener("click", (ev) => { const b = ev.target.closest("button"); if (b) { $("q").value = b.textContent; perguntar(b.textContent); } });
@@ -838,18 +883,18 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
   function cidade(distritos) {
     const cv = $("cidade"); if (!cv || !cv.getContext) return;
     const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const LAT0 = -23.60, LON0 = -46.60, COS = Math.cos(LAT0 * Math.PI / 180);
-    let base, W, H, dpr, proj, fortes = [], quadro = 0, visivel = true, animando = false;
+    const LAT0 = -23.57, LON0 = -46.60, COS = Math.cos(LAT0 * Math.PI / 180);
+    let base, W, H, dpr, proj, dens = 1, fortes = [], quadro = 0, visivel = true, animando = false;
     const pts = EMPS.filter((e) => e.lat && e.lon).sort((a, b) => String(a.def1 || "").localeCompare(String(b.def1 || "")));
     function medir() {
       dpr = Math.min(2, window.devicePixelRatio || 1);
       W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-      const esc = Math.max(W / (0.46 * COS), H / 0.44);
-      const fy = W < 640 ? 0.8 : 0.62; proj = (lon, lat) => [W * 0.56 + (lon - LON0) * COS * esc, H * fy - (lat - LAT0) * esc];
+      const vao = W < 640 ? 0.26 : 0.5; dens = Math.min(1, Math.max(0.55, W / 1100));
+      const esc = Math.max(W / (vao * COS), H / 0.42);
+      proj = (lon, lat) => [W * 0.5 + (lon - LON0) * COS * esc, H * 0.5 - (lat - LAT0) * esc];
       base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height;
       const b = base.getContext("2d"); b.scale(dpr, dpr);
-      const g = b.createRadialGradient(W * 0.56, H * 0.5, 0, W * 0.56, H * 0.5, Math.hypot(W, H) * 0.6);
-      g.addColorStop(0, "#161B24"); g.addColorStop(1, "#06080B"); b.fillStyle = g; b.fillRect(0, 0, W, H);
+      b.fillStyle = "#06080B"; b.fillRect(0, 0, W, H);
       b.strokeStyle = "rgba(255,255,255,.045)"; b.lineWidth = 1;
       for (const f of distritos.features) {
         const polys = f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [f.geometry.coordinates];
@@ -863,8 +908,8 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       const b = base.getContext("2d"); b.save(); b.globalCompositeOperation = "lighter";
       for (let k = de; k < ate; k++) {
         const e = pts[k], [x, y] = proj(e.lon, e.lat); if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
-        const un = (e.his1 || 0) + (e.his2 || 0) + (e.hmp || 0), r = 0.8 + Math.min(1.6, Math.sqrt(Math.max(un, 1)) / 7);
-        b.shadowColor = "rgba(255,190,120,.95)"; b.shadowBlur = 10; b.fillStyle = `rgba(255,212,160,${0.5 + Math.min(0.45, un / 400)})`;
+        const un = (e.his1 || 0) + (e.his2 || 0) + (e.hmp || 0), r = (0.7 + Math.min(1.5, Math.sqrt(Math.max(un, 1)) / 7)) * dens;
+        b.shadowColor = "rgba(255,190,120,.75)"; b.shadowBlur = 7 * dens; b.fillStyle = `rgba(255,212,160,${(0.42 + Math.min(0.4, un / 400)) * (0.6 + 0.4 * dens)})`;
         b.beginPath(); b.arc(x, y, r, 0, 7); b.fill();
       }
       b.restore();
@@ -890,7 +935,8 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
   // barra de vidro: variante escura sobre a cidade, clara sobre o conteúdo
   function barra() {
     const nav = $("barra"), heroi = $("boletim"); if (!nav || !heroi) return;
-    const ajustar = () => nav.classList.toggle("escuro", heroi.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom + 8);
+    const ia = $("ia-barra");
+    const ajustar = () => { const r = heroi.getBoundingClientRect(); nav.classList.toggle("escuro", r.bottom > nav.getBoundingClientRect().bottom + 8); ia.classList.toggle("escuro", r.bottom > innerHeight - 40); };
     addEventListener("scroll", ajustar, { passive: true }); ajustar();
   }
 

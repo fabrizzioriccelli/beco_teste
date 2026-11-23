@@ -3,8 +3,8 @@
  "tipo": "panorama",
  "assunto": "Faro · 23/11 · o mapa completo: 5.250 prédios HIS/HMP",
  "rotulo": "Boletim de segunda-feira, 23/11/2026",
- "titulo": "O mapa completo, para começar",
- "resumo": "Este é o primeiro boletim. O Faro acompanha 5.250 prédios com alvará HIS/HMP na capital, com 87.582 primeiras vendas e 4.294 revendas registradas no ITBI. A partir de amanhã, chega aqui só o que mudou de um dia para o outro.",
+ "titulo": "O mapa completo",
+ "resumo": "5.250 prédios HIS/HMP com alvará em São Paulo, 87.582 vendas e 4.294 revendas registradas no ITBI. A partir de amanhã, você recebe só o que mudou.",
  "numeros": [
   {
    "valor": "5.250",
@@ -22,7 +22,7 @@
  "secoes": [
   {
    "titulo": "Alvarás mais recentes",
-   "nota": "Últimos publicados pela Prefeitura (até 30/06/2026).",
+   "nota": "Últimos alvarás publicados pela Prefeitura, até 30/06/2026.",
    "itens": [
     {
      "id": "0700820006",
@@ -55,13 +55,13 @@
   },
   {
    "titulo": "Oportunidades do dia",
-   "nota": "Unidades que já valorizaram acima da inflação. Toque para achar quem vende.",
+   "nota": "Unidades que valorizaram acima da inflação. Toque para ver quem procurar.",
    "itens": [
     {
      "id": "0812290004",
      "titulo": "R Cardeal Arcoverde 2004-Pinheiros",
      "contexto": "Pinheiros · AP 907",
-     "detalhe": "Comprou por R$ 340.000 (out/25) e revendeu por R$ 383.000 (set/26).",
+     "detalhe": "Comprada por R$ 340.000 (out/25), revendida por R$ 383.000 (set/26).",
      "destaque": "+8%",
      "destaque_rotulo": "acima da inflação",
      "tom": "ganho"
@@ -70,7 +70,7 @@
      "id": "2991010670",
      "titulo": "Avenida Doutor Cardoso de Melo, 716, Vila Olimpia",
      "contexto": "Itaim Bibi · AP 1105",
-     "detalhe": "Comprou por R$ 320.420 (set/25) e revendeu por R$ 361.308 (set/26).",
+     "detalhe": "Comprada por R$ 320.420 (set/25), revendida por R$ 361.308 (set/26).",
      "destaque": "+8%",
      "destaque_rotulo": "acima da inflação",
      "tom": "ganho"
@@ -79,7 +79,7 @@
      "id": "0100340704",
      "titulo": "Rua Frei Caneca, 651-655, Consolação",
      "contexto": "Bela Vista · AP 304",
-     "detalhe": "Comprou por R$ 297.050 (jan/25) e revendeu por R$ 385.000 (set/26).",
+     "detalhe": "Comprada por R$ 297.050 (jan/25), revendida por R$ 385.000 (set/26).",
      "destaque": "+20%",
      "destaque_rotulo": "acima da inflação",
      "tom": "ganho"
