@@ -45,3 +45,13 @@ Decisões estratégicas irreversíveis (nome, identidade, arquitetura de dados, 
 - **Data:** 21/11/2026
 - **Estado:** Proposta (atende diretamente ao briefing, seção 8.2)
 - **Decisão proposta:** Sem evidência mínima (alvará para empreendimento; matrícula ou tabela oficial conciliada para unidade), o estado é "Classificação não confirmada", visível na interface.
+
+## DEC-0006 — Nome e identidade: Faro
+
+- **Data:** 23/11/2026
+- **Estado:** Proposta (decisão irreversível: depende de aprovação e da busca no INPI)
+- **Contexto:** "BECO" soa negativo (sombrio, perigoso) e "Radar HIS" foi considerado genérico e fraco. A identidade anterior (H de quadra, azul e amarelo) não tinha personalidade.
+- **Decisão proposta:** Nome **Faro** ("ter faro para negócio" e farol). Símbolo: o F como farol, haste Tinta e facho laranja. Paleta Tinta #0F1E46 e Facho #FF5A1F; tipografia Schibsted Grotesk e JetBrains Mono. Base: análise de 24 projetos "real estate" do Behance (Astrix, Alliance, Lumen e Bilge como referências principais).
+- **Alternativas descartadas:** Lastro (proptech existente), Prumo (associado à Prumo Logística), Radar (genérico), BECO (conotação negativa); visual preto e dourado de luxo (padrão dominante do Behance e errado para habitação social).
+- **Consequências:** Site, e-mail e design system já usam Faro. Antes de registrar: busca no INPI (classes 9, 35, 36 e 42) e domínio. A pasta de código continua `11_APPLICATION/radar_his/` para não quebrar a rotina agendada.
+

@@ -1,4 +1,4 @@
-# Radar HIS São Paulo
+# Faro — HIS São Paulo
 
 Relatório de imóveis HIS/HMP na capital, montado só com dados oficiais:
 

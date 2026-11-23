@@ -1,5 +1,22 @@
 # Histórico de versões
 
+## [0.5.0] — 23/11/2026 — Rebrand: Faro
+
+### Alterado
+
+- Nome do produto: **Faro** (proposto; substitui "BECO" e "Radar HIS"). Pendente: busca no INPI e domínio.
+- Identidade nova: o F como farol, com haste Tinta (#0F1E46) e facho laranja (#FF5A1F). Arquivos em `03_BRAND_IDENTITY/faro/` (SVG e PNG).
+- Design system v2.0: paleta Tinta e Facho, Schibsted Grotesk e JetBrains Mono, banda de marca com borda Facho, números do dia em laranja.
+- Site e boletim por e-mail redesenhados com a marca nova; assunto do e-mail passa a ser "Faro · DD/MM · ...".
+
+### Adicionado
+
+- Manual de marca (`03_BRAND_IDENTITY/manual/`), com a análise dos projetos do Behance, o raciocínio do nome, construção do símbolo, cores, tipografia, componentes, aplicações e usos incorretos.
+
+### Arquivado
+
+- Identidade "Radar HIS" (H de quadra) em `03_BRAND_IDENTITY/arquivo/radar-his-v1/`.
+
 ## [0.4.0] — 23/11/2026 — Boletim editorial e benchmark visual
 
 ### Adicionado

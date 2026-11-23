@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Gera os arquivos do logo do Radar HIS (SVG com texto convertido em curvas).
+"""Gera os arquivos da marca Faro (SVG com texto convertido em curvas e PNGs).
 
-Conceito "H de quadra": duas quadras (azul placa) e, entre elas, o lote encontrado
-(amarelo faixa). Juntas formam um H, de HIS e de habitação. Grade de construção 48 x 48.
+Conceito "facho": o F de Faro é desenhado como a haste de um farol (Tinta) com um facho de luz
+(laranja Facho) que sai dela e se abre. "Ter faro" é ter instinto para a oportunidade; o facho é
+o que encontra o imóvel certo antes dos outros. Grade de construção 48 x 48.
 
 Uso:
-  python3 gerar_identidade.py --fontes PASTA_COM_FONTSOURCE --saida logo/
-Requer: fonttools. As fontes são Archivo (800) e IBM Plex Mono (500), licença OFL.
+  python3 gerar_identidade.py --fontes PASTA_COM_FONTSOURCE --saida faro/
+Requer fonttools. Fontes: Schibsted Grotesk 900 e JetBrains Mono 500 (licença OFL).
 """
 import argparse
 import pathlib
@@ -15,24 +16,22 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 
-COR = {
-    "placa": "#1F3F8B", "faixa": "#F2B705", "asfalto": "#171C1B",
-    "concreto": "#EFF0EC", "papel": "#FFFFFF", "placa_clara": "#9DB8F2",
-}
-GRADE = 48
-QUADRA_ESQ = (0, 0, 15, 48)    # x, y, largura, altura
-QUADRA_DIR = (33, 0, 15, 48)
-LOTE = (17, 17, 14, 14)        # área de proteção do logo = 1 lote (14 unidades)
+COR = {"tinta": "#0F1E46", "facho": "#FF5A1F", "nevoa": "#D9E4F5", "gelo": "#F5F7FB", "papel": "#FFFFFF", "grafite": "#4B5875"}
+
+# Geometria do símbolo na grade 48 x 48
+HASTE = (6, 6, 11, 36)                         # x, y, largura, altura
+FACHO = [(19, 10.5), (46, 1), (46, 20), (19, 15.5)]  # separado da haste por 2: luz que sai do farol, abre de 5 para 19
+BRACO = (17, 23, 16, 8)
+PROTECAO = 8                                   # área de proteção = altura do braço
 
 
-def simbolo(cor_quadra, cor_lote, x=0.0, y=0.0, escala=1.0, solido=False):
-    s = escala
-    rects = []
-    for (rx, ry, rw, rh), cor in [(QUADRA_ESQ, cor_quadra), (QUADRA_DIR, cor_quadra), (LOTE, cor_lote)]:
-        if solido and cor == cor_lote:  # versão favicon: sem ruas em volta do lote
-            rx, rw = 15, 18
-        rects.append(f'<rect x="{x + rx * s:.2f}" y="{y + ry * s:.2f}" width="{rw * s:.2f}" height="{rh * s:.2f}" fill="{cor}"/>')
-    return "".join(rects)
+def simbolo(cor_haste, cor_facho, x=0.0, y=0.0, s=1.0):
+    hx, hy, hw, hh = HASTE
+    bx, by, bw, bh = BRACO
+    pts = " ".join(f"{x + px * s:.2f},{y + py * s:.2f}" for px, py in FACHO)
+    return (f'<rect x="{x + hx * s:.2f}" y="{y + hy * s:.2f}" width="{hw * s:.2f}" height="{hh * s:.2f}" fill="{cor_haste}"/>'
+            f'<polygon points="{pts}" fill="{cor_facho}"/>'
+            f'<rect x="{x + bx * s:.2f}" y="{y + by * s:.2f}" width="{bw * s:.2f}" height="{bh * s:.2f}" fill="{cor_haste}"/>')
 
 
 class Texto:
@@ -41,11 +40,9 @@ class Texto:
         self.glifos = self.fonte.getGlyphSet()
         self.cmap = self.fonte.getBestCmap()
         self.upm = self.fonte["head"].unitsPerEm
-        self.cap = getattr(self.fonte["OS/2"], "sCapHeight", 0) or int(self.upm * 0.7)
 
-    def caminho(self, texto, x, linha_base, altura_cap, rastreio=0.0):
-        """Path SVG do texto, com a altura das maiúsculas = altura_cap. Retorna (d, largura)."""
-        esc = altura_cap / self.cap
+    def caminho(self, texto, x, linha_base, corpo, rastreio=0.0):
+        esc = corpo / self.upm
         pen = SVGPathPen(self.glifos)
         cursor = 0.0
         for ch in texto:
@@ -53,13 +50,12 @@ class Texto:
             if nome is None:
                 continue
             g = self.glifos[nome]
-            tp = TransformPen(pen, (esc, 0, 0, -esc, x + cursor, linha_base))
-            g.draw(tp)
-            cursor += g.width * esc + rastreio * altura_cap
-        return pen.getCommands(), cursor - rastreio * altura_cap
+            g.draw(TransformPen(pen, (esc, 0, 0, -esc, x + cursor, linha_base)))
+            cursor += g.width * esc + rastreio * corpo
+        return pen.getCommands(), cursor - rastreio * corpo
 
 
-def svg(w, h, corpo, titulo):
+def svg(w, h, corpo, titulo="Faro"):
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w:.0f} {h:.0f}" width="{w:.0f}" height="{h:.0f}" role="img" aria-label="{titulo}">'
             f"<title>{titulo}</title>{corpo}</svg>\n")
 
@@ -67,57 +63,50 @@ def svg(w, h, corpo, titulo):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fontes", required=True)
-    ap.add_argument("--saida", default="logo")
+    ap.add_argument("--saida", default="faro")
     a = ap.parse_args()
     fontes, saida = pathlib.Path(a.fontes), pathlib.Path(a.saida)
     saida.mkdir(parents=True, exist_ok=True)
-    marca = Texto(next(fontes.glob("**/archivo-latin-800-normal.woff")))
-    apoio = Texto(next(fontes.glob("**/ibm-plex-mono-latin-500-normal.woff")))
+    marca = Texto(next(fontes.glob("**/schibsted-grotesk-latin-900-normal.woff")))
+    apoio = Texto(next(fontes.glob("**/jetbrains-mono-latin-500-normal.woff")))
 
-    arquivos = {}
-    # Símbolo (versão reduzida)
-    arquivos["simbolo.svg"] = svg(48, 48, simbolo(COR["placa"], COR["faixa"]), "Radar HIS")
-    arquivos["simbolo-negativo.svg"] = svg(48, 48, simbolo(COR["papel"], COR["faixa"]), "Radar HIS")
-    arquivos["simbolo-mono.svg"] = svg(48, 48, simbolo(COR["asfalto"], COR["asfalto"]), "Radar HIS")
-    arquivos["favicon.svg"] = svg(48, 48, simbolo(COR["placa"], COR["faixa"], solido=True), "Radar HIS")
-    # Ícone de aplicativo: símbolo sobre placa, margem de 1 lote
-    icone = f'<rect width="96" height="96" rx="20" fill="{COR["placa"]}"/>' + simbolo(COR["papel"], COR["faixa"], 24, 24, 1.0)
-    arquivos["icone-app.svg"] = svg(96, 96, icone, "Radar HIS")
+    arq = {}
+    arq["simbolo.svg"] = svg(48, 48, simbolo(COR["tinta"], COR["facho"]))
+    arq["simbolo-negativo.svg"] = svg(48, 48, simbolo(COR["papel"], COR["facho"]))
+    arq["simbolo-mono.svg"] = svg(48, 48, simbolo(COR["tinta"], COR["tinta"]))
+    arq["favicon.svg"] = svg(48, 48, f'<rect width="48" height="48" rx="10" fill="{COR["tinta"]}"/>' + simbolo(COR["papel"], COR["facho"], 4, 4, 0.84))
+    arq["icone-app.svg"] = svg(96, 96, f'<rect width="96" height="96" rx="22" fill="{COR["tinta"]}"/>' + simbolo(COR["papel"], COR["facho"], 20, 20, 1.15))
 
-    # Assinatura horizontal: símbolo 48 de altura; maiúsculas com 26; tagline em mono
-    def horizontal(cor_texto, cor_quadra, cor_lote, cor_apoio, tagline=True):
-        d, largura = marca.caminho("Radar HIS", 48 + 14, 30, 26, rastreio=-0.01)
-        partes = [simbolo(cor_quadra, cor_lote), f'<path d="{d}" fill="{cor_texto}"/>']
-        larg_total = 48 + 14 + largura
-        if tagline:
-            d2, l2 = apoio.caminho("INTELIGÊNCIA HIS · SÃO PAULO", 48 + 14, 47, 8.2, rastreio=0.12)
-            partes.append(f'<path d="{d2}" fill="{cor_apoio}"/>')
-            larg_total = max(larg_total, 48 + 14 + l2)
-        return svg(larg_total + 2, 48, "".join(partes), "Radar HIS")
+    def horizontal(cor_texto, cor_haste, cor_facho, cor_tag=None):
+        d, largura = marca.caminho("faro", 48 + 10, 41, 50, rastreio=-0.035)
+        partes = [simbolo(cor_haste, cor_facho), f'<path d="{d}" fill="{cor_texto}"/>']
+        total = 48 + 10 + largura
+        if cor_tag:
+            d2, l2 = apoio.caminho("INTELIGÊNCIA IMOBILIÁRIA", total + 16, 30, 9, rastreio=0.14)
+            partes.append(f'<path d="{d2}" fill="{cor_tag}"/>')
+            total += 16 + l2
+        return svg(total + 2, 48, "".join(partes))
 
-    arquivos["assinatura-horizontal.svg"] = horizontal(COR["asfalto"], COR["placa"], COR["faixa"], "#59625F")
-    arquivos["assinatura-horizontal-negativa.svg"] = horizontal(COR["papel"], COR["papel"], COR["faixa"], "#C9CEC8")
-    arquivos["assinatura-horizontal-mono.svg"] = horizontal(COR["asfalto"], COR["asfalto"], COR["asfalto"], COR["asfalto"])
-    arquivos["assinatura-horizontal-sem-tagline.svg"] = horizontal(COR["asfalto"], COR["placa"], COR["faixa"], "", tagline=False)
+    arq["assinatura.svg"] = horizontal(COR["tinta"], COR["tinta"], COR["facho"])
+    arq["assinatura-negativa.svg"] = horizontal(COR["papel"], COR["papel"], COR["facho"])
+    arq["assinatura-mono.svg"] = horizontal(COR["tinta"], COR["tinta"], COR["tinta"])
+    arq["assinatura-com-descritor.svg"] = horizontal(COR["tinta"], COR["tinta"], COR["facho"], COR["grafite"])
 
-    # Assinatura vertical
-    d, largura = marca.caminho("Radar HIS", 0, 0, 22, rastreio=-0.01)
-    w = max(largura, 96)
-    vert = simbolo(COR["placa"], COR["faixa"], (w - 72) / 2, 0, 1.5) + \
-        f'<g transform="translate({(w - largura) / 2:.2f} 112)"><path d="{d}" fill="{COR["asfalto"]}"/></g>'
-    arquivos["assinatura-vertical.svg"] = svg(w + 2, 118, vert, "Radar HIS")
+    d, largura = marca.caminho("faro", 0, 0, 44, rastreio=-0.035)
+    w = max(largura, 84)
+    arq["assinatura-vertical.svg"] = svg(w + 2, 128, simbolo(COR["tinta"], COR["facho"], (w - 72) / 2, 0, 1.5) +
+                                         f'<g transform="translate({(w - largura) / 2:.2f} 118)"><path d="{d}" fill="{COR["tinta"]}"/></g>')
 
-    # Folha de construção: grade 48, ruas de 2, lote 14 = área de proteção
-    linhas = "".join(f'<line x1="{i * 6}" y1="0" x2="{i * 6}" y2="288" stroke="#D6D9D3" stroke-width=".5"/>'
-                     f'<line x1="0" y1="{i * 6}" x2="288" y2="{i * 6}" stroke="#D6D9D3" stroke-width=".5"/>' for i in range(49))
-    cota = lambda x1, y1, x2, y2, t, tx, ty: (f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#B42318" stroke-width="1"/>'
-                                               f'<text x="{tx}" y="{ty}" font-family="monospace" font-size="9" fill="#B42318">{t}</text>')
-    construcao = (f'<rect width="288" height="288" fill="{COR["papel"]}"/>{linhas}' + simbolo(COR["placa"], COR["faixa"], 0, 0, 6) +
-                  cota(0, 294, 90, 294, "15", 40, 306) + cota(90, 294, 102, 294, "2", 92, 306) +
-                  cota(102, 294, 186, 294, "14 = lote = área de proteção", 104, 306))
-    arquivos["construcao.svg"] = svg(288, 312, construcao, "Construção do símbolo Radar HIS")
-
-    for nome, conteudo in arquivos.items():
+    # Folha de construção
+    grade = "".join(f'<line x1="{i * 6}" y1="0" x2="{i * 6}" y2="288" stroke="#D5DCE8" stroke-width=".5"/>'
+                    f'<line x1="0" y1="{i * 6}" x2="288" y2="{i * 6}" stroke="#D5DCE8" stroke-width=".5"/>' for i in range(49))
+    raios = (f'<line x1="{17 * 6}" y1="{12.5 * 6}" x2="288" y2="{-1 * 6}" stroke="{COR["facho"]}" stroke-dasharray="4 4" stroke-width="1"/>'
+             f'<line x1="{17 * 6}" y1="{12.5 * 6}" x2="288" y2="{23 * 6}" stroke="{COR["facho"]}" stroke-dasharray="4 4" stroke-width="1"/>'
+             f'<circle cx="{17 * 6}" cy="{12.5 * 6}" r="4" fill="none" stroke="{COR["facho"]}"/>')
+    nota = lambda x, y, t: f'<text x="{x}" y="{y}" font-family="monospace" font-size="10" fill="{COR["grafite"]}">{t}</text>'
+    arq["construcao.svg"] = svg(288, 318, f'<rect width="288" height="318" fill="{COR["papel"]}"/>{grade}' + simbolo(COR["tinta"], COR["facho"], 0, 0, 6) + raios +
+                                nota(4, 304, "haste 11 · rua de 2 · facho abre de 5 para 19 · braço 16 x 8") + nota(4, 316, "foco do facho no centro da haste · proteção = 8"))
+    for nome, conteudo in arq.items():
         (saida / nome).write_text(conteudo, encoding="utf-8")
         print(nome)
 

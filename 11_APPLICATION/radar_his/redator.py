@@ -10,12 +10,13 @@ import html
 import json
 import pathlib
 
-COR = {"placa": "#1F3F8B", "faixa": "#F2B705", "asfalto": "#171C1B", "grafite": "#59625F", "meio_fio": "#D6D9D3",
-       "calcada": "#E5E7E2", "concreto": "#EFF0EC", "papel": "#FFFFFF", "ganho": "#1C6B45", "alerta": "#B42318",
-       "alerta_fundo": "#FBE4E1", "placa_clara": "#C9D6F2"}
-FONTE_MARCA = "Archivo, 'Helvetica Neue', Arial, sans-serif"
-FONTE_TEXTO = "'IBM Plex Sans', 'Segoe UI', Arial, sans-serif"
-FONTE_DADO = "'IBM Plex Mono', Menlo, Consolas, monospace"
+# Paleta e tipografia da marca Faro (04_DESIGN_SYSTEM/tokens.css)
+COR = {"tinta": "#0F1E46", "facho": "#FF5A1F", "facho_escuro": "#C2410C", "grafite": "#4B5875", "linha": "#D5DCE8",
+       "calcada": "#E9EEF6", "gelo": "#F5F7FB", "papel": "#FFFFFF", "ganho": "#11795A", "alerta": "#C0262D",
+       "alerta_fundo": "#FCE4E4", "nevoa": "#A9B8DA"}
+FONTE_MARCA = "'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif"
+FONTE_TEXTO = "'Schibsted Grotesk', 'Segoe UI', Arial, sans-serif"
+FONTE_DADO = "'JetBrains Mono', Menlo, Consolas, monospace"
 MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
 DIAS = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
 
@@ -146,7 +147,7 @@ def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
     secoes, vistos, partes = [], set(), []
     if c["primeiro"]:
         tipo, titulo = "panorama", "O mapa completo, para começar"
-        resumo = (f"Este é o primeiro boletim. O Radar acompanha {milhar(t['empreendimentos'])} prédios com alvará HIS/HMP na capital, "
+        resumo = (f"Este é o primeiro boletim. O Faro acompanha {milhar(t['empreendimentos'])} prédios com alvará HIS/HMP na capital, "
                   f"com {milhar(t['vendas'])} primeiras vendas e {milhar(t['revendas'])} revendas registradas no ITBI. "
                   "A partir de amanhã, chega aqui só o que mudou de um dia para o outro.")
         numeros = [{"valor": milhar(t["empreendimentos"]), "rotulo": "prédios HIS/HMP"},
@@ -172,7 +173,7 @@ def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
                    {"valor": str(c["acima_novas"]), "rotulo": "alertas de teto"}]
         if n_alv:
             itens = [_item_alvara(e) for e in c["novos_alvaras"][:5]]
-            secoes.append({"titulo": "Alvarás novos", "nota": "Prédios HIS/HMP licenciados que ainda não estavam no Radar.", "itens": itens})
+            secoes.append({"titulo": "Alvarás novos", "nota": "Prédios HIS/HMP licenciados que ainda não estavam no Faro.", "itens": itens})
             vistos |= {i["id"] for i in itens}
         if c["revendas"]:
             secoes.append({"titulo": "Revendas registradas", "nota": "Unidades que trocaram de dono, com o ganho já descontada a inflação.",
@@ -189,9 +190,9 @@ def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
     falhas = [v["verificacao"] for v in auditoria["verificacoes"] if not v["ok"]]
     dia = data_br(hoje.isoformat())
     if tipo == "panorama":
-        assunto = f"Radar HIS · {dia[:5]} · o mapa completo: {milhar(t['empreendimentos'])} prédios HIS/HMP"
+        assunto = f"Faro · {dia[:5]} · o mapa completo: {milhar(t['empreendimentos'])} prédios HIS/HMP"
     else:
-        assunto = f"Radar HIS · {dia[:5]} · " + (", ".join(partes) if partes else "sem dados novos ontem · 3 oportunidades do dia")
+        assunto = f"Faro · {dia[:5]} · " + (", ".join(partes) if partes else "sem dados novos ontem · 3 oportunidades do dia")
     return {
         "data": hoje.isoformat(), "tipo": tipo, "assunto": assunto,
         "rotulo": f"Boletim de {DIAS[hoje.weekday()]}, {dia}",
@@ -205,37 +206,40 @@ def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
 
 
 # ---------------------------------------------------------------- e-mail
-def logo_html(negativo=False):
-    """Símbolo "H de quadra" em tabela (sem imagem): aparece mesmo com imagens bloqueadas."""
-    cq = COR["papel"] if negativo else COR["placa"]
-    ct = COR["papel"] if negativo else COR["asfalto"]
-    q = f'<td style="width:8px;height:26px;background:{cq};font-size:0;line-height:0">&nbsp;</td>'
-    rua = '<td style="width:1px;font-size:0;line-height:0">&nbsp;</td>'
-    lote = (f'<td style="width:8px;height:26px;vertical-align:middle;font-size:0;line-height:0">'
-            f'<div style="width:8px;height:8px;background:{COR["faixa"]};font-size:0;line-height:0">&nbsp;</div></td>')
-    return (f'<table role="presentation" cellspacing="0" cellpadding="0"><tr>{q}{rua}{lote}{rua}{q}'
-            f'<td style="padding-left:10px;font-family:{FONTE_MARCA};font-weight:800;font-size:21px;letter-spacing:-0.2px;color:{ct}">Radar HIS</td>'
+def logo_html(negativo=True):
+    """Símbolo Faro (haste + facho + braço) desenhado com CSS, sem imagem."""
+    h = COR["papel"] if negativo else COR["tinta"]
+    t = COR["papel"] if negativo else COR["tinta"]
+    z = "font-size:0;line-height:0"
+    return (f'<table role="presentation" cellspacing="0" cellpadding="0"><tr>'
+            f'<td style="width:8px;height:27px;background:{h};{z}">&nbsp;</td>'
+            f'<td valign="top" style="width:22px;height:27px;{z}">'
+            f'<div style="height:1px;{z}">&nbsp;</div>'
+            f'<div style="margin-left:2px;width:0;height:3px;border-right:19px solid {COR["facho"]};border-top:5px solid transparent;border-bottom:5px solid transparent;{z}"></div>'
+            f'<div style="height:3px;{z}">&nbsp;</div>'
+            f'<div style="width:12px;height:6px;background:{h};{z}">&nbsp;</div></td>'
+            f'<td style="padding-left:8px;font-family:{FONTE_MARCA};font-weight:900;font-size:28px;line-height:27px;letter-spacing:-1px;color:{t}">faro</td>'
             f'</tr></table>')
 
 
 def _rotulo_secao(n, titulo):
     return (f'<tr><td style="padding:30px 0 6px;font-family:{FONTE_DADO};font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:{COR["grafite"]}">'
-            f'{n:02d} &mdash; {_e(titulo)}</td></tr><tr><td style="border-top:1px solid {COR["asfalto"]};font-size:0;line-height:0;height:1px">&nbsp;</td></tr>')
+            f'<span style="color:{COR["facho_escuro"]};font-weight:500">{n:02d}</span> &mdash; {_e(titulo)}</td></tr><tr><td style="border-top:2px solid {COR["tinta"]};font-size:0;line-height:0;height:1px">&nbsp;</td></tr>')
 
 
 def _item_email(i, link):
-    cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(i["tom"], COR["placa"])
-    return f"""<tr><td style="padding:14px 0;border-bottom:1px solid {COR['meio_fio']}">
+    cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(i["tom"], COR["tinta"])
+    return f"""<tr><td style="padding:14px 0;border-bottom:1px solid {COR['linha']}">
  <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-  <td valign="top" style="width:16px;padding-top:6px"><div style="width:9px;height:9px;background:{COR['faixa']};font-size:0;line-height:0">&nbsp;</div></td>
+  <td valign="top" style="width:16px;padding-top:6px"><div style="width:9px;height:9px;background:{COR['facho']};font-size:0;line-height:0">&nbsp;</div></td>
   <td valign="top">
-   <div style="font-family:{FONTE_MARCA};font-weight:700;font-size:16px;line-height:1.3;color:{COR['asfalto']}">{_e(i['titulo'])}</div>
+   <div style="font-family:{FONTE_MARCA};font-weight:700;font-size:16px;line-height:1.3;color:{COR['tinta']}">{_e(i['titulo'])}</div>
    <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:2px">{_e(i['contexto'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:14px;line-height:1.45;color:{COR['asfalto']};padding-top:6px">{_e(i['detalhe'])}</div>
-   <div style="padding-top:8px"><a href="{link}#imovel-{i['id']}" style="font-family:{FONTE_TEXTO};font-size:14px;font-weight:600;color:{COR['placa']};text-decoration:none">Ver contatos e detalhes &rarr;</a></div>
+   <div style="font-family:{FONTE_TEXTO};font-size:14px;line-height:1.45;color:{COR['tinta']};padding-top:6px">{_e(i['detalhe'])}</div>
+   <div style="padding-top:8px"><a href="{link}#imovel-{i['id']}" style="font-family:{FONTE_TEXTO};font-size:14px;font-weight:600;color:{COR['facho_escuro']};text-decoration:none">Ver contatos e detalhes &rarr;</a></div>
   </td>
   <td valign="top" align="right" style="width:120px;padding-left:12px">
-   <div style="font-family:{FONTE_MARCA};font-weight:800;font-size:24px;line-height:1.1;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
+   <div style="font-family:{FONTE_MARCA};font-weight:900;font-size:26px;line-height:1.1;letter-spacing:-0.5px;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
    <div style="font-family:{FONTE_TEXTO};font-size:11.5px;color:{COR['grafite']};padding-top:2px">{_e(i['destaque_rotulo'])}</div>
   </td>
  </tr></table>
@@ -244,8 +248,8 @@ def _item_email(i, link):
 
 def render_email(c):
     nums = "".join(
-        f"""<td width="{100 // len(c['numeros'])}%" valign="top" style="padding:14px 12px 14px {'14px;border-left:1px solid ' + COR['meio_fio'] if k else '0'}">
-   <div style="font-family:{FONTE_MARCA};font-weight:800;font-size:36px;line-height:1;letter-spacing:-0.5px;white-space:nowrap;color:{COR['placa']}">{_e(n['valor'])}</div>
+        f"""<td width="{100 // len(c['numeros'])}%" valign="top" style="padding:14px 12px 14px {'14px;border-left:1px solid ' + COR['linha'] if k else '0'}">
+   <div style="font-family:{FONTE_MARCA};font-weight:900;font-size:40px;line-height:1;letter-spacing:-1.2px;white-space:nowrap;color:{COR['facho']}">{_e(n['valor'])}</div>
    <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:6px">{_e(n['rotulo'])}</div></td>"""
         for k, n in enumerate(c["numeros"]))
     secoes = "".join(_rotulo_secao(k + 1, s["titulo"]) +
@@ -253,25 +257,25 @@ def render_email(c):
                      "".join(_item_email(i, c["link"]) for i in s["itens"]) for k, s in enumerate(c["secoes"]))
     aviso = (f'<tr><td style="padding:12px 14px;background:{COR["alerta_fundo"]};color:{COR["alerta"]};font-family:{FONTE_TEXTO};font-size:13px">{_e(c["aviso"])}</td></tr>'
              if c.get("aviso") else "")
-    return f"""<!doctype html><html><body style="margin:0;padding:0;background:{COR['concreto']}">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['concreto']}"><tr><td align="center" style="padding:20px 12px">
+    return f"""<!doctype html><html><body style="margin:0;padding:0;background:{COR['gelo']}">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['gelo']}"><tr><td align="center" style="padding:20px 12px">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%">
- <tr><td style="background:{COR['placa']};padding:16px 22px">
+ <tr><td style="background:{COR['tinta']};padding:18px 22px">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
    <td>{logo_html(negativo=True)}</td>
-   <td align="right" style="font-family:{FONTE_DADO};font-size:12px;color:{COR['placa_clara']}">{data_br(c['data'])}</td>
+   <td align="right" style="font-family:{FONTE_DADO};font-size:12px;color:{COR['nevoa']}">{data_br(c['data'])}</td>
   </tr></table>
  </td></tr>
- <tr><td style="background:{COR['papel']};padding:26px 24px 8px">
+ <tr><td style="background:{COR['papel']};border-top:6px solid {COR['facho']};padding:26px 24px 8px">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
    <tr><td style="font-family:{FONTE_DADO};font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:{COR['grafite']}">&mdash; {_e(c['rotulo'])}</td></tr>
-   <tr><td style="padding:10px 0 8px;font-family:{FONTE_MARCA};font-weight:800;font-size:34px;line-height:1.08;letter-spacing:-0.5px;color:{COR['asfalto']}">{_e(c['titulo'])}</td></tr>
-   <tr><td style="padding:0 0 12px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.55;color:{COR['asfalto']}">{_e(c['resumo'])}</td></tr>
+   <tr><td style="padding:10px 0 8px;font-family:{FONTE_MARCA};font-weight:900;font-size:38px;line-height:1.02;letter-spacing:-1.2px;color:{COR['tinta']}">{_e(c['titulo'])}</td></tr>
+   <tr><td style="padding:0 0 12px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.55;color:{COR['tinta']}">{_e(c['resumo'])}</td></tr>
    {aviso}
-   <tr><td style="border-top:1px solid {COR['asfalto']};border-bottom:1px solid {COR['asfalto']}"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
+   <tr><td style="border-top:2px solid {COR['tinta']};border-bottom:1px solid {COR['linha']}"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
    {secoes}
    <tr><td align="left" style="padding:28px 0 26px">
-    <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['placa']};color:#FFFFFF;font-family:{FONTE_TEXTO};font-weight:600;font-size:15px;text-decoration:none;padding:13px 22px">Abrir o Radar e perguntar</a>
+    <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['facho']};color:{COR['tinta']};font-family:{FONTE_TEXTO};font-weight:700;font-size:15px;text-decoration:none;padding:14px 22px">Abrir o Faro e perguntar &rarr;</a>
     <span style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-left:12px">mapa, fichas e contatos de cada prédio</span>
    </td></tr>
   </table>
@@ -287,9 +291,9 @@ def render_texto(c):
     linhas += [f"{n['valor']} {n['rotulo']}" for n in c["numeros"]] + [""]
     for k, s in enumerate(c["secoes"], 1):
         linhas.append(f"{k:02d} — {s['titulo'].upper()}")
-        linhas += [f"- {i['titulo']} ({i['contexto']}): {i['detalhe']} {i['destaque']} {i['destaque_rotulo']}. {c['link']}#imovel-{i['id']}" for i in s["itens"]]
+        linhas += [f"- {i['titulo']} ({i['contexto']}): {i['detalhe'].rstrip('.')}. {i['destaque']} {i['destaque_rotulo']}. {c['link']}#imovel-{i['id']}" for i in s["itens"]]
         linhas.append("")
-    linhas += [f"Abrir o Radar: {c['link_boletim']}", "", c["fontes"]]
+    linhas += [f"Abrir o Faro: {c['link_boletim']}", "", c["fontes"]]
     return "\n".join(linhas)
 
 

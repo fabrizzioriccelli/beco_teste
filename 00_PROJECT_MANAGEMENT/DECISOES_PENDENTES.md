@@ -12,7 +12,7 @@ Gerado ao fim da Fase 0, em 21/11/2026. Responda diretamente neste arquivo (colu
 | D6 | Fase 4 em paralelo às Fases 1 a 3 | Sim / não (sequência estrita) | Sim | Prazo do MVP | |
 | D7 | Liberar acesso de rede no ambiente de trabalho | Liberar os domínios abaixo / manter bloqueado | Liberar | Verificação primária (Fase 4) | |
 | D8 | Teto de orçamento mensal (infra e IA) da v1 e orçamento para validação jurídica | Valor a definir | Até US$ 600/mês na v1; jurídico a cotar | Fase 5 | |
-| D9 | Busca formal de anterioridade do nome BECO | Autorizar / adiar | Autorizar antes de qualquer criação visual | Fase 2 | 22/11/2026: a equipe considera que "beco" soa negativo (sombrio, perigoso). Gerar nomes alternativos na Fase 1. |
+| D9 | Busca formal de anterioridade do nome BECO | Autorizar / adiar | Autorizar antes de qualquer criação visual | Fase 2 | 22/11/2026: a equipe considera que "beco" soa negativo (sombrio, perigoso). Gerar nomes alternativos na Fase 1. 23/11/2026: proposto **Faro** (DEC-0006); falta busca no INPI e domínio. |
 | D10 | WhatsApp na v1 ou na v1.1 | v1 / v1.1 | v1.1 | Fase 8 | |
 | D11 | Perfil do responsável e da equipe | Quem fará as validações de mercado, jurídica e de usuários? | Indicar pelo menos um advogado urbanista e 5 a 8 usuários para entrevistas | Fases 3 e 4 | |
 

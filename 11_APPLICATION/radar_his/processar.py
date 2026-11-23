@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Radar HIS - processamento.
+"""Faro - processamento.
 
 Lê a pasta gerada por coletar.py e escreve os arquivos do site em site/dados:
   empreendimentos.json  um registro por lote com alvará HIS/HMP, com resumo das vendas (ITBI)

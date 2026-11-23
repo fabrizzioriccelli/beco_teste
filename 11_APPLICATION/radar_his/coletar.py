@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Radar HIS - coleta das fontes oficiais.
+"""Faro - coleta das fontes oficiais.
 
 Baixa para uma pasta local (padrão: ./_dados):
   1. GeoSampa (WFS): camada "HIS e HMP - Alvará de Execução" (geoportal:habitacao_popular),

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rotina diária do Radar HIS.
+"""Rotina diária do Faro.
 
 Agentes, em sequência:
   1. Coletor   (coletar.py)    baixa GeoSampa, ITBI e Banco Central

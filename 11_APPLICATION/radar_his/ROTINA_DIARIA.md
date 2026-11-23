@@ -1,4 +1,4 @@
-# Rotina diária do Radar HIS — roteiro do orquestrador
+# Rotina diária do Faro — roteiro do orquestrador
 
 Disparada todo dia às 7h38 (horário de São Paulo), para o e-mail chegar por volta das 8h. Quem executa é o orquestrador (Claude), seguindo estes passos na ordem. Não pule o Auditor.
 
@@ -26,7 +26,7 @@ Disparada todo dia às 7h38 (horário de São Paulo), para o e-mail chegar por v
 6. **Enviar o e-mail.**
    - Se `destinatarios` tiver endereços: `mcp__Gmail__send_message` com `to` = `destinatarios`, `cc` = `copia`, `subject` = `assunto`, `htmlBody` = `html`, `body` = `texto` (sem anexos: o logo é desenhado no próprio HTML).
    - Se `destinatarios` estiver vazio: `mcp__Gmail__create_draft` com os mesmos campos (sem `to`) e avise que falta o e-mail do Diogo em `config.json`.
-7. **Registrar.** `git add 11_APPLICATION/radar_his/estado 11_APPLICATION/radar_his/boletins`, commit `Radar HIS: boletim AAAA-MM-DD` (com as linhas de atribuição da sessão) e `git push origin claude/beco-real-estate-intelligence-i322uf`.
+7. **Registrar.** `git add 11_APPLICATION/radar_his/estado 11_APPLICATION/radar_his/boletins`, commit `Faro: boletim AAAA-MM-DD` (com as linhas de atribuição da sessão) e `git push origin claude/beco-real-estate-intelligence-i322uf`.
 8. **Responder** em até 3 linhas: status do Auditor, assunto do e-mail, e se foi enviado ou ficou como rascunho.
 
 ## Configuração

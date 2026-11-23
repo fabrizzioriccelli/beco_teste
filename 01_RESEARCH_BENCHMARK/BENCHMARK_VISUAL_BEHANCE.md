@@ -24,7 +24,9 @@
 | Layout | Foto de arquitetura em tela cheia, muito espaço vazio, linhas finas, rótulos pequenos em caixa-alta | Todos os sites |
 | Dado | Números gigantes como elemento gráfico ("94%", "250+", "$11.4M" na Alliance; "4 / 40+ / 90" no Lumen) | Alliance, Lumen |
 
-## O que trazemos para o Radar HIS
+## O que trazemos para o Faro
+
+> Atualizado em 23/11/2026: esta análise virou a identidade Faro (nome, símbolo do farol, paleta Tinta e Facho). Ver o [manual de marca](../03_BRAND_IDENTITY/manual/) e a [DEC-0006](../00_PROJECT_MANAGEMENT/DECISION_LOG.md).
 
 | Referência | Como entra no nosso design system |
 |---|---|
