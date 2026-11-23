@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-"""Gera os arquivos da marca Faro v3 (SVG com texto convertido em curvas).
+"""Gera os arquivos da marca Faro v4 (SVG com texto convertido em curvas).
 
-Conceito "endereço nobre": o F de Faro em Bodoni, como as letras de latão na fachada dos prédios
-de alto padrão de São Paulo, com um facho de luz de latão que sai da serifa superior. Paleta dos
-materiais desses prédios: verde dos Jardins, latão dos letreiros e travertino do hall.
+Conceito "a luz acesa": o logotipo é a palavra faro em Inter Tight Semibold, minimalista, e o miolo
+do "o" é uma luz quente, como a lâmpada de um farol ou uma janela acesa à noite. É o único ponto de
+cor da marca. O ícone de app é a mesma luz num quadrado escuro, no estilo dos ícones de vidro
+do iOS 26.
+
+O texto corrido do site e do e-mail usa a fonte do sistema (SF Pro nos aparelhos Apple). O logo não
+usa SF porque a licença da Apple não permite usar a fonte em logotipos nem embuti-la na web.
 
 Uso:
   python3 gerar_identidade.py --fontes PASTA_COM_FONTSOURCE --saida faro/
-Requer fonttools. Fontes: Bodoni Moda 500 e Jost 500 (licença OFL), pacotes @fontsource.
+Requer fonttools. Fonte: Inter Tight 600 (licença OFL), pacote @fontsource/inter-tight.
 """
 import argparse
 import pathlib
@@ -16,14 +20,13 @@ from fontTools.pens.svgPathPen import SVGPathPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 
-COR = {"jardim": "#17302A", "latao": "#B08D57", "latao_escuro": "#7D5F38", "latao_claro": "#C9A878",
-       "travertino": "#EFEAE1", "papel": "#FBF9F5", "grafite": "#5B625D", "linha": "#DDD5C7"}
+COR = {"tinta": "#1D1D1F", "branco": "#FFFFFF", "noite": "#0A0C10", "noite_2": "#1B2029", "grafite": "#6E6E73", "linha": "#D2D2D7"}
+# luz de sódio: do centro claro para a borda âmbar
+LUZ = [("0", "#FFFBF4"), ("0.6", "#FFE3BC"), ("1", "#FFC888")]
 
-# Facho em unidades da fonte (Bodoni Moda, 2000 por eme; versal F de x 57 a 1125, altura 1500).
-# O eixo do facho passa no centro da serifa superior do F (y 1090 a 1500, centro 1295).
-# Começa 60 unidades depois da serifa, tem 900 de comprimento e abre de 70 para 500 (1 para 7).
-FACHO = [(1185, 1260), (2085, 1060), (2085, 1560), (1185, 1330)]
-X0, X1, TOPO, VERSAL = 57, 2085, 1560, 1500
+# miolo do "o" na Inter Tight 600 (unidades da fonte, 2048 por eme): x 316 a 852, y 190 a 920
+MIOLO = (584, 555, 292, 386)          # cx, cy, rx, ry (um pouco maior que o miolo: a borda fica sob o anel)
+RASTREIO = -0.035
 
 
 class Fonte:
@@ -33,28 +36,28 @@ class Fonte:
         self.cmap = self.f.getBestCmap()
         self.upm = self.f["head"].unitsPerEm
 
-    def glifo(self, ch):
-        pen = SVGPathPen(self.g)
-        self.g[self.cmap[ord(ch)]].draw(pen)
-        return pen.getCommands()
-
     def texto(self, texto, x, base, corpo, rastreio=0.0):
+        """Devolve o caminho SVG, a largura e a posição x (em px) de cada letra."""
         esc = corpo / self.upm
         pen = SVGPathPen(self.g)
-        cur = 0.0
+        cur, pos = 0.0, []
         for ch in texto:
-            nome = self.cmap.get(ord(ch))
-            if nome is None:
-                continue
-            gl = self.g[nome]
+            gl = self.g[self.cmap[ord(ch)]]
+            pos.append(x + cur)
             gl.draw(TransformPen(pen, (esc, 0, 0, -esc, x + cur, base)))
             cur += gl.width * esc + rastreio * corpo
-        return pen.getCommands(), cur - rastreio * corpo
+        return pen.getCommands(), cur - rastreio * corpo, pos
 
 
-def svg(w, h, corpo, titulo="Faro"):
+def gradiente(id_):
+    stops = "".join(f'<stop offset="{o}" stop-color="{c}"/>' for o, c in LUZ)
+    return f'<radialGradient id="{id_}" cx="0.5" cy="0.42" r="0.62">{stops}</radialGradient>'
+
+
+def svg(w, h, corpo, titulo="Faro", defs=""):
+    d = f"<defs>{defs}</defs>" if defs else ""
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w:.1f} {h:.1f}" width="{w:.0f}" height="{h:.0f}" role="img" aria-label="{titulo}">'
-            f"<title>{titulo}</title>{corpo}</svg>\n")
+            f"<title>{titulo}</title>{d}{corpo}</svg>\n")
 
 
 def main():
@@ -64,103 +67,81 @@ def main():
     a = ap.parse_args()
     fontes, saida = pathlib.Path(a.fontes), pathlib.Path(a.saida)
     saida.mkdir(parents=True, exist_ok=True)
-    bodoni = Fonte(next(fontes.glob("**/bodoni-moda-latin-500-normal.woff")))
-    jost = Fonte(next(fontes.glob("**/jost-latin-500-normal.woff")))
-    F = bodoni.glifo("F")
-    facho = " ".join(f"{x},{y}" for x, y in FACHO)
+    inter = Fonte(next(fontes.glob("**/inter-tight-latin-600-normal.woff")))
 
-    def mono(x, base, versal, cor_f, cor_l):
-        """Monograma com a versal de altura `versal` px, canto esquerdo em x e linha de base em `base`."""
-        s = versal / VERSAL
-        return (f'<g transform="translate({x - X0 * s:.2f} {base:.2f}) scale({s:.5f} {-s:.5f})">'
-                f'<path d="{F}" fill="{cor_f}"/><polygon points="{facho}" fill="{cor_l}"/></g>')
+    def logotipo(cor, luz=True, corpo=56, margem=4, gid="luz"):
+        esc = corpo / inter.upm
+        base = margem + 1560 * esc           # altura do f
+        d, w, pos = inter.texto("faro", margem, base, corpo, RASTREIO)
+        cx, cy, rx, ry = MIOLO
+        luz_svg = ""
+        if luz:
+            luz_svg = (f'<ellipse cx="{pos[3] + cx * esc:.2f}" cy="{base - cy * esc:.2f}" rx="{rx * esc:.2f}" ry="{ry * esc:.2f}" fill="url(#{gid})"/>')
+        return svg(w + 2 * margem, base + 22 * esc + margem, luz_svg + f'<path d="{d}" fill="{cor}"/>', defs=gradiente(gid) if luz else "")
 
-    def largura(versal):
-        return (X1 - X0) * versal / VERSAL
+    arq = {
+        "logotipo.svg": logotipo(COR["tinta"]),
+        "logotipo-negativo.svg": logotipo(COR["branco"]),
+        "logotipo-mono.svg": logotipo(COR["tinta"], luz=False),
+        "logotipo-mono-negativo.svg": logotipo(COR["branco"], luz=False),
+    }
 
-    def altura(versal):
-        return TOPO * versal / VERSAL
+    # Símbolo: o "o" aceso
+    def simbolo(cor, tamanho=48, fundo=None, raio=0, gid="luz"):
+        corpo = tamanho * 0.86 * inter.upm / 1154      # altura do "o" ocupa ~86% do quadro
+        esc = corpo / inter.upm
+        larg_o = (1120 - 49) * esc
+        alt_o = (1132 + 22) * esc
+        x0 = (tamanho - larg_o) / 2 - 49 * esc
+        base = (tamanho + alt_o) / 2 - 22 * esc
+        d, _, _ = inter.texto("o", x0, base, corpo)
+        cx, cy, rx, ry = MIOLO
+        partes = ""
+        if fundo:
+            partes += fundo
+        partes += f'<ellipse cx="{x0 + cx * esc:.2f}" cy="{base - cy * esc:.2f}" rx="{rx * esc:.2f}" ry="{ry * esc:.2f}" fill="url(#{gid})"/>'
+        partes += f'<path d="{d}" fill="{cor}"/>'
+        return partes
 
-    arq = {}
-    # Símbolo (monograma)
-    v = 40
-    for nome, f_, l_ in (("simbolo.svg", COR["jardim"], COR["latao"]), ("simbolo-negativo.svg", COR["travertino"], COR["latao_claro"]),
-                         ("simbolo-mono.svg", COR["jardim"], COR["jardim"])):
-        arq[nome] = svg(largura(v) + 8, altura(v) + 8, mono(4, 4 + altura(v), v, f_, l_))
+    arq["simbolo.svg"] = svg(48, 48, simbolo(COR["tinta"]), defs=gradiente("luz"))
+    arq["simbolo-negativo.svg"] = svg(48, 48, simbolo(COR["branco"]), defs=gradiente("luz"))
 
-    # Ícone de app: selo verde com fio de latão e o monograma
-    v = 40
-    arq["icone-app.svg"] = svg(96, 96, f'<rect width="96" height="96" rx="20" fill="{COR["jardim"]}"/>'
-                               f'<rect x="8.5" y="8.5" width="79" height="79" rx="13" fill="none" stroke="{COR["latao_claro"]}" stroke-width="1"/>'
-                               + mono((96 - largura(v)) / 2, (96 + altura(v)) / 2, v, COR["travertino"], COR["latao_claro"]))
-    v = 22
-    arq["favicon.svg"] = svg(48, 48, f'<rect width="48" height="48" rx="10" fill="{COR["jardim"]}"/>'
-                             + mono((48 - largura(v)) / 2, (48 + altura(v)) / 2, v, COR["travertino"], COR["latao_claro"]))
+    # Ícone de app: quadrado escuro com o "o" de vidro e a luz dentro (estilo iOS 26)
+    def icone(t, rx):
+        defs = (gradiente("luz") +
+                f'<linearGradient id="fundo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{COR["noite_2"]}"/><stop offset="1" stop-color="{COR["noite"]}"/></linearGradient>'
+                '<linearGradient id="vidro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".98"/><stop offset=".5" stop-color="#E6E8EE" stop-opacity=".92"/><stop offset="1" stop-color="#FFFFFF" stop-opacity=".75"/></linearGradient>'
+                '<radialGradient id="brilho" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#FFC888" stop-opacity=".35"/><stop offset="1" stop-color="#FFC888" stop-opacity="0"/></radialGradient>')
+        fundo = (f'<rect width="{t}" height="{t}" rx="{rx}" fill="url(#fundo)"/>'
+                 f'<circle cx="{t / 2}" cy="{t / 2}" r="{t * .42}" fill="url(#brilho)"/>'
+                 f'<rect x=".5" y=".5" width="{t - 1}" height="{t - 1}" rx="{rx - .5}" fill="none" stroke="#FFFFFF" stroke-opacity=".14"/>')
+        marca = f'<g transform="translate({t * .19:.2f} {t * .19:.2f})">' + simbolo("url(#vidro)", t * 0.62, gid="luz") + "</g>"
+        return svg(t, t, fundo + marca, defs=defs)
 
-    # Logotipo: FARO em versais espaçadas, como letreiro de fachada
-    d, w = bodoni.texto("FARO", 2, 32, 40, rastreio=0.24)
-    arq["logotipo.svg"] = svg(w + 4, 36, f'<path d="{d}" fill="{COR["jardim"]}"/>')
-    arq["logotipo-negativo.svg"] = svg(w + 4, 36, f'<path d="{d}" fill="{COR["travertino"]}"/>')
+    arq["icone-app.svg"] = icone(96, 21.5)
+    arq["favicon.svg"] = icone(48, 11)
 
-    # Assinatura horizontal: monograma | fio de latão | FARO + descritor
-    def horizontal(cor_f, cor_l, cor_fio, cor_desc, descritor=True):
-        v = 40
-        h = altura(v) + 12
-        mx = largura(v)
-        x_fio = mx + 17
-        x_txt = x_fio + 17
-        if descritor:
-            d1, w1 = bodoni.texto("FARO", x_txt, 30, 32, rastreio=0.24)
-            d2, w2 = jost.texto("INTELIGÊNCIA IMOBILIÁRIA", x_txt + 1, 45.5, 7.4, rastreio=0.42)
-            partes = f'<path d="{d1}" fill="{cor_f}"/><path d="{d2}" fill="{cor_desc}"/>'
-            w = max(w1, w2 + 1)
-        else:
-            d1, w = bodoni.texto("FARO", x_txt, 38, 32, rastreio=0.24)
-            partes = f'<path d="{d1}" fill="{cor_f}"/>'
-        corpo = (mono(0, 6 + altura(v), v, cor_f, cor_l) + f'<rect x="{x_fio:.2f}" y="6" width="0.8" height="{altura(v):.2f}" fill="{cor_fio}"/>' + partes)
-        return svg(x_txt + w + 2, h, corpo)
-
-    arq["assinatura.svg"] = horizontal(COR["jardim"], COR["latao"], COR["latao"], COR["latao_escuro"])
-    arq["assinatura-negativa.svg"] = horizontal(COR["travertino"], COR["latao_claro"], COR["latao_claro"], COR["latao_claro"])
-    arq["assinatura-mono.svg"] = horizontal(COR["jardim"], COR["jardim"], COR["jardim"], COR["jardim"])
-    arq["assinatura-sem-descritor.svg"] = horizontal(COR["jardim"], COR["latao"], COR["latao"], COR["latao_escuro"], descritor=False)
-    arq["assinatura-sem-descritor-negativa.svg"] = horizontal(COR["travertino"], COR["latao_claro"], COR["latao_claro"], COR["latao_claro"], descritor=False)
-
-    # Assinatura vertical (capas, telas quadradas)
-    v = 64
-    d1, w1 = bodoni.texto("FARO", 0, 0, 40, rastreio=0.24)
-    d2, w2 = jost.texto("INTELIGÊNCIA IMOBILIÁRIA", 0, 0, 8.4, rastreio=0.42)
-    W = max(w1, w2, largura(v)) + 8
-    arq["assinatura-vertical.svg"] = svg(W, altura(v) + 84,
-                                         mono((W - largura(v)) / 2, 4 + altura(v), v, COR["jardim"], COR["latao"]) +
-                                         f'<g transform="translate({(W - w1) / 2:.2f} {altura(v) + 58:.2f})"><path d="{d1}" fill="{COR["jardim"]}"/></g>'
-                                         f'<g transform="translate({(W - w2) / 2:.2f} {altura(v) + 78:.2f})"><path d="{d2}" fill="{COR["latao_escuro"]}"/></g>')
-
-    # Folha de construção (unidades da fonte / 6,25 = px)
-    k = 1 / 6.25
-    W = 520
-    def px(x, y):
-        return 24 + (x - X0) * k, 300 - y * k
+    # Folha de construção: logotipo grande com a altura-x, o miolo e a luz
+    corpo = 160
+    esc = corpo / inter.upm
+    m = 24
+    base = m + 1560 * esc
+    d, w, pos = inter.texto("faro", m, base, corpo, RASTREIO)
+    cx, cy, rx, ry = MIOLO
+    W, H = max(w + 2 * m, 700), base + 70
     guias = []
-    for y, rot in ((0, "linha de base"), (VERSAL, "altura das versais"), (1295, "eixo do facho: centro da serifa")):
-        _, yy = px(0, y)
-        guias.append(f'<line x1="0" y1="{yy:.1f}" x2="{W}" y2="{yy:.1f}" stroke="{COR["latao"]}" stroke-width=".6" stroke-dasharray="3 3"/>'
-                     f'<text x="362" y="{yy - 5:.1f}" font-family="sans-serif" font-size="9" fill="{COR["grafite"]}">{rot}</text>')
-    for x in (1125, 1185, 2085):
-        xx, _ = px(x, 0)
-        guias.append(f'<line x1="{xx:.1f}" y1="20" x2="{xx:.1f}" y2="312" stroke="{COR["linha"]}" stroke-width=".6"/>')
-    # as bordas do facho convergem num ponto dentro da serifa do F: a luz nasce da letra
-    ax, ay = 1038.5, 1292.6
-    for (x1, y1) in ((2085, 1560), (2085, 1060)):
-        a1, b1 = px(ax, ay); a2, b2 = px(x1, y1)
-        guias.append(f'<line x1="{a1:.1f}" y1="{b1:.1f}" x2="{a2:.1f}" y2="{b2:.1f}" stroke="{COR["latao_escuro"]}" stroke-width=".7" stroke-dasharray="2 2"/>')
-    a1, b1 = px(ax, ay)
-    guias.append(f'<circle cx="{a1:.1f}" cy="{b1:.1f}" r="3" fill="none" stroke="{COR["latao_escuro"]}" stroke-width=".8"/>')
-    nota = lambda y, t: f'<text x="24" y="{y}" font-family="sans-serif" font-size="9" fill="{COR["grafite"]}">{t}</text>'
-    corpo = (f'<rect width="{W}" height="352" fill="{COR["papel"]}"/>' + mono(24, 300, VERSAL * k, COR["jardim"], COR["latao"]) + "".join(guias) +
-             nota(330, "Facho: começa a 4% da versal depois da serifa, mede 60% da versal e abre de 70 para 500 unidades (1 para 7).") +
-             nota(344, "As bordas do facho se encontram na serifa do F. Área de proteção: um terço da altura da versal."))
-    arq["construcao.svg"] = svg(W, 352, corpo)
+    for y, rot in ((0, "linha de base"), (1118, "altura-x"), (1560, "ascendente do f")):
+        yy = base - y * esc
+        guias.append(f'<line x1="0" y1="{yy:.1f}" x2="{W:.1f}" y2="{yy:.1f}" stroke="#86868B" stroke-width=".6" stroke-dasharray="3 3"/>'
+                     f'<text x="{W - 6:.1f}" y="{yy - 5:.1f}" text-anchor="end" font-family="sans-serif" font-size="9" fill="{COR["grafite"]}">{rot}</text>')
+    ox, oy = pos[3] + cx * esc, base - cy * esc
+    guias.append(f'<line x1="{ox:.1f}" y1="{oy - ry * esc - 16:.1f}" x2="{ox:.1f}" y2="{oy + ry * esc + 16:.1f}" stroke="#F08A2C" stroke-width=".6"/>'
+                 f'<line x1="{ox - rx * esc - 16:.1f}" y1="{oy:.1f}" x2="{ox + rx * esc + 16:.1f}" y2="{oy:.1f}" stroke="#F08A2C" stroke-width=".6"/>')
+    nota = f'<text x="{m}" y="{H - 24:.1f}" font-family="sans-serif" font-size="10" fill="{COR["grafite"]}">Inter Tight Semibold, rastreio −3,5%. A luz ocupa o miolo do "o" e passa 5% por baixo do anel.</text>'
+    nota += f'<text x="{m}" y="{H - 10:.1f}" font-family="sans-serif" font-size="10" fill="{COR["grafite"]}">Área de proteção: a altura-x em volta do logotipo. Mínimo: 18 px de altura.</text>'
+    arq["construcao.svg"] = svg(W, H, f'<rect width="{W:.1f}" height="{H:.1f}" fill="#FFFFFF"/>' + "".join(guias) +
+                                f'<ellipse cx="{ox:.2f}" cy="{oy:.2f}" rx="{rx * esc:.2f}" ry="{ry * esc:.2f}" fill="url(#luz)"/><path d="{d}" fill="{COR["tinta"]}"/>' + nota,
+                                defs=gradiente("luz"))
     for nome, conteudo in arq.items():
         (saida / nome).write_text(conteudo, encoding="utf-8")
         print(nome)

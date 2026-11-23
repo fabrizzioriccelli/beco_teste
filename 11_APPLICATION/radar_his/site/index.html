@@ -2,248 +2,315 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..700&family=Jost:wght@300..600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
 <style>
-/* Layout: uma coluna de leitura, como um relatório privado. Boletim primeiro, depois a pergunta, os destaques e o mapa. Um imóvel abre uma ficha lateral cuja primeira linha são as ações. */
-/* Tokens do design system Faro v3 (04_DESIGN_SYSTEM/tokens.css) */
+/* Layout: herói escuro com a cidade acesa e os números do dia em vidro; depois listas agrupadas no estilo do iPhone sobre fundo claro.
+   Navegação, controles e ficha em Liquid Glass, flutuando sobre o conteúdo (Apple HIG: o vidro é a camada de navegação, nunca o conteúdo). */
+/* Tokens do design system Faro v4 (04_DESIGN_SYSTEM/tokens.css) */
 :root {
   /* Marca */
-  --tinta: #17302A;         /* verde Jardim: banda de marca, títulos, monograma, botão principal */
-  --tinta-texto: #F4EFE6;   /* texto sobre --tinta */
-  --facho: #B08D57;         /* latão: facho do monograma, fios, marcadores. 2,9:1 no papel: só decorativo */
-  --facho-claro: #C9A878;   /* latão sobre fundo verde (6,3:1) */
-  --facho-escuro: #7D5F38;  /* latão para texto e links (5,6:1 no papel) */
-  --facho-suave: #F1E8DA;   /* fundo de destaque leve */
-  --banda: #17302A;         /* faixa de marca no topo (site e e-mail) */
-  --banda-texto: #F4EFE6;
+  --luz: #FFC888;           /* luz quente: miolo do logotipo, pontos da cidade, brilhos. Só sobre fundo escuro ou como preenchimento */
+  --luz-clara: #FFF6EA;
+  --noite: #0A0C10;         /* fundo do herói (a cidade à noite) */
+  --noite-2: #1B2029;
 
-  /* Neutros */
-  --texto: #1A2622;         /* ônix esverdeado (13:1 no travertino) */
-  --grafite: #5B625D;       /* texto secundário (6,0:1 no papel) */
-  --linha: #DDD5C7;         /* fios e bordas */
-  --pedra: #E7E0D3;         /* chips e fundos de apoio */
-  --travertino: #EFEAE1;    /* fundo da página */
-  --papel: #FBF9F5;         /* cartões, fichas e o corpo do boletim */
+  /* Neutros (escala de cinzas da Apple) */
+  --texto: #1D1D1F;         /* 16,8:1 no branco */
+  --texto-2: #6E6E73;       /* secundário, 5,1:1 no branco */
+  --texto-3: #86868B;       /* terciário: só ícones e setas */
+  --separador: rgb(60 60 67 / .18);
+  --fundo: #F5F5F7;         /* fundo da página */
+  --superficie: #FFFFFF;    /* cartões, listas e fichas */
+  --superficie-2: #E8E8ED;  /* campos, controle segmentado, chips */
+  --link: #0066CC;          /* 5,6:1 no branco */
+  --acao: #1D1D1F;          /* botão principal (cápsula preta) */
+  --acao-texto: #FFFFFF;
 
-  /* Estados */
-  --ganho: #2D6A4F;   --ganho-fundo: #E3EDE6;
-  --atencao: #8A5A12; --atencao-fundo: #F3E9D6;
-  --alerta: #9E2B25;  --alerta-fundo: #F5E3DF;
+  /* Estados (cores de sistema da Apple, versões acessíveis) */
+  --ganho: #1E7A34;   --ganho-fundo: #E3F4E6;
+  --atencao: #B25000; --atencao-fundo: #FDEEDC;
+  --alerta: #D70015;  --alerta-fundo: #FDE6E8;
 
-  /* Categorias de unidade */
-  --cat-his: #2D6A4F; --cat-hmp: #3F5E7A; --cat-livre: #9A6A2F; --cat-sem: #A9A297;
+  /* Categorias de unidade (mapa) */
+  --cat-his: #34C759; --cat-hmp: #007AFF; --cat-livre: #FF9500; --cat-sem: #AEAEB2;
 
-  /* Tipografia (OFL, uso comercial livre) */
-  --fonte-marca: "Bodoni Moda", "Bodoni 72", Didot, "Bodoni MT", Georgia, serif;   /* títulos e números */
-  --fonte-texto: "Jost", "Futura", "Century Gothic", "Helvetica Neue", Arial, sans-serif;
-  --fonte-dado: "Jost", "Futura", "Helvetica Neue", Arial, sans-serif;            /* rótulos em versais espaçadas, datas, códigos */
-  --rastreio-rotulo: .22em;
-  --t-heroi: 56px; --t-1: 44px; --t-2: 28px; --t-3: 20px; --t-corpo: 16px; --t-apoio: 14px; --t-nota: 12.5px;
+  /* Liquid Glass (camada de navegação e controles; nunca no conteúdo) */
+  --vidro-claro: rgb(255 255 255 / .62);
+  --vidro-claro-borda: rgb(255 255 255 / .75);
+  --vidro-escuro: rgb(255 255 255 / .08);     /* variante "clear" sobre a cidade, com camada de escurecimento */
+  --vidro-escuro-borda: rgb(255 255 255 / .16);
+  --vidro-desfoque: blur(24px) saturate(180%);
+  --vidro-brilho: inset 0 1px 0 rgb(255 255 255 / .5), inset 0 -1px 0 rgb(255 255 255 / .08);
+  --vidro-sombra: 0 8px 32px rgb(0 0 0 / .12);
 
-  /* Espaço, raio e sombra */
-  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 24px; --e-6: 32px; --e-7: 48px;
-  --raio-1: 2px; --raio-2: 3px; --raio-3: 4px; --raio-pilula: 2px;
-  --sombra-ficha: -16px 0 40px rgb(23 48 42 / .16);
+  /* Tipografia: SF Pro nos aparelhos Apple (fonte do sistema), Inter nos demais */
+  --fonte: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --fonte-titulo: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  /* Escala do iOS (Dynamic Type, tamanho padrão) + títulos de página */
+  --t-heroi: 64px; --t-titulo-grande: 34px; --t-titulo-1: 28px; --t-titulo-2: 22px; --t-titulo-3: 20px;
+  --t-destaque: 17px; --t-corpo: 17px; --t-chamada: 16px; --t-subtitulo: 15px; --t-nota: 13px; --t-legenda: 12px;
+
+  /* Forma: cantos concêntricos (raio de dentro = raio de fora − espaçamento) */
+  --raio-cartao: 28px; --raio-grupo: 22px; --raio-campo: 12px; --raio-capsula: 999px;
+  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 20px; --e-6: 24px; --e-7: 32px; --e-8: 48px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --tinta: #EDE7DC; --tinta-texto: #0F1A17; --facho: #C9A878; --facho-claro: #C9A878; --facho-escuro: #D6B98C; --facho-suave: #2A2519; --banda: #0B1411; --banda-texto: #EDE7DC;
-    --texto: #EDE7DC; --grafite: #A7AFA9; --linha: #2A3A35; --pedra: #1E2E29; --travertino: #0F1A17; --papel: #15231F;
-    --ganho: #7CC4A0; --ganho-fundo: #16332A; --atencao: #E0B56E; --atencao-fundo: #33291A; --alerta: #EE8E84; --alerta-fundo: #3A1F1C;
-    --cat-his: #7CC4A0; --cat-hmp: #93AFCB; --cat-livre: #D6A866; --cat-sem: #5F6A65;
+    --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #6E6E73; --separador: rgb(84 84 88 / .6);
+    --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #2997FF; --acao: #F5F5F7; --acao-texto: #000000;
+    --ganho: #30D158; --ganho-fundo: #0F2E19; --atencao: #FF9F0A; --atencao-fundo: #33230A; --alerta: #FF453A; --alerta-fundo: #3A1312;
+    --cat-his: #30D158; --cat-hmp: #0A84FF; --cat-livre: #FF9F0A; --cat-sem: #636366;
+    --vidro-claro: rgb(40 40 44 / .55); --vidro-claro-borda: rgb(255 255 255 / .12); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .45);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --tinta: #EDE7DC; --tinta-texto: #0F1A17; --facho: #C9A878; --facho-claro: #C9A878; --facho-escuro: #D6B98C; --facho-suave: #2A2519; --banda: #0B1411; --banda-texto: #EDE7DC;
-  --texto: #EDE7DC; --grafite: #A7AFA9; --linha: #2A3A35; --pedra: #1E2E29; --travertino: #0F1A17; --papel: #15231F;
-  --ganho: #7CC4A0; --ganho-fundo: #16332A; --atencao: #E0B56E; --atencao-fundo: #33291A; --alerta: #EE8E84; --alerta-fundo: #3A1F1C;
-  --cat-his: #7CC4A0; --cat-hmp: #93AFCB; --cat-livre: #D6A866; --cat-sem: #5F6A65;
+  --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #6E6E73; --separador: rgb(84 84 88 / .6);
+  --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #2997FF; --acao: #F5F5F7; --acao-texto: #000000;
+  --ganho: #30D158; --ganho-fundo: #0F2E19; --atencao: #FF9F0A; --atencao-fundo: #33230A; --alerta: #FF453A; --alerta-fundo: #3A1312;
+  --cat-his: #30D158; --cat-hmp: #0A84FF; --cat-livre: #FF9F0A; --cat-sem: #636366;
+  --vidro-claro: rgb(40 40 44 / .55); --vidro-claro-borda: rgb(255 255 255 / .12); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .45);
   color-scheme: dark;
 }
 
 :root {
   /* aliases usados pelos componentes da página */
-  --bg: var(--travertino); --paper: var(--papel); --ink: var(--texto); --muted: var(--grafite); --rule: var(--linha); --soft: var(--pedra);
-  --accent: var(--facho-escuro); --accent-ink: var(--papel); --accent-soft: var(--facho-suave);
-  --his: var(--cat-his); --hmp: var(--cat-hmp); --misto: var(--cat-livre); --sem: var(--cat-sem);
+  --bg: var(--fundo); --paper: var(--superficie); --ink: var(--texto); --muted: var(--texto-2); --rule: var(--separador); --soft: var(--superficie-2);
+  --accent: var(--link); --his: var(--cat-his); --hmp: var(--cat-hmp); --misto: var(--cat-livre); --sem: var(--cat-sem);
   --good: var(--ganho); --good-bg: var(--ganho-fundo); --warn: var(--atencao); --warn-bg: var(--atencao-fundo); --bad: var(--alerta); --bad-bg: var(--alerta-fundo);
-  --font: var(--fonte-texto); --mono: var(--fonte-dado);
-  --gelo: var(--travertino); --calcada: var(--pedra); --nevoa: var(--pedra);
+  --font: var(--fonte); --mono: var(--fonte);
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.6; font-weight: 400; }
-.wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 72px; display: grid; gap: 44px; }
-.wrap > * { min-width: 0; }
-h1, h2, h3, .cartao .t, .ficha .end, .b-numeros b, .b-dest b, .numeros b, .kpi .v { font-family: var(--fonte-marca); font-optical-sizing: auto; font-weight: 500; letter-spacing: -.01em; }
-h1 { margin: 0; font-size: clamp(28px, 5vw, 36px); line-height: 1.1; text-wrap: balance; color: var(--tinta); }
-h2 { margin: 0 0 16px; font-size: clamp(24px, 4vw, 30px); line-height: 1.15; text-wrap: balance; color: var(--tinta); display: grid; gap: 10px; }
-h2::before { content: ""; width: 36px; height: 1px; background: var(--facho); }
-h3 { margin: 0 0 8px; font-size: 18px; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--fundo); color: var(--texto); font-family: var(--fonte); font-size: 17px; line-height: 1.47; letter-spacing: -.012em; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--noite); }
+h1, h2, h3 { font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: -.022em; margin: 0; text-wrap: balance; }
+h2 { font-size: var(--t-titulo-1); line-height: 1.14; margin-bottom: 16px; }
+h3 { font-size: var(--t-titulo-3); }
 p { margin: 0; }
-a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-:focus-visible { outline: 1px solid var(--facho-escuro); outline-offset: 3px; }
-.fonte { font-family: var(--fonte-dado); font-size: 12.5px; color: var(--muted); }
-.eyebrow, .rotulo { font-family: var(--fonte-dado); font-size: 11.5px; font-weight: 500; letter-spacing: var(--rastreio-rotulo); text-transform: uppercase; color: var(--facho-escuro); }
-input, select, button, textarea { font: inherit; color: var(--ink); }
-input, select { background: var(--paper); border: 1px solid var(--rule); border-radius: var(--raio-1); padding: 11px 12px; min-width: 0; width: 100%; }
-input:focus, select:focus { border-color: var(--facho); outline: none; }
-button { cursor: pointer; border-radius: var(--raio-1); border: 1px solid var(--rule); background: var(--paper); padding: 10px 14px; }
-button:disabled { opacity: .55; cursor: default; }
-.btn-prim { background: var(--tinta); color: var(--tinta-texto); border-color: var(--tinta); font-weight: 500; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding-inline: 20px; }
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 3px solid rgb(0 125 250 / .6); outline-offset: 2px; }
+input, select, button, textarea { font: inherit; color: var(--texto); letter-spacing: inherit; }
+input, select { background: var(--superficie); border: 0; border-radius: var(--raio-campo); padding: 11px 14px; min-width: 0; width: 100%; font-size: 16px; box-shadow: inset 0 0 0 1px var(--separador); }
+button { cursor: pointer; border: 0; border-radius: var(--raio-capsula); background: var(--superficie-2); padding: 9px 16px; }
+button:disabled { opacity: .5; cursor: default; }
+.btn-prim { background: var(--acao); color: var(--acao-texto); font-weight: 500; }
+.fonte, .nota { font-size: var(--t-nota); color: var(--texto-2); }
 
-/* Banda de marca e boletim (mesmo desenho do e-mail) */
-.banda { background: var(--banda); color: var(--banda-texto); margin-top: calc(-1 * env(safe-area-inset-top, 0px)); padding-top: calc(env(safe-area-inset-top, 0px) + 18px); padding-bottom: 18px; border-bottom: 1px solid var(--facho); }
-.banda-in { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.logo { height: 44px; width: auto; display: block; }
-.banda-data { font-family: var(--fonte-dado); font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--facho-claro); text-align: right; }
-.boletim { background: var(--papel); border: 1px solid var(--linha); padding: clamp(24px, 5vw, 44px) clamp(18px, 5vw, 44px) 24px; display: grid; gap: 16px; }
-.boletim h1 { font-size: clamp(38px, 8vw, 64px); font-weight: 500; letter-spacing: -.02em; line-height: 1; }
-.b-resumo { font-size: 17px; max-width: 60ch; color: var(--texto); font-weight: 300; }
-.b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--facho); border-bottom: 1px solid var(--linha); margin-top: 6px; }
-.b-numeros div { padding: 18px 12px 18px 0; display: grid; gap: 6px; min-width: 0; }
-.b-numeros div + div { border-left: 1px solid var(--linha); padding-left: clamp(10px, 3vw, 20px); }
-.b-numeros b { font-size: clamp(30px, 8vw, 60px); line-height: 1; color: var(--tinta); font-variant-numeric: lining-nums proportional-nums; white-space: nowrap; }
-.b-numeros span { font-family: var(--fonte-dado); font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--grafite); }
-.b-secao { display: grid; gap: 4px; margin-top: 22px; }
-.b-secao .rotulo { border-bottom: 1px solid var(--linha); padding-bottom: 8px; }
-.b-secao .rotulo b { font-family: var(--fonte-marca); font-weight: 500; font-size: 15px; letter-spacing: 0; color: var(--facho-escuro); margin-right: 4px; }
-.b-secao .nota { margin: 6px 0 2px; }
-.b-item { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 4px 12px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--linha); border-radius: 0; padding: 18px 0; color: var(--texto); }
-.b-item:hover .b-acao { text-decoration: underline; }
-.b-item i { width: 6px; height: 6px; background: var(--facho); transform: rotate(45deg); margin: 9px 0 0 3px; }
-.b-item .b-t { font-family: var(--fonte-marca); font-weight: 500; font-size: 18px; line-height: 1.3; overflow-wrap: anywhere; color: var(--tinta); }
-.b-item .b-c { font-family: var(--fonte-dado); font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--grafite); }
-.b-item .b-d { font-size: 15px; padding-top: 4px; font-weight: 300; }
-.b-acao { color: var(--facho-escuro); font-weight: 500; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; padding-top: 8px; }
-.b-dest { text-align: right; display: grid; align-content: start; gap: 2px; min-width: 84px; }
-.b-dest b { font-size: 30px; line-height: 1.05; white-space: nowrap; color: var(--tinta); font-variant-numeric: lining-nums; }
+/* Liquid Glass: variante regular (sobre conteúdo claro) */
+.vidro { background: var(--vidro-claro); -webkit-backdrop-filter: var(--vidro-desfoque); backdrop-filter: var(--vidro-desfoque);
+  border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), var(--vidro-sombra); }
+
+/* Barra flutuante */
+.barra { position: fixed; z-index: 25; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 50%; transform: translateX(-50%);
+  width: min(880px, calc(100% - 2 * max(16px, env(safe-area-inset-left, 0px)))); display: flex; align-items: center; gap: 12px;
+  padding: 7px 7px 7px 18px; border-radius: var(--raio-capsula); color: var(--texto); transition: background .35s, color .35s, border-color .35s, box-shadow .35s; }
+.barra.escuro { background: rgb(255 255 255 / .1); border-color: rgb(255 255 255 / .18); color: #F5F5F7; box-shadow: inset 0 1px 0 rgb(255 255 255 / .22), 0 8px 32px rgb(0 0 0 / .3); }
+.barra .marca { display: block; color: inherit; line-height: 0; }
+.barra .marca svg { height: 22px; width: auto; }
+.barra-data { margin-left: auto; font-size: 13px; opacity: .72; white-space: nowrap; }
+.barra-acao { background: var(--acao); color: var(--acao-texto); border-radius: var(--raio-capsula); padding: 7px 15px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.barra-acao:hover { text-decoration: none; }
+.barra.escuro .barra-acao { background: #F5F5F7; color: #000; }
+
+/* Herói: a cidade acesa */
+.heroi { position: relative; background: var(--noite); color: #F5F5F7; overflow: hidden; isolation: isolate; }
+.heroi canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; display: block; }
+.heroi::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, rgb(10 12 16 / .7) 0%, rgb(10 12 16 / .15) 38%, rgb(10 12 16 / .1) 62%, rgb(10 12 16 / .78) 100%); }
+.heroi-in { max-width: 880px; margin: 0 auto; padding-top: 128px; padding-bottom: 36px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 14px; }
+.heroi .rotulo { font-size: 15px; font-weight: 600; color: var(--luz); }
+.heroi h1 { font-size: clamp(40px, 8vw, 76px); line-height: 1.03; letter-spacing: -.03em; max-width: 13ch; }
+.b-resumo { font-size: clamp(17px, 2.1vw, 21px); line-height: 1.4; color: rgb(235 235 245 / .72); max-width: 42ch; }
+/* números do dia: Liquid Glass "clear" sobre fundo rico, com a camada de escurecimento do herói */
+.b-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: clamp(96px, 20vw, 230px); }
+.b-numeros div { position: relative; overflow: hidden; min-width: 0; display: grid; gap: 6px; padding: 18px 18px 16px; border-radius: var(--raio-grupo);
+  background: var(--vidro-escuro); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--vidro-escuro-borda); box-shadow: inset 0 1px 0 rgb(255 255 255 / .2), 0 10px 30px rgb(0 0 0 / .25); }
+.b-numeros div::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(140deg, rgb(255 255 255 / .16) 0%, rgb(255 255 255 / 0) 42%); }
+.b-numeros b { font-family: var(--fonte-titulo); font-size: clamp(28px, 6.4vw, 50px); font-weight: 600; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+.b-numeros span { font-size: 13px; line-height: 1.3; color: rgb(235 235 245 / .62); }
+.heroi-legenda { font-size: 12px; color: rgb(235 235 245 / .48); display: flex; gap: 8px; align-items: center; }
+.heroi-legenda i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .8); flex: none; }
+
+/* Conteúdo */
+.wrap { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 44px 88px; display: grid; gap: 64px; }
+.wrap > * { min-width: 0; }
+/* listas agrupadas no estilo do iPhone */
+.b-secao { display: grid; gap: 6px; }
+.b-secao + .b-secao { margin-top: 36px; }
+.b-secao .rotulo { font-family: var(--fonte-titulo); font-size: var(--t-titulo-2); font-weight: 600; letter-spacing: -.02em; }
+.b-secao .nota { font-size: 15px; margin-bottom: 8px; }
+.grupo { background: var(--superficie); border-radius: var(--raio-grupo); overflow: hidden; }
+.b-item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 12px; gap: 2px 16px; align-items: center; width: 100%; text-align: left;
+  background: none; border-radius: 0; padding: 15px 18px; color: var(--texto); }
+.b-item + .b-item::before { content: ""; position: absolute; top: 0; left: 18px; right: 0; height: 1px; background: var(--separador); }
+.b-item:hover { background: rgb(120 120 128 / .06); }
+.b-txt { min-width: 0; display: grid; gap: 1px; }
+.b-t { font-size: 17px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.b-c { font-size: 15px; color: var(--texto-2); }
+.b-d { font-size: 15px; margin-top: 3px; }
+.b-dest { text-align: right; display: grid; gap: 1px; }
+.b-dest b { font-family: var(--fonte-titulo); font-size: 22px; font-weight: 600; letter-spacing: -.025em; line-height: 1.1; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .b-dest.ganho b { color: var(--ganho); } .b-dest.alerta b { color: var(--alerta); }
-.b-dest span { font-size: 11.5px; color: var(--grafite); }
-.b-historico { border-top: 1px solid var(--linha); padding-top: 12px; }
-.b-historico summary { cursor: pointer; font-family: var(--fonte-dado); font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--facho-escuro); }
-.b-hist-item { display: grid; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--linha); }
-.b-hist-item .rotulo { font-size: 11px; }
-@media (max-width: 520px) { .b-numeros span { font-size: 10px; letter-spacing: .08em; overflow-wrap: anywhere; } .b-item { grid-template-columns: 16px minmax(0, 1fr); } .b-dest { grid-column: 2; text-align: left; display: flex; gap: 8px; align-items: baseline; } }
+.b-dest span { font-size: 12px; color: var(--texto-2); white-space: nowrap; }
+.b-chev { color: var(--texto-3); font-size: 22px; line-height: 1; font-weight: 300; }
+.b-historico { margin-top: 20px; }
+.b-historico summary { cursor: pointer; font-size: 15px; color: var(--link); }
+.b-hist-item { display: grid; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--separador); }
+.b-hist-item .rotulo { font-size: 13px; color: var(--texto-2); }
+#fonte { margin-top: 14px; }
+@media (max-width: 560px) {
+  .b-item { grid-template-columns: minmax(0, 1fr) 12px; }
+  .b-dest { grid-column: 1; grid-row: 2; text-align: left; display: flex; gap: 6px; align-items: baseline; margin-top: 4px; }
+  .b-chev { grid-column: 2; grid-row: 1 / span 2; }
+  .b-numeros { gap: 6px; } .b-numeros div { padding: 14px 12px 12px; border-radius: 18px; } .b-numeros span { font-size: 11.5px; }
+}
 
-/* Pergunta */
-.pergunta { background: var(--tinta); color: var(--tinta-texto); padding: clamp(22px, 5vw, 36px); display: grid; gap: 16px; }
-.pergunta h2 { color: var(--tinta-texto); }
-.pergunta h2::before { background: var(--facho-claro); }
-.pergunta form { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; }
-.pergunta input { font-size: 17px; padding: 14px; background: var(--papel); }
-.pergunta .btn-prim { background: var(--facho-claro); border-color: var(--facho-claro); color: #17302A; }
-.pergunta .mic { background: transparent; color: var(--tinta-texto); border-color: var(--facho-claro); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; }
+/* Pergunte ao Faro */
+.pergunta { position: relative; background: var(--superficie); border-radius: var(--raio-cartao); padding: clamp(22px, 4vw, 34px); display: grid; gap: 16px; }
+.pergunta::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: linear-gradient(120deg, rgb(255 200 136 / .95), rgb(255 200 136 / 0) 38%, rgb(255 200 136 / 0) 62%, rgb(255 168 96 / .8));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.pergunta h2 { margin: 0; }
+.pergunta form { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px; align-items: center; background: var(--superficie-2); border-radius: var(--raio-capsula); padding: 5px; }
+.pergunta input { background: transparent; box-shadow: none; font-size: 17px; padding: 9px 14px; }
+.pergunta .mic { background: transparent; color: var(--texto-2); padding: 9px 12px; }
 #mic[hidden] { display: none; }
-.mic.ouvindo { background: var(--bad-bg); color: var(--bad); border-color: var(--bad); }
+.mic.ouvindo { background: var(--bad-bg); color: var(--bad); }
 .sugestoes { display: flex; flex-wrap: wrap; gap: 8px; }
-.sugestoes button { background: transparent; color: var(--tinta-texto); border: 1px solid rgb(201 168 120 / .55); font-size: 14px; padding: 7px 12px; text-align: left; font-weight: 300; }
-.sugestoes button:hover { border-color: var(--facho-claro); }
+.sugestoes button { font-size: 15px; padding: 8px 14px; text-align: left; }
 .resposta { display: grid; gap: 12px; }
-.resposta:not(:empty) { background: var(--papel); color: var(--texto); padding: 18px; }
-.resposta .texto { white-space: pre-wrap; font-size: 16.5px; }
-.resposta .estado { color: var(--muted); font-size: 14px; }
+.resposta .texto { white-space: pre-wrap; font-size: 17px; }
+.resposta .estado { color: var(--texto-2); font-size: 15px; }
 .resposta .linha-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
-.resposta .linha-acoes button { font-size: 14px; padding: 7px 12px; }
+.resposta .linha-acoes button { font-size: 15px; }
 
-/* Cartões */
-.abas { display: flex; gap: 0; flex-wrap: wrap; margin-bottom: 14px; border-bottom: 1px solid var(--linha); }
-.abas button { border: 0; border-bottom: 1px solid transparent; margin-bottom: -1px; border-radius: 0; background: none; padding: 10px 14px 10px 0; margin-right: 18px; font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--grafite); }
-.abas button[aria-selected="true"] { color: var(--tinta); border-bottom-color: var(--facho); }
+/* Destaques: controle segmentado + cartões */
+.abas { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: var(--raio-capsula); background: var(--superficie-2); margin-bottom: 14px; }
+.abas button { background: transparent; padding: 7px 15px; font-size: 14px; font-weight: 500; }
+.abas button[aria-selected="true"] { background: var(--superficie); box-shadow: 0 1px 4px rgb(0 0 0 / .12), 0 0 0 .5px rgb(0 0 0 / .04); }
 .cartoes { display: grid; gap: 10px; }
-.cartao { display: grid; gap: 6px; text-align: left; width: 100%; background: var(--paper); border: 1px solid var(--rule); border-radius: var(--raio-1); padding: 18px 20px; }
-.cartao:hover { border-color: var(--facho); }
-.cartao .t { font-size: 19px; overflow-wrap: anywhere; color: var(--tinta); }
-.cartao .s { color: var(--muted); font-size: 14px; }
+.cartao { display: grid; gap: 4px; text-align: left; width: 100%; background: var(--superficie); border-radius: var(--raio-grupo); padding: 18px 20px; transition: transform .2s, box-shadow .2s; }
+.cartao:hover { box-shadow: 0 6px 24px rgb(0 0 0 / .08); }
+.cartao .t { font-size: 17px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.cartao .s { color: var(--texto-2); font-size: 15px; }
 .cartao .v { font-size: 15px; font-variant-numeric: tabular-nums; }
-.cartao .ir { color: var(--accent); font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag { font-size: 12px; padding: 2px 8px; border-radius: var(--raio-pilula); background: var(--soft); color: var(--ink); white-space: nowrap; }
+.cartao .ir { color: var(--link); font-size: 15px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { font-size: 13px; padding: 3px 10px; border-radius: var(--raio-capsula); background: var(--superficie-2); color: var(--texto); white-space: nowrap; }
 .tag.bom { background: var(--good-bg); color: var(--good); }
 .tag.ruim { background: var(--bad-bg); color: var(--bad); }
 .tag.aviso { background: var(--warn-bg); color: var(--warn); }
-.mais { margin-top: 12px; width: 100%; background: transparent; border-color: var(--facho); color: var(--tinta); font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; padding: 13px; }
-.nota { font-size: 13.5px; color: var(--muted); }
+.mais { margin-top: 12px; width: 100%; background: var(--superficie); color: var(--link); font-size: 15px; font-weight: 500; padding: 13px; }
+.vazio { color: var(--texto-2); }
 
 /* Explorar */
 .explorar { display: grid; gap: 16px; }
-.filtros { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.explorar h2 { margin: 0; }
+.filtros { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 @media (max-width: 640px) { .filtros { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .filtros .busca { grid-column: 1 / -1; } }
-label { display: grid; gap: 5px; font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-label input, label select { text-transform: none; letter-spacing: 0; font-size: 15px; font-weight: 400; }
-.mapa-box { background: var(--paper); border: 1px solid var(--rule); padding: 12px; }
+label { display: grid; gap: 6px; font-size: 13px; color: var(--texto-2); }
+.mapa-box { background: var(--superficie); border-radius: var(--raio-cartao); padding: 14px; }
 #mapa { width: 100%; aspect-ratio: 1 / 1.1; display: block; }
-#mapa .dist { fill: var(--soft); stroke: var(--paper); stroke-width: .8; }
-#mapa .pt { stroke: var(--paper); stroke-width: .4; cursor: pointer; }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); padding: 8px 4px 0; }
-.legenda i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+#mapa .dist { fill: var(--superficie-2); stroke: var(--superficie); stroke-width: 1; }
+#mapa .pt { stroke: var(--superficie); stroke-width: .4; cursor: pointer; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--texto-2); padding: 8px 6px 2px; }
+.legenda i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
 
 /* Calculadora */
-details.calc { background: var(--paper); border: 1px solid var(--rule); padding: 6px 20px; }
-details.calc summary { cursor: pointer; font-family: var(--fonte-marca); font-weight: 500; font-size: 20px; padding: 14px 0; color: var(--tinta); }
-.campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; padding-bottom: 14px; }
-.check { display: flex; gap: 8px; align-items: center; color: var(--ink); font-size: 15px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+details.calc { background: var(--superficie); border-radius: var(--raio-cartao); padding: 6px 22px; }
+details.calc summary { cursor: pointer; font-family: var(--fonte-titulo); font-weight: 600; font-size: var(--t-titulo-3); letter-spacing: -.02em; padding: 16px 0; }
+.campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding-bottom: 14px; }
+details.calc input, details.calc select { background: var(--fundo); box-shadow: none; }
+.check { display: flex; gap: 8px; align-items: center; color: var(--texto); font-size: 15px; }
 .check input { width: auto; }
-.calc-res { display: grid; gap: 10px; padding-bottom: 16px; }
-.veredito { padding: 12px 14px; font-weight: 500; }
+.calc-res { display: grid; gap: 10px; padding-bottom: 18px; }
+.veredito { padding: 14px 16px; border-radius: 16px; font-weight: 600; }
 .v-bom { color: var(--good); background: var(--good-bg); }
 .v-medio { color: var(--warn); background: var(--warn-bg); }
 .v-ruim { color: var(--bad); background: var(--bad-bg); }
 .contas { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; margin: 0; font-variant-numeric: tabular-nums; }
-.contas dt { color: var(--muted); }
-.contas dd { margin: 0; text-align: right; font-weight: 500; }
-.aviso-box { padding: 10px 12px; font-size: 14.5px; }
+.contas dt { color: var(--texto-2); }
+.contas dd { margin: 0; text-align: right; font-weight: 600; }
+.aviso-box { padding: 12px 14px; border-radius: 14px; font-size: 15px; }
 .aviso-box.ruim { background: var(--bad-bg); color: var(--bad); }
 .aviso-box.ok { background: var(--good-bg); color: var(--good); }
-.aviso-box.neutro { background: var(--soft); }
+.aviso-box.neutro { background: var(--superficie-2); }
 
-/* Ficha */
-.fundo { position: fixed; inset: 0; background: rgb(11 20 17 / .45); z-index: 20; }
-.ficha { position: fixed; top: 0; right: 0; bottom: 0; width: min(580px, 100%); background: var(--bg); z-index: 21; overflow-y: auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 20px) max(18px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 32px) max(18px, env(safe-area-inset-left, 0px));
-  display: grid; gap: 20px; align-content: start; box-shadow: var(--sombra-ficha); border-left: 1px solid var(--facho); }
-.ficha .cab { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
-.ficha .end { font-size: 26px; line-height: 1.15; overflow-wrap: anywhere; color: var(--tinta); }
+/* Ficha: folha de vidro flutuante (cantos concêntricos: 28 por fora, 14 por dentro, 14 de margem) */
+.fundo { position: fixed; inset: 0; background: rgb(0 0 0 / .28); z-index: 20; }
+.ficha { position: fixed; z-index: 21; top: calc(env(safe-area-inset-top, 0px) + 12px); right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  width: min(470px, calc(100% - 24px)); border-radius: var(--raio-cartao); overflow-y: auto; padding: 14px; display: grid; gap: 12px; align-content: start;
+  background: rgb(245 245 247 / .78); -webkit-backdrop-filter: blur(40px) saturate(180%); backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--vidro-claro-borda); box-shadow: var(--vidro-brilho), 0 30px 80px rgb(0 0 0 / .28); }
+:root[data-theme="dark"] .ficha { background: rgb(28 28 30 / .78); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ficha { background: rgb(28 28 30 / .78); } }
+@media (max-width: 640px) {
+  .ficha { top: calc(env(safe-area-inset-top, 0px) + 44px); left: 0; right: 0; bottom: 0; width: 100%; border-radius: var(--raio-cartao) var(--raio-cartao) 0 0;
+    padding: 18px max(14px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 24px) max(14px, env(safe-area-inset-left, 0px)); }
+}
+.ficha .cab { display: flex; justify-content: space-between; gap: 12px; align-items: start; padding: 6px 6px 2px; }
+.ficha .end { font-family: var(--fonte-titulo); font-size: var(--t-titulo-2); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; overflow-wrap: anywhere; }
+#fechar { font-size: 14px; padding: 7px 14px; background: rgb(120 120 128 / .16); flex: none; }
 .acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.acao { display: grid; gap: 2px; text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: var(--raio-1); padding: 12px 14px; text-align: left; font-size: 15px; }
-.acao:hover { border-color: var(--facho); }
-.acao b { font-weight: 500; }
-.acao span { font-size: 12.5px; color: var(--muted); }
-.acao.prim { background: var(--tinta); color: var(--tinta-texto); border-color: var(--tinta); }
-.acao.prim span { color: var(--tinta-texto); opacity: .8; }
-.bloco { background: var(--paper); border: 1px solid var(--rule); padding: 16px 18px; display: grid; gap: 10px; }
-.numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--facho); }
-.numeros div { padding: 10px 10px 4px 0; }
-.numeros div + div { border-left: 1px solid var(--linha); padding-left: 10px; }
-.numeros b { display: block; font-size: 22px; font-variant-numeric: lining-nums tabular-nums; overflow-wrap: anywhere; color: var(--tinta); }
-.numeros span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-.unidade { display: grid; gap: 4px; padding: 12px 0; border-top: 1px solid var(--linha); }
+.acao { display: grid; gap: 1px; color: var(--texto); background: var(--superficie); border-radius: 14px; padding: 12px 14px; text-align: left; font-size: 15px; }
+.acao:hover { text-decoration: none; filter: brightness(.98); }
+.acao b { font-weight: 600; }
+.acao span { font-size: 13px; color: var(--texto-2); }
+.acao.prim { background: var(--acao); color: var(--acao-texto); }
+.acao.prim span { color: var(--acao-texto); opacity: .7; }
+.bloco { background: var(--superficie); border-radius: 14px; padding: 16px; display: grid; gap: 10px; }
+.bloco h3 { font-size: 17px; }
+.numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.numeros div { background: var(--superficie); border-radius: 14px; padding: 12px; }
+.numeros b { display: block; font-family: var(--fonte-titulo); font-size: 20px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.numeros span { font-size: 12px; color: var(--texto-2); }
+.unidade { display: grid; gap: 4px; padding: 12px 0; border-top: 1px solid var(--separador); }
 .unidade:first-of-type { border-top: 0; padding-top: 0; }
-.unidade .u { font-weight: 500; }
-.unidade .reg { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 13px; color: var(--muted); }
-.copiar { font-size: 12px; padding: 4px 9px; letter-spacing: .08em; }
-.reg-linha { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin-top: 6px; font-size: 14px; }
-.vazio { color: var(--muted); }
-footer { font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; border-top: 1px solid var(--facho); padding-top: 16px; }
+.unidade .u { font-weight: 600; }
+.unidade .reg { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 13px; color: var(--texto-2); }
+.copiar { font-size: 13px; padding: 4px 10px; }
+.reg-linha { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin-top: 6px; font-size: 15px; }
+footer { font-size: 12px; color: var(--texto-2); display: grid; gap: 6px; border-top: 1px solid var(--separador); padding-top: 18px; }
+
+/* Acessibilidade: sem transparência quando o sistema pede */
+@media (prefers-reduced-transparency: reduce) {
+  .vidro, .barra, .barra.escuro, .b-numeros div, .ficha { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .vidro, .barra { background: var(--superficie); } .barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha { background: var(--fundo); }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro, .barra { background: var(--superficie); } .barra.escuro { background: #1C1C1E; } .b-numeros div { background: #1C1C1E; } .ficha { background: var(--fundo); }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
-<header class="banda">
-  <div class="banda-in"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 257.2 53.6" class="logo" role="img" aria-label="Faro"><title>Faro</title><g transform="translate(-1.52 47.60) scale(0.02667 -0.02667)"><path d="M790 525Q786 592 758.5 636.5Q731 681 677.0 704.0Q623 727 538 727H462V39H661V0H57V39H238V1461H57V1500H1125V1090H1085Q1081 1197 1046.5 1281.0Q1012 1365 940.5 1413.0Q869 1461 754 1461H462V765H538Q623 765 677.0 785.0Q731 805 758.5 847.0Q786 889 790 956H830V525Z" fill="#EFEAE1"/><polygon points="1185,1260 2085,1060 2085,1560 1185,1330" fill="#C9A878"/></g><rect x="71.08" y="6" width="0.8" height="41.60" fill="#C9A878"/><path d="M100.72 21.6Q100.656 20.528 100.21600000000001 19.816Q99.776 19.104 98.912 18.736Q98.048 18.368000000000002 96.688 18.368000000000002H95.472V29.376H98.656V30.0H88.992V29.376H91.888V6.623999999999999H88.992V6.0H106.08V12.559999999999999H105.44Q105.376 10.847999999999999 104.824 9.504Q104.27199999999999 8.16 103.12799999999999 7.3919999999999995Q101.984 6.623999999999999 100.144 6.623999999999999H95.472V17.759999999999998H96.688Q98.048 17.759999999999998 98.912 17.439999999999998Q99.776 17.119999999999997 100.21600000000001 16.448Q100.656 15.776 100.72 14.703999999999999H101.36V21.6ZM128.384 5.535999999999998 136.64 29.376H139.136V30.0H129.35999999999999V29.376H132.512L130.28799999999998 22.512H122.064L119.66399999999999 29.376H123.056V30.0H116.0V29.376H118.94399999999999L127.32799999999999 5.535999999999998ZM130.096 21.887999999999998 126.336 10.256 122.27199999999999 21.887999999999998ZM148.64000000000001 30.0V29.376H152.08V6.623999999999999H148.64000000000001V6.0H159.392Q161.872 6.0 163.73600000000002 6.656000000000001Q165.60000000000002 7.312000000000001 166.632 8.664Q167.66400000000002 10.015999999999998 167.66400000000002 12.096Q167.66400000000002 14.176 166.69600000000003 15.456Q165.728 16.735999999999997 163.888 17.311999999999998Q162.62400000000002 17.712 161.008 17.84Q162.73600000000002 17.936 163.84 18.448Q165.168 19.072 165.84 20.112000000000002Q166.512 21.152 166.744 22.392Q166.976 23.631999999999998 166.99200000000002 24.863999999999997Q167.008 26.096 167.06400000000002 27.136Q167.12 28.176 167.416 28.799999999999997Q167.71200000000002 29.424 168.52800000000002 29.424Q169.04000000000002 29.424 169.44 29.32Q169.84 29.216 170.16000000000003 29.056L170.38400000000001 29.648Q170.0 29.856 169.152 30.016Q168.304 30.176 167.232 30.176Q165.776 30.176 164.952 29.671999999999997Q164.12800000000001 29.168 163.752 28.311999999999998Q163.376 27.456 163.28 26.384Q163.184 25.312 163.168 24.176000000000002Q163.15200000000002 23.04 163.048 21.968Q162.94400000000002 20.896 162.568 20.04Q162.192 19.183999999999997 161.36 18.671999999999997Q160.52800000000002 18.16 159.056 18.16H155.66400000000002V29.376H159.104V30.0ZM155.66400000000002 17.536H159.168Q160.704 17.536 161.76800000000003 16.92Q162.83200000000002 16.304000000000002 163.38400000000001 15.096Q163.936 13.887999999999998 163.936 12.095999999999998Q163.936 10.303999999999998 163.38400000000001 9.088Q162.83200000000002 7.872 161.76800000000003 7.247999999999999Q160.704 6.623999999999999 159.168 6.623999999999999H155.66400000000002ZM190.928 30.32Q188.464 30.32 186.52800000000002 29.375999999999998Q184.592 28.432 183.24800000000002 26.735999999999997Q181.90400000000002 25.04 181.20800000000003 22.808Q180.512 20.576 180.512 18.0Q180.512 15.424 181.248 13.192Q181.984 10.96 183.36 9.264Q184.73600000000002 7.567999999999998 186.656 6.623999999999999Q188.57600000000002 5.68 190.928 5.68Q193.28 5.68 195.192 6.623999999999999Q197.104 7.567999999999998 198.48000000000002 9.264Q199.85600000000002 10.96 200.592 13.192Q201.328 15.424 201.328 18.0Q201.328 20.576 200.632 22.808Q199.936 25.04 198.60000000000002 26.735999999999997Q197.264 28.432 195.32800000000003 29.375999999999998Q193.39200000000002 30.32 190.928 30.32ZM190.928 29.744Q192.89600000000002 29.744 194.12 28.776Q195.34400000000002 27.808 196.0 26.144Q196.656 24.48 196.888 22.368000000000002Q197.12 20.256 197.12 18.0Q197.12 15.744 196.84 13.632Q196.56 11.52 195.88 9.856Q195.20000000000002 8.192 193.99200000000002 7.224Q192.78400000000002 6.256 190.928 6.256Q189.072 6.256 187.864 7.224Q186.656 8.192 185.96800000000002 9.856Q185.28 11.52 184.99200000000002 13.632Q184.704 15.744 184.704 18.0Q184.704 20.256 184.952 22.368000000000002Q185.20000000000002 24.48 185.848 26.144Q186.496 27.808 187.728 28.776Q188.96 29.744 190.928 29.744Z" fill="#EFEAE1"/><path d="M89.6572 40.32V45.5H90.5452V40.32ZM98.5816 40.32V43.798L94.8002 40.061V45.5H95.65859999999999V42.022L99.44 45.759V40.32ZM103.18440000000001 41.126599999999996H104.55340000000001V45.5H105.42660000000001V41.126599999999996H106.79560000000001V40.32H103.18440000000001ZM110.54 40.32V45.5H113.6924V44.7304H111.3984V43.1024H113.5444V42.3476H111.3984V41.0896H113.6924V40.32ZM117.8734 40.32V45.5H120.8038V44.7156H118.7466V40.32ZM124.5408 40.32V45.5H125.4288V40.32ZM132.14800000000002 43.5316H133.739Q133.6724 43.7906 133.5392 44.019999999999996Q133.406 44.2494 133.20620000000002 44.427Q133.0064 44.6046 132.73260000000002 44.7008Q132.45880000000002 44.797 132.11100000000002 44.797Q131.6004 44.797 131.1934 44.560199999999995Q130.78640000000001 44.3234 130.5496 43.8979Q130.3128 43.4724 130.3128 42.91Q130.3128 42.3402 130.5533 41.9221Q130.7938 41.504 131.2045 41.2709Q131.61520000000002 41.0378 132.11100000000002 41.0378Q132.65120000000002 41.0378 133.03230000000002 41.2598Q133.41340000000002 41.4818 133.62800000000001 41.8518L134.3384 41.3782Q134.109 41.0156 133.78340000000003 40.7603Q133.45780000000002 40.505 133.0397 40.3644Q132.6216 40.2238 132.11100000000002 40.2238Q131.52640000000002 40.2238 131.03060000000002 40.4199Q130.53480000000002 40.616 130.1648 40.9749Q129.7948 41.3338 129.59130000000002 41.8259Q129.38780000000003 42.318 129.38780000000003 42.91Q129.38780000000003 43.502 129.5876 43.9978Q129.78740000000002 44.4936 130.15370000000001 44.8562Q130.52 45.2188 131.0158 45.4149Q131.51160000000002 45.611 132.0962 45.611Q132.7178 45.611 133.1988 45.3853Q133.6798 45.1596 134.0054 44.767399999999995Q134.33100000000002 44.3752 134.49380000000002 43.868300000000005Q134.65660000000003 43.3614 134.64180000000002 42.7916H132.14800000000002ZM138.6452 40.32V45.5H141.7976V44.7304H139.50359999999998V43.1024H141.6496V42.3476H139.50359999999998V41.0896H141.7976V40.32ZM140.27319999999997 39.1064 141.03539999999998 39.7798 141.5682 39.394999999999996 140.27319999999997 38.359 138.9782 39.394999999999996 139.51839999999999 39.7798ZM149.76 40.32V43.798L145.9786 40.061V45.5H146.837V42.022L150.6184 45.759V40.32ZM155.532 42.91Q155.532 42.355 155.7799 41.9443Q156.0278 41.5336 156.42740000000003 41.307900000000004Q156.82700000000003 41.0822 157.30060000000003 41.0822Q157.6706 41.0822 157.9703 41.178399999999996Q158.27 41.2746 158.5068 41.4411Q158.74360000000001 41.6076 158.92120000000003 41.8148V40.7788Q158.603 40.505 158.2219 40.3644Q157.84080000000003 40.2238 157.27100000000002 40.2238Q156.70120000000003 40.2238 156.20910000000003 40.4199Q155.717 40.616 155.3544 40.9749Q154.9918 41.3338 154.78830000000002 41.8259Q154.58480000000003 42.318 154.58480000000003 42.91Q154.58480000000003 43.4946 154.78830000000002 43.9867Q154.9918 44.4788 155.3544 44.8414Q155.717 45.204 156.20910000000003 45.3964Q156.70120000000003 45.5888 157.27100000000002 45.5888Q157.84080000000003 45.5888 158.2219 45.4482Q158.603 45.3076 158.92120000000003 45.0412V43.9978Q158.74360000000001 44.2124 158.5068 44.3789Q158.27 44.5454 157.9703 44.6416Q157.6706 44.7378 157.30060000000003 44.7378Q156.82700000000003 44.7378 156.42740000000003 44.508399999999995Q156.0278 44.278999999999996 155.7799 43.8683Q155.532 43.4576 155.532 42.91ZM163.1022 40.32V45.5H163.99020000000002V40.32ZM171.1756 44.168 171.76760000000002 45.5H172.75920000000002L170.221 40.0314L167.6902 45.5H168.67440000000002L169.2664 44.168ZM170.221 41.7852 170.9314 43.428H169.518ZM181.7872 40.32V45.5H182.67520000000002V40.32ZM187.8922 42.3476 189.4684 45.019 191.05200000000002 42.3476 191.40720000000002 45.5H192.31L191.5996 40.061L189.4684 43.576L187.3446 40.061L186.63420000000002 45.5H187.537ZM196.90540000000001 42.91Q196.90540000000001 42.3772 197.1348 41.9591Q197.3642 41.541 197.76010000000002 41.304199999999994Q198.156 41.0674 198.66660000000002 41.0674Q199.192 41.0674 199.58790000000002 41.304199999999994Q199.98380000000003 41.541 200.2058 41.9591Q200.42780000000002 42.3772 200.42780000000002 42.91Q200.42780000000002 43.4428 200.20210000000003 43.8572Q199.9764 44.2716 199.58050000000003 44.512100000000004Q199.18460000000002 44.7526 198.66660000000002 44.7526Q198.156 44.7526 197.76010000000002 44.512100000000004Q197.3642 44.2716 197.1348 43.8572Q196.90540000000001 43.4428 196.90540000000001 42.91ZM195.98040000000003 42.91Q195.98040000000003 43.4872 196.1802 43.983000000000004Q196.38000000000002 44.4788 196.74260000000004 44.8414Q197.10520000000002 45.204 197.59730000000002 45.4075Q198.0894 45.611 198.66660000000002 45.611Q199.25860000000003 45.611 199.747 45.4075Q200.23540000000003 45.204 200.598 44.8414Q200.96060000000003 44.4788 201.16040000000004 43.983000000000004Q201.36020000000002 43.4872 201.36020000000002 42.91Q201.36020000000002 42.3254 201.16040000000004 41.837Q200.96060000000003 41.3486 200.59430000000003 40.9897Q200.228 40.6308 199.7396 40.4273Q199.2512 40.2238 198.66660000000002 40.2238Q198.09680000000003 40.2238 197.60470000000004 40.4273Q197.11260000000001 40.6308 196.74630000000002 40.9897Q196.38000000000002 41.3486 196.1802 41.837Q195.98040000000003 42.3254 195.98040000000003 42.91ZM207.74640000000002 42.688Q207.74640000000002 42.688 207.7538 42.688Q208.12380000000002 42.547399999999996 208.3347 42.2773Q208.5456 42.0072 208.5456 41.6224Q208.5456 41.178399999999996 208.3347 40.889799999999994Q208.12380000000002 40.6012 207.7538 40.4606Q207.3838 40.32 206.888 40.32H205.3266V45.5H206.9768Q207.5318 45.5 207.9499 45.340900000000005Q208.368 45.1818 208.6048 44.8488Q208.8416 44.5158 208.8416 44.0052Q208.8416 43.6352 208.6936 43.3688Q208.5456 43.1024 208.28660000000002 42.9322Q208.0498 42.7768 207.74640000000002 42.688ZM206.1998 43.0802H206.925Q207.14700000000002 43.0802 207.332 43.128299999999996Q207.517 43.1764 207.6576 43.283699999999996Q207.7982 43.391 207.87220000000002 43.5464Q207.9462 43.7018 207.9462 43.9164Q207.9462 44.205 207.813 44.393699999999995Q207.6798 44.5824 207.4504 44.6786Q207.221 44.7748 206.925 44.7748H206.1998ZM206.1998 42.3994V41.0378H206.8288Q207.1988 41.0378 207.42450000000002 41.2154Q207.6502 41.393 207.6502 41.7186Q207.6502 41.9332 207.5466 42.084900000000005Q207.443 42.2366 207.258 42.318Q207.073 42.3994 206.8288 42.3994ZM212.882 40.32V45.5H213.77V40.32ZM218.02500000000003 40.32V45.5H220.95540000000003V44.7156H218.89820000000003V40.32ZM224.69240000000002 40.32V45.5H225.58040000000003V40.32ZM232.76580000000004 44.168 233.35780000000005 45.5H234.34940000000006L231.81120000000004 40.0314L229.28040000000004 45.5H230.26460000000006L230.85660000000004 44.168ZM231.81120000000004 41.7852 232.52160000000003 43.428H231.10820000000004ZM232.85460000000003 38.4774 232.18120000000005 38.1444 231.07120000000003 39.3284 231.52260000000004 39.5874ZM238.04940000000005 40.32V45.5H238.92260000000005V43.539H239.46280000000004L240.76520000000005 45.5H241.82340000000005L240.35820000000004 43.4428Q240.50620000000004 43.3984 240.63200000000003 43.3392Q241.04640000000003 43.1394 241.27950000000004 42.7768Q241.51260000000005 42.4142 241.51260000000005 41.925799999999995Q241.51260000000005 41.4374 241.27950000000004 41.0785Q241.04640000000003 40.7196 240.63200000000003 40.519800000000004Q240.21760000000003 40.32 239.64780000000005 40.32ZM238.92260000000005 42.8138V41.074799999999996H239.61080000000004Q239.91420000000005 41.074799999999996 240.13620000000003 41.178399999999996Q240.35820000000004 41.282 240.48400000000004 41.4744Q240.60980000000004 41.6668 240.60980000000004 41.948Q240.60980000000004 42.2218 240.48400000000004 42.4179Q240.35820000000004 42.614 240.13620000000003 42.713899999999995Q239.91420000000005 42.8138 239.61080000000004 42.8138ZM245.56040000000002 40.32V45.5H246.44840000000002V40.32ZM253.63380000000004 44.168 254.22580000000005 45.5H255.21740000000005L252.67920000000004 40.0314L250.14840000000004 45.5H251.13260000000005L251.72460000000004 44.168ZM252.67920000000004 41.7852 253.38960000000003 43.428H251.97620000000003Z" fill="#C9A878"/></svg><span class="banda-data" id="banda-data">São Paulo capital</span></div>
-</header>
-<div class="wrap">
-  <section class="boletim" id="boletim" aria-label="Boletim do dia">
-    <p class="rotulo" id="b-rotulo">— Boletim do dia</p>
+<nav class="barra vidro escuro" id="barra" aria-label="Faro">
+  <a class="marca" href="#boletim" aria-label="Faro, início"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 103.5 51.3" role="img" aria-label="Faro"><title>Faro</title><defs><radialGradient id="luz-barra" cx="0.5" cy="0.42" r="0.62"><stop offset="0" stop-color="#FFFBF4"/><stop offset="0.6" stop-color="#FFE3BC"/><stop offset="1" stop-color="#FFC888"/></radialGradient></defs><ellipse cx="83.57" cy="31.48" rx="7.98" ry="10.55" fill="url(#luz-barra)"/><path d="M22.18359375 16.0859375V21.6640625H15.8125V46.65625H8.6484375V21.6640625H4.1640625V16.0859375H8.6484375V13.21484375Q8.6484375 10.125 9.93359375 8.07421875Q11.21875 6.0234375 13.392578125 5.01171875Q15.56640625 4.0 18.19140625 4.0Q20.078125 4.0 21.541015625 4.30078125Q23.00390625 4.6015625 23.6875 4.84765625L22.2109375 10.42578125Q21.7734375 10.26171875 21.08984375 10.111328125Q20.40625 9.9609375 19.53125 9.9609375Q17.53515625 9.9609375 16.673828125 10.9453125Q15.8125 11.9296875 15.8125 13.734375V16.0859375ZM32.6103125 47.28515625Q29.68453125 47.28515625 27.3603125 46.232421875Q25.03609375 45.1796875 23.69625 43.12890625Q22.35640625 41.078125 22.35640625 38.0703125Q22.35640625 35.5 23.3134375 33.8046875Q24.27046875 32.109375 25.924765625 31.09765625Q27.5790625 30.0859375 29.6571875 29.552734375Q31.7353125 29.01953125 33.95015625 28.80078125Q36.6571875 28.5 38.32515625 28.28125Q39.993125 28.0625 40.745078125 27.5703125Q41.49703125 27.078125 41.49703125 26.0390625V25.90234375Q41.49703125 23.6875 40.18453125 22.45703125Q38.87203125 21.2265625 36.35640625 21.2265625Q33.7040625 21.2265625 32.159140625 22.375Q30.61421875 23.5234375 30.06734375 25.08203125L23.368125 24.125Q24.16109375 21.3359375 25.993125 19.462890625Q27.82515625 17.58984375 30.463828125 16.646484375Q33.1025 15.703125 36.30171875 15.703125Q38.48921875 15.703125 40.67671875 16.208984375Q42.86421875 16.71484375 44.69625 17.91796875Q46.52828125 19.12109375 47.62203125 21.14453125Q48.71578125 23.16796875 48.71578125 26.203125V46.65625H41.7978125V42.4453125H41.5790625Q40.9228125 43.703125 39.733359375 44.810546875Q38.54390625 45.91796875 36.780234375 46.6015625Q35.0165625 47.28515625 32.6103125 47.28515625ZM34.44234375 41.98046875Q36.62984375 41.98046875 38.21578125 41.119140625Q39.80171875 40.2578125 40.67671875 38.822265625Q41.55171875 37.38671875 41.55171875 35.69140625V32.109375Q41.19625 32.3828125 40.40328125 32.615234375Q39.6103125 32.84765625 38.59859375 33.0390625Q37.586875 33.23046875 36.616171875 33.3671875Q35.64546875 33.50390625 34.93453125 33.5859375Q33.32125 33.8046875 32.049765625 34.310546875Q30.77828125 34.81640625 30.04 35.69140625Q29.30171875 36.56640625 29.30171875 37.9609375Q29.30171875 39.95703125 30.7509375 40.96875Q32.20015625 41.98046875 34.44234375 41.98046875ZM52.0878125 46.65625V16.0859375H59.06046875V21.2265625H59.38859375Q60.20890625 18.546875 62.2596875 17.111328125Q64.31046875 15.67578125 66.93546875 15.67578125Q67.5096875 15.67578125 68.261640625 15.73046875Q69.01359375 15.78515625 69.50578125 15.8671875V22.484375Q69.0409375 22.3203125 68.0565625 22.2109375Q67.0721875 22.1015625 66.16984375 22.1015625Q64.17375 22.1015625 62.61515625 22.94921875Q61.0565625 23.796875 60.167890625 25.2734375Q59.27921875 26.75 59.27921875 28.71875V46.65625ZM83.56921875 47.2578125Q79.08484375 47.2578125 75.80359375 45.2890625Q72.52234375 43.3203125 70.731328125 39.765625Q68.9403125 36.2109375 68.9403125 31.5078125Q68.9403125 26.77734375 70.731328125 23.208984375Q72.52234375 19.640625 75.80359375 17.671875Q79.08484375 15.703125 83.56921875 15.703125Q88.05359375 15.703125 91.33484375 17.671875Q94.61609375 19.640625 96.42078125 23.208984375Q98.22546875 26.77734375 98.22546875 31.5078125Q98.22546875 36.2109375 96.42078125 39.765625Q94.61609375 43.3203125 91.33484375 45.2890625Q88.05359375 47.2578125 83.56921875 47.2578125ZM83.56921875 41.4609375Q86.0575 41.4609375 87.67078125 40.134765625Q89.2840625 38.80859375 90.090703125 36.5390625Q90.89734375 34.26953125 90.89734375 31.5078125Q90.89734375 28.69140625 90.090703125 26.421875Q89.2840625 24.15234375 87.67078125 22.826171875Q86.0575 21.5 83.56921875 21.5Q81.135625 21.5 79.495 22.826171875Q77.854375 24.15234375 77.047734375 26.421875Q76.24109375 28.69140625 76.24109375 31.5078125Q76.24109375 34.26953125 77.047734375 36.5390625Q77.854375 38.80859375 79.495 40.134765625Q81.135625 41.4609375 83.56921875 41.4609375Z" fill="currentColor"/></svg></a>
+  <span class="barra-data" id="banda-data">São Paulo</span>
+  <a class="barra-acao" href="#pergunta">Perguntar</a>
+</nav>
+<header class="heroi" id="boletim" aria-label="Boletim do dia">
+  <canvas id="cidade" aria-hidden="true"></canvas>
+  <div class="heroi-in">
+    <p class="rotulo" id="b-rotulo">Boletim do dia</p>
     <h1 id="b-titulo">Carregando o boletim…</h1>
     <p class="b-resumo" id="b-resumo"></p>
     <div class="b-numeros" id="b-numeros"></div>
+    <p class="heroi-legenda"><i aria-hidden="true"></i>Cada luz é um prédio HIS/HMP com alvará. Os anéis marcam os imóveis do boletim de hoje.</p>
+  </div>
+</header>
+<div class="wrap">
+  <section aria-label="Itens do boletim">
     <div id="b-secoes"></div>
     <p class="fonte" id="fonte"></p>
     <details class="b-historico" id="b-historico" hidden><summary>Boletins anteriores</summary><div id="b-lista"></div></details>
   </section>
 
-  <section class="pergunta" aria-label="Pergunte ao Faro">
+  <section class="pergunta" id="pergunta" aria-label="Pergunte ao Faro">
     <h2>Pergunte ao Faro</h2>
     <form id="form-pergunta">
       <input id="q" autocomplete="off" placeholder="Ex.: o que saiu de novo em Itaquera?" aria-label="Sua pergunta">
@@ -350,6 +417,7 @@ footer { font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; border
   };
 
   let EMPS = [], POR_ID = {}, META = {}, IDX = { ipca: {}, cdi: {} }, DEST = {}, TX = {};
+  let DESTAQUES_DIA = [];
   let historico = [], cartoesResposta = [], fichaAtual = null;
   const usar = async (nome) => { try { return (await window.claude?.use?.(nome)) ?? null; } catch { return null; } };
 
@@ -710,14 +778,15 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
     $("b-resumo").textContent = b.resumo;
     $("banda-data").textContent = dataBR(b.data);
     $("b-numeros").innerHTML = b.numeros.map((n) => `<div><b>${esc(n.valor)}</b><span>${esc(n.rotulo)}</span></div>`).join("");
-    $("b-secoes").innerHTML = (b.aviso ? `<p class="aviso-box ruim">${esc(b.aviso)}</p>` : "") + b.secoes.map((s, k) => `
+    $("b-secoes").innerHTML = (b.aviso ? `<p class="aviso-box ruim">${esc(b.aviso)}</p>` : "") + b.secoes.map((s) => `
       <div class="b-secao">
-        <p class="rotulo"><b>${["I", "II", "III", "IV", "V", "VI"][k] || k + 1}</b> · ${esc(s.titulo)}</p>
+        <h2 class="rotulo">${esc(s.titulo)}</h2>
         ${s.nota ? `<p class="nota">${esc(s.nota)}</p>` : ""}
-        ${s.itens.map((i) => `<button type="button" class="b-item" data-id="${esc(i.id)}"><i aria-hidden="true"></i>
-          <span><span class="b-t">${esc(i.titulo)}</span><br><span class="b-c">${esc(i.contexto)}</span><br><span class="b-d">${esc(i.detalhe)}</span><br><span class="b-acao">Ver contatos e detalhes →</span></span>
-          <span class="b-dest ${esc(i.tom)}"><b>${esc(i.destaque)}</b><span>${esc(i.destaque_rotulo)}</span></span></button>`).join("")}
+        <div class="grupo">${s.itens.map((i) => `<button type="button" class="b-item" data-id="${esc(i.id)}">
+          <span class="b-txt"><span class="b-t">${esc(i.titulo)}</span><span class="b-c">${esc(i.contexto)}</span><span class="b-d">${esc(i.detalhe)}</span></span>
+          <span class="b-dest ${esc(i.tom)}"><b>${esc(i.destaque)}</b><span>${esc(i.destaque_rotulo)}</span></span><span class="b-chev" aria-hidden="true">›</span></button>`).join("")}</div>
       </div>`).join("");
+    DESTAQUES_DIA = b.secoes.flatMap((s) => s.itens.map((i) => i.id));
     $("fonte").textContent = "Fontes: " + b.fontes;
     const antigos = (historico || []).filter((h) => h.data !== b.data);
     if (antigos.length) {
@@ -761,6 +830,66 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
     }).replace("S/Nº", "s/nº").replace("S/N", "s/n");
 
+  // ---------------- a cidade acesa (herói): cada prédio HIS/HMP é um ponto de luz; acendem na ordem do alvará
+  function cidade(distritos) {
+    const cv = $("cidade"); if (!cv || !cv.getContext) return;
+    const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const LAT0 = -23.60, LON0 = -46.60, COS = Math.cos(LAT0 * Math.PI / 180);
+    let base, W, H, dpr, proj, fortes = [], quadro = 0, visivel = true, animando = false;
+    const pts = EMPS.filter((e) => e.lat && e.lon).sort((a, b) => String(a.def1 || "").localeCompare(String(b.def1 || "")));
+    function medir() {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = cv.clientWidth; H = cv.clientHeight; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      const esc = Math.max(W / (0.46 * COS), H / 0.44);
+      proj = (lon, lat) => [W * 0.56 + (lon - LON0) * COS * esc, H * 0.52 - (lat - LAT0) * esc];
+      base = document.createElement("canvas"); base.width = cv.width; base.height = cv.height;
+      const b = base.getContext("2d"); b.scale(dpr, dpr);
+      const g = b.createRadialGradient(W * 0.56, H * 0.5, 0, W * 0.56, H * 0.5, Math.hypot(W, H) * 0.6);
+      g.addColorStop(0, "#161B24"); g.addColorStop(1, "#06080B"); b.fillStyle = g; b.fillRect(0, 0, W, H);
+      b.strokeStyle = "rgba(255,255,255,.045)"; b.lineWidth = 1;
+      for (const f of distritos.features) {
+        const polys = f.geometry.type === "MultiPolygon" ? f.geometry.coordinates : [f.geometry.coordinates];
+        for (const pol of polys) for (const anel of pol) { b.beginPath(); anel.forEach(([lo, la], k) => { const [x, y] = proj(lo, la); k ? b.lineTo(x, y) : b.moveTo(x, y); }); b.stroke(); }
+      }
+      b.globalCompositeOperation = "lighter"; b.fillStyle = "rgba(255,200,136,.18)";
+      for (const e of pts) { const [x, y] = proj(e.lon, e.lat); b.fillRect(x - .6, y - .6, 1.2, 1.2); }
+      const ids = new Set(DESTAQUES_DIA); fortes = pts.filter((e) => ids.has(e.id)).map((e) => proj(e.lon, e.lat));
+    }
+    function acender(de, ate) {
+      const b = base.getContext("2d"); b.save(); b.globalCompositeOperation = "lighter";
+      for (let k = de; k < ate; k++) {
+        const e = pts[k], [x, y] = proj(e.lon, e.lat); if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
+        const un = (e.his1 || 0) + (e.his2 || 0) + (e.hmp || 0), r = 0.7 + Math.min(1.5, Math.sqrt(Math.max(un, 1)) / 8);
+        b.shadowColor = "rgba(255,190,120,.9)"; b.shadowBlur = 8; b.fillStyle = `rgba(255,205,150,${0.35 + Math.min(0.5, un / 500)})`;
+        b.beginPath(); b.arc(x, y, r, 0, 7); b.fill();
+      }
+      b.restore();
+    }
+    function desenhar(t) {
+      const c = cv.getContext("2d"); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(base, 0, 0); c.scale(dpr, dpr);
+      for (const [x, y] of fortes) {
+        const fase = reduzir ? 0.5 : ((t / 2400) % 1);
+        c.fillStyle = "#FFF6EA"; c.shadowColor = "rgba(255,220,180,.95)"; c.shadowBlur = 16; c.beginPath(); c.arc(x, y, 3, 0, 7); c.fill(); c.shadowBlur = 0;
+        c.strokeStyle = `rgba(255,255,255,${0.85 - fase * 0.75})`; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 9 + fase * 16, 0, 7); c.stroke();
+      }
+    }
+    function laco(t) {
+      if (!visivel) { animando = false; return; }
+      if (quadro < pts.length) { const prox = Math.min(pts.length, quadro + 48); acender(quadro, prox); quadro = prox; }
+      desenhar(t); if (!reduzir || quadro < pts.length) requestAnimationFrame(laco); else animando = false;
+    }
+    function iniciar() { medir(); quadro = 0; if (reduzir) { acender(0, pts.length); quadro = pts.length; desenhar(0); } else if (!animando) { animando = true; requestAnimationFrame(laco); } }
+    iniciar();
+    let rs; addEventListener("resize", () => { clearTimeout(rs); rs = setTimeout(() => { if (Math.abs(cv.clientWidth - W) > 40 || Math.abs(cv.clientHeight - H) > 120) iniciar(); }, 200); });
+    if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => { visivel = en.isIntersecting; if (visivel && !animando && !reduzir) { animando = true; requestAnimationFrame(laco); } }).observe(cv);
+  }
+  // barra de vidro: variante escura sobre a cidade, clara sobre o conteúdo
+  function barra() {
+    const nav = $("barra"), heroi = $("boletim"); if (!nav || !heroi) return;
+    const ajustar = () => nav.classList.toggle("escuro", heroi.getBoundingClientRect().bottom > nav.getBoundingClientRect().bottom + 8);
+    addEventListener("scroll", ajustar, { passive: true }); ajustar();
+  }
+
   // ---------------- carga
   const opcional = (n) => fetch(`dados/${n}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   Promise.all([...["meta", "indices", "empreendimentos", "distritos", "destaques"].map((n) => fetch(`dados/${n}.json`).then((r) => { if (!r.ok) throw new Error(n); return r.json(); })), opcional("boletim"), opcional("boletins")])
@@ -769,6 +898,8 @@ Regras 2026: renda familiar HIS-1 até R$ 4.863, HIS-2 até R$ 9.726, HMP até R
       Object.values(DEST).forEach((l) => (l || []).forEach((x) => { if (x && x.end) x.end = endereco(x.end); }));
       const ult = META.itbi_ultimo_mes;
       desenharBoletim(boletim, historico);
+      try { cidade(dist); } catch (e) { console.warn(e); }
+      barra();
       if (!boletim) $("fonte").textContent = `Dados oficiais: alvarás atualizados em ${dataBR(META.geosampa_atualizacao)} · vendas até ${ult.slice(0, 3).toLowerCase()}/${ult.slice(4)} · ${num.format(META.totais.empreendimentos)} prédios HIS/HMP na capital`;
       $("c-mes1").value = META.ipca_ultimo;
       const ds = [...new Set(EMPS.map((e) => e.dist).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));

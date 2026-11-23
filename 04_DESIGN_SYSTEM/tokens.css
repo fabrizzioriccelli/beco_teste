@@ -1,59 +1,69 @@
-/* Faro — tokens do design system (v3.0, 23/11/2026)
-   Conceito "endereço nobre": os materiais dos prédios de alto padrão de São Paulo.
-   Verde dos Jardins (tinta), latão dos letreiros de fachada (facho) e travertino do hall (fundo).
+/* Faro — tokens do design system (v4.0, 23/11/2026)
+   Minimalismo no estilo Apple, com Liquid Glass na camada de navegação e controles.
+   Conceito "a cidade acesa": a única cor da marca é a luz quente; o resto é neutro.
    Uso: copie este bloco para o topo do CSS da página. */
 :root {
   /* Marca */
-  --tinta: #17302A;         /* verde Jardim: banda de marca, títulos, monograma, botão principal */
-  --tinta-texto: #F4EFE6;   /* texto sobre --tinta */
-  --facho: #B08D57;         /* latão: facho do monograma, fios, marcadores. 2,9:1 no papel: só decorativo */
-  --facho-claro: #C9A878;   /* latão sobre fundo verde (6,3:1) */
-  --facho-escuro: #7D5F38;  /* latão para texto e links (5,6:1 no papel) */
-  --facho-suave: #F1E8DA;   /* fundo de destaque leve */
-  --banda: #17302A;         /* faixa de marca no topo (site e e-mail) */
-  --banda-texto: #F4EFE6;
+  --luz: #FFC888;           /* luz quente: miolo do logotipo, pontos da cidade, brilhos. Só sobre fundo escuro ou como preenchimento */
+  --luz-clara: #FFF6EA;
+  --noite: #0A0C10;         /* fundo do herói (a cidade à noite) */
+  --noite-2: #1B2029;
 
-  /* Neutros */
-  --texto: #1A2622;         /* ônix esverdeado (13:1 no travertino) */
-  --grafite: #5B625D;       /* texto secundário (6,0:1 no papel) */
-  --linha: #DDD5C7;         /* fios e bordas */
-  --pedra: #E7E0D3;         /* chips e fundos de apoio */
-  --travertino: #EFEAE1;    /* fundo da página */
-  --papel: #FBF9F5;         /* cartões, fichas e o corpo do boletim */
+  /* Neutros (escala de cinzas da Apple) */
+  --texto: #1D1D1F;         /* 16,8:1 no branco */
+  --texto-2: #6E6E73;       /* secundário, 5,1:1 no branco */
+  --texto-3: #86868B;       /* terciário: só ícones e setas */
+  --separador: rgb(60 60 67 / .18);
+  --fundo: #F5F5F7;         /* fundo da página */
+  --superficie: #FFFFFF;    /* cartões, listas e fichas */
+  --superficie-2: #E8E8ED;  /* campos, controle segmentado, chips */
+  --link: #0066CC;          /* 5,6:1 no branco */
+  --acao: #1D1D1F;          /* botão principal (cápsula preta) */
+  --acao-texto: #FFFFFF;
 
-  /* Estados */
-  --ganho: #2D6A4F;   --ganho-fundo: #E3EDE6;
-  --atencao: #8A5A12; --atencao-fundo: #F3E9D6;
-  --alerta: #9E2B25;  --alerta-fundo: #F5E3DF;
+  /* Estados (cores de sistema da Apple, versões acessíveis) */
+  --ganho: #1E7A34;   --ganho-fundo: #E3F4E6;
+  --atencao: #B25000; --atencao-fundo: #FDEEDC;
+  --alerta: #D70015;  --alerta-fundo: #FDE6E8;
 
-  /* Categorias de unidade */
-  --cat-his: #2D6A4F; --cat-hmp: #3F5E7A; --cat-livre: #9A6A2F; --cat-sem: #A9A297;
+  /* Categorias de unidade (mapa) */
+  --cat-his: #34C759; --cat-hmp: #007AFF; --cat-livre: #FF9500; --cat-sem: #AEAEB2;
 
-  /* Tipografia (OFL, uso comercial livre) */
-  --fonte-marca: "Bodoni Moda", "Bodoni 72", Didot, "Bodoni MT", Georgia, serif;   /* títulos e números */
-  --fonte-texto: "Jost", "Futura", "Century Gothic", "Helvetica Neue", Arial, sans-serif;
-  --fonte-dado: "Jost", "Futura", "Helvetica Neue", Arial, sans-serif;            /* rótulos em versais espaçadas, datas, códigos */
-  --rastreio-rotulo: .22em;
-  --t-heroi: 56px; --t-1: 44px; --t-2: 28px; --t-3: 20px; --t-corpo: 16px; --t-apoio: 14px; --t-nota: 12.5px;
+  /* Liquid Glass (camada de navegação e controles; nunca no conteúdo) */
+  --vidro-claro: rgb(255 255 255 / .62);
+  --vidro-claro-borda: rgb(255 255 255 / .75);
+  --vidro-escuro: rgb(255 255 255 / .08);     /* variante "clear" sobre a cidade, com camada de escurecimento */
+  --vidro-escuro-borda: rgb(255 255 255 / .16);
+  --vidro-desfoque: blur(24px) saturate(180%);
+  --vidro-brilho: inset 0 1px 0 rgb(255 255 255 / .5), inset 0 -1px 0 rgb(255 255 255 / .08);
+  --vidro-sombra: 0 8px 32px rgb(0 0 0 / .12);
 
-  /* Espaço, raio e sombra */
-  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 24px; --e-6: 32px; --e-7: 48px;
-  --raio-1: 2px; --raio-2: 3px; --raio-3: 4px; --raio-pilula: 2px;
-  --sombra-ficha: -16px 0 40px rgb(23 48 42 / .16);
+  /* Tipografia: SF Pro nos aparelhos Apple (fonte do sistema), Inter nos demais */
+  --fonte: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --fonte-titulo: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  /* Escala do iOS (Dynamic Type, tamanho padrão) + títulos de página */
+  --t-heroi: 64px; --t-titulo-grande: 34px; --t-titulo-1: 28px; --t-titulo-2: 22px; --t-titulo-3: 20px;
+  --t-destaque: 17px; --t-corpo: 17px; --t-chamada: 16px; --t-subtitulo: 15px; --t-nota: 13px; --t-legenda: 12px;
+
+  /* Forma: cantos concêntricos (raio de dentro = raio de fora − espaçamento) */
+  --raio-cartao: 28px; --raio-grupo: 22px; --raio-campo: 12px; --raio-capsula: 999px;
+  --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 20px; --e-6: 24px; --e-7: 32px; --e-8: 48px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --tinta: #EDE7DC; --tinta-texto: #0F1A17; --facho: #C9A878; --facho-claro: #C9A878; --facho-escuro: #D6B98C; --facho-suave: #2A2519; --banda: #0B1411; --banda-texto: #EDE7DC;
-    --texto: #EDE7DC; --grafite: #A7AFA9; --linha: #2A3A35; --pedra: #1E2E29; --travertino: #0F1A17; --papel: #15231F;
-    --ganho: #7CC4A0; --ganho-fundo: #16332A; --atencao: #E0B56E; --atencao-fundo: #33291A; --alerta: #EE8E84; --alerta-fundo: #3A1F1C;
-    --cat-his: #7CC4A0; --cat-hmp: #93AFCB; --cat-livre: #D6A866; --cat-sem: #5F6A65;
+    --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #6E6E73; --separador: rgb(84 84 88 / .6);
+    --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #2997FF; --acao: #F5F5F7; --acao-texto: #000000;
+    --ganho: #30D158; --ganho-fundo: #0F2E19; --atencao: #FF9F0A; --atencao-fundo: #33230A; --alerta: #FF453A; --alerta-fundo: #3A1312;
+    --cat-his: #30D158; --cat-hmp: #0A84FF; --cat-livre: #FF9F0A; --cat-sem: #636366;
+    --vidro-claro: rgb(40 40 44 / .55); --vidro-claro-borda: rgb(255 255 255 / .12); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .45);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --tinta: #EDE7DC; --tinta-texto: #0F1A17; --facho: #C9A878; --facho-claro: #C9A878; --facho-escuro: #D6B98C; --facho-suave: #2A2519; --banda: #0B1411; --banda-texto: #EDE7DC;
-  --texto: #EDE7DC; --grafite: #A7AFA9; --linha: #2A3A35; --pedra: #1E2E29; --travertino: #0F1A17; --papel: #15231F;
-  --ganho: #7CC4A0; --ganho-fundo: #16332A; --atencao: #E0B56E; --atencao-fundo: #33291A; --alerta: #EE8E84; --alerta-fundo: #3A1F1C;
-  --cat-his: #7CC4A0; --cat-hmp: #93AFCB; --cat-livre: #D6A866; --cat-sem: #5F6A65;
+  --texto: #F5F5F7; --texto-2: #A1A1A6; --texto-3: #6E6E73; --separador: rgb(84 84 88 / .6);
+  --fundo: #000000; --superficie: #1C1C1E; --superficie-2: #2C2C2E; --link: #2997FF; --acao: #F5F5F7; --acao-texto: #000000;
+  --ganho: #30D158; --ganho-fundo: #0F2E19; --atencao: #FF9F0A; --atencao-fundo: #33230A; --alerta: #FF453A; --alerta-fundo: #3A1312;
+  --cat-his: #30D158; --cat-hmp: #0A84FF; --cat-livre: #FF9F0A; --cat-sem: #636366;
+  --vidro-claro: rgb(40 40 44 / .55); --vidro-claro-borda: rgb(255 255 255 / .12); --vidro-sombra: 0 8px 32px rgb(0 0 0 / .45);
   color-scheme: dark;
 }
