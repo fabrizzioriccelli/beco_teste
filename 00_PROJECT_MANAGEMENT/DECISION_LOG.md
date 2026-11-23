@@ -55,3 +55,12 @@ Decisões estratégicas irreversíveis (nome, identidade, arquitetura de dados, 
 - **Alternativas descartadas:** Lastro (proptech existente), Prumo (associado à Prumo Logística), Radar (genérico), BECO (conotação negativa); visual preto e dourado de luxo (padrão dominante do Behance e errado para habitação social).
 - **Consequências:** Site, e-mail e design system já usam Faro. Antes de registrar: busca no INPI (classes 9, 35, 36 e 42) e domínio. A pasta de código continua `11_APPLICATION/radar_his/` para não quebrar a rotina agendada.
 
+## DEC-0007 — Identidade Faro v3: alto padrão
+
+- **Data:** 23/11/2026
+- **Estado:** Proposta (aguarda aprovação)
+- **Contexto:** A versão 2 (grotesca pesada, laranja) foi considerada pouco sofisticada. Pedido: "mais sofisticado, algo alta renda". O Faro serve a quem investe.
+- **Decisão proposta:** Conceito "endereço nobre": monograma F em Bodoni Moda com facho de latão; logotipo em versais espaçadas; paleta dos materiais dos prédios de alto padrão de São Paulo (verde Jardim, latão, travertino); Jost para texto. Referências: Brickell, Forte, Orchard Hill e SOLA (Behance).
+- **Alternativas descartadas:** Preto com dourado brilhante (clichê do luxo); marrom e cobre (muito próximo da Brickell); Cormorant e Marcellus (números de estilo antigo, ruins para dados); moldura em placa e raios finos para o monograma (testados em prancha).
+- **Consequências:** Site, e-mail, tokens e manual já usam a v3. O nome Faro continua (DEC-0006).
+

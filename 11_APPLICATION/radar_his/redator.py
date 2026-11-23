@@ -9,14 +9,16 @@ import datetime as dt
 import html
 import json
 import pathlib
+import re
 
-# Paleta e tipografia da marca Faro (04_DESIGN_SYSTEM/tokens.css)
-COR = {"tinta": "#0F1E46", "facho": "#FF5A1F", "facho_escuro": "#C2410C", "grafite": "#4B5875", "linha": "#D5DCE8",
-       "calcada": "#E9EEF6", "gelo": "#F5F7FB", "papel": "#FFFFFF", "ganho": "#11795A", "alerta": "#C0262D",
-       "alerta_fundo": "#FCE4E4", "nevoa": "#A9B8DA"}
-FONTE_MARCA = "'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif"
-FONTE_TEXTO = "'Schibsted Grotesk', 'Segoe UI', Arial, sans-serif"
-FONTE_DADO = "'JetBrains Mono', Menlo, Consolas, monospace"
+# Paleta e tipografia da marca Faro v3 (04_DESIGN_SYSTEM/tokens.css)
+COR = {"tinta": "#17302A", "tinta_texto": "#F4EFE6", "facho": "#B08D57", "facho_claro": "#C9A878", "facho_escuro": "#7D5F38",
+       "texto": "#1A2622", "grafite": "#5B625D", "linha": "#DDD5C7", "pedra": "#E7E0D3", "travertino": "#EFEAE1", "papel": "#FBF9F5",
+       "ganho": "#2D6A4F", "alerta": "#9E2B25", "alerta_fundo": "#F5E3DF"}
+FONTE_MARCA = "'Bodoni Moda', 'Bodoni 72', Didot, 'Bodoni MT', Georgia, 'Times New Roman', serif"
+FONTE_TEXTO = "Jost, Futura, 'Century Gothic', 'Helvetica Neue', Arial, sans-serif"
+FONTE_DADO = FONTE_TEXTO
+ROMANOS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
 MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
 DIAS = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
 
@@ -51,6 +53,26 @@ def mes_extenso(aba_ou_ym):
     if aba_ou_ym[:3].isalpha():
         return f"{aba_ou_ym[:3].lower()}/{aba_ou_ym[-4:]}"
     return f"{MES[int(aba_ou_ym[5:7]) - 1]}/{aba_ou_ym[:4]}"
+
+
+PEQUENAS = {"da", "de", "do", "das", "dos", "e", "em", "na", "no", "nas", "nos"}
+SIGLAS = {"HIS", "HMP", "SP", "BL", "AP", "APTO", "CJ", "CEP", "SQL"}
+ROMANO = re.compile(r"^(X{0,3})(IX|IV|V?I{0,3})$")
+
+
+def endereco(s):
+    """Endereço da Prefeitura (muitas vezes em caixa alta) em grafia de título: 'Rua Major Ari Gomes, 29, Vila Mazzei'."""
+    def palavra(m):
+        w, k = m.group(0), m.start()
+        u = w.upper()
+        if u in SIGLAS or (len(u) > 1 and ROMANO.match(u)):
+            return u
+        if k > 0 and w.lower() in PEQUENAS:
+            return w.lower()
+        return w[:1].upper() + w[1:].lower()
+    s = re.sub(r"\b0+(\d)", r"\1", s or "")
+    s = re.sub(r"[A-Za-zÀ-ÿ]+", palavra, s)
+    return s.replace("S/Nº", "s/nº").replace("S/N", "s/n")
 
 
 def _e(s):
@@ -121,7 +143,7 @@ def rotativos(lista, n, hoje, excluir):
 
 # ---------------------------------------------------------------- conteúdo
 def _item_revenda(r):
-    return {"id": r["id"], "titulo": r["end"], "contexto": f"{r['dist']} · {r['un']}",
+    return {"id": r["id"], "titulo": endereco(r["end"]), "contexto": f"{r['dist']} · {r['un']}",
             "detalhe": f"Comprou por {brl(r['v0'])} ({mes_ano(r['d0'])}) e revendeu por {brl(r['v1'])} ({mes_ano(r['d1'])}).",
             "destaque": pct_curto(r["real"]), "destaque_rotulo": "acima da inflação" if r["real"] >= 0 else "abaixo da inflação",
             "tom": "ganho" if r["real"] >= 0 else "alerta"}
@@ -130,13 +152,13 @@ def _item_revenda(r):
 def _item_alvara(e):
     u = e["his1"] + e["his2"] + e["hmp"]
     partes = [f"{e['his1']} HIS-1" if e["his1"] else "", f"{e['his2']} HIS-2" if e["his2"] else "", f"{e['hmp']} HMP" if e["hmp"] else ""]
-    return {"id": e["id"], "titulo": e["end"], "contexto": f"{e['dist']} · alvará de {data_br(e['def1'])}",
+    return {"id": e["id"], "titulo": endereco(e["end"]), "contexto": f"{e['dist']} · alvará de {data_br(e['def1'])}",
             "detalhe": " · ".join(p for p in partes if p) or "Unidades não informadas no alvará.",
             "destaque": milhar(u), "destaque_rotulo": "unidades", "tom": "neutro"}
 
 
 def _item_acima(a):
-    return {"id": a["id"], "titulo": a["end"], "contexto": f"{a['dist']} · {', '.join(a['unidades'][:3])}{' e outras' if a['n'] > 3 else ''}",
+    return {"id": a["id"], "titulo": endereco(a["end"]), "contexto": f"{a['dist']} · {', '.join(a['unidades'][:3])}{' e outras' if a['n'] > 3 else ''}",
             "detalhe": f"{plural(a['n'], 'venda nova', 'vendas novas')} acima do teto {a['categoria']} de {brl(a['teto'])}.",
             "destaque": "+" + brl(a["maior"]), "destaque_rotulo": "acima do teto", "tom": "alerta"}
 
@@ -206,41 +228,37 @@ def conteudo_do_dia(emps, dest, meta, ant, auditoria, config, hoje):
 
 
 # ---------------------------------------------------------------- e-mail
+ROTULO = f"font-family:{FONTE_DADO};font-size:11px;font-weight:500;letter-spacing:2.4px;text-transform:uppercase"
+
+
 def logo_html(negativo=True):
-    """Símbolo Faro (haste + facho + braço) desenhado com CSS, sem imagem."""
-    h = COR["papel"] if negativo else COR["tinta"]
-    t = COR["papel"] if negativo else COR["tinta"]
-    z = "font-size:0;line-height:0"
-    return (f'<table role="presentation" cellspacing="0" cellpadding="0"><tr>'
-            f'<td style="width:8px;height:27px;background:{h};{z}">&nbsp;</td>'
-            f'<td valign="top" style="width:22px;height:27px;{z}">'
-            f'<div style="height:1px;{z}">&nbsp;</div>'
-            f'<div style="margin-left:2px;width:0;height:3px;border-right:19px solid {COR["facho"]};border-top:5px solid transparent;border-bottom:5px solid transparent;{z}"></div>'
-            f'<div style="height:3px;{z}">&nbsp;</div>'
-            f'<div style="width:12px;height:6px;background:{h};{z}">&nbsp;</div></td>'
-            f'<td style="padding-left:8px;font-family:{FONTE_MARCA};font-weight:900;font-size:28px;line-height:27px;letter-spacing:-1px;color:{t}">faro</td>'
-            f'</tr></table>')
+    """Assinatura Faro em texto (sem imagem): FARO em Bodoni com versais espaçadas e o descritor em latão."""
+    cor = COR["tinta_texto"] if negativo else COR["tinta"]
+    desc = COR["facho_claro"] if negativo else COR["facho_escuro"]
+    return (f'<div style="font-family:{FONTE_MARCA};font-weight:500;font-size:27px;line-height:1;letter-spacing:7px;color:{cor}">FARO</div>'
+            f'<div style="{ROTULO};font-size:8.5px;letter-spacing:3px;color:{desc};padding-top:7px">Inteligência imobiliária</div>')
 
 
 def _rotulo_secao(n, titulo):
-    return (f'<tr><td style="padding:30px 0 6px;font-family:{FONTE_DADO};font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:{COR["grafite"]}">'
-            f'<span style="color:{COR["facho_escuro"]};font-weight:500">{n:02d}</span> &mdash; {_e(titulo)}</td></tr><tr><td style="border-top:2px solid {COR["tinta"]};font-size:0;line-height:0;height:1px">&nbsp;</td></tr>')
+    num = ROMANOS[n - 1] if n <= len(ROMANOS) else str(n)
+    return (f'<tr><td style="padding:34px 0 8px;{ROTULO};color:{COR["facho_escuro"]};border-bottom:1px solid {COR["linha"]}">'
+            f'<span style="font-family:{FONTE_MARCA};font-size:15px;letter-spacing:0;text-transform:none">{num}</span> &nbsp;·&nbsp; {_e(titulo)}</td></tr>')
 
 
 def _item_email(i, link):
     cor = {"ganho": COR["ganho"], "alerta": COR["alerta"]}.get(i["tom"], COR["tinta"])
-    return f"""<tr><td style="padding:14px 0;border-bottom:1px solid {COR['linha']}">
+    return f"""<tr><td style="padding:18px 0;border-bottom:1px solid {COR['linha']}">
  <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-  <td valign="top" style="width:16px;padding-top:6px"><div style="width:9px;height:9px;background:{COR['facho']};font-size:0;line-height:0">&nbsp;</div></td>
+  <td valign="top" style="width:18px;padding-top:4px;font-size:9px;line-height:14px;color:{COR['facho']}">&#9670;</td>
   <td valign="top">
-   <div style="font-family:{FONTE_MARCA};font-weight:700;font-size:16px;line-height:1.3;color:{COR['tinta']}">{_e(i['titulo'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:2px">{_e(i['contexto'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:14px;line-height:1.45;color:{COR['tinta']};padding-top:6px">{_e(i['detalhe'])}</div>
-   <div style="padding-top:8px"><a href="{link}#imovel-{i['id']}" style="font-family:{FONTE_TEXTO};font-size:14px;font-weight:600;color:{COR['facho_escuro']};text-decoration:none">Ver contatos e detalhes &rarr;</a></div>
+   <div style="font-family:{FONTE_MARCA};font-weight:500;font-size:18px;line-height:1.3;color:{COR['tinta']}">{_e(i['titulo'])}</div>
+   <div style="{ROTULO};font-size:10.5px;letter-spacing:1.6px;color:{COR['grafite']};padding-top:4px">{_e(i['contexto'])}</div>
+   <div style="font-family:{FONTE_TEXTO};font-size:14.5px;line-height:1.5;color:{COR['texto']};padding-top:8px">{_e(i['detalhe'])}</div>
+   <div style="padding-top:10px"><a href="{link}#imovel-{i['id']}" style="{ROTULO};font-size:11px;letter-spacing:1.8px;color:{COR['facho_escuro']};text-decoration:none">Ver contatos e detalhes &rarr;</a></div>
   </td>
   <td valign="top" align="right" style="width:120px;padding-left:12px">
-   <div style="font-family:{FONTE_MARCA};font-weight:900;font-size:26px;line-height:1.1;letter-spacing:-0.5px;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:11.5px;color:{COR['grafite']};padding-top:2px">{_e(i['destaque_rotulo'])}</div>
+   <div style="font-family:{FONTE_MARCA};font-weight:500;font-size:28px;line-height:1.05;color:{cor};white-space:nowrap">{_e(i['destaque'])}</div>
+   <div style="font-family:{FONTE_TEXTO};font-size:11.5px;color:{COR['grafite']};padding-top:4px">{_e(i['destaque_rotulo'])}</div>
   </td>
  </tr></table>
 </td></tr>"""
@@ -248,39 +266,41 @@ def _item_email(i, link):
 
 def render_email(c):
     nums = "".join(
-        f"""<td width="{100 // len(c['numeros'])}%" valign="top" style="padding:14px 12px 14px {'14px;border-left:1px solid ' + COR['linha'] if k else '0'}">
-   <div style="font-family:{FONTE_MARCA};font-weight:900;font-size:40px;line-height:1;letter-spacing:-1.2px;white-space:nowrap;color:{COR['facho']}">{_e(n['valor'])}</div>
-   <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:6px">{_e(n['rotulo'])}</div></td>"""
+        f"""<td width="{100 // len(c['numeros'])}%" valign="top" style="padding:18px 12px 18px {'16px;border-left:1px solid ' + COR['linha'] if k else '0'}">
+   <div style="font-family:{FONTE_MARCA};font-weight:500;font-size:42px;line-height:1;white-space:nowrap;color:{COR['tinta']}">{_e(n['valor'])}</div>
+   <div style="{ROTULO};font-size:10px;letter-spacing:1.8px;color:{COR['grafite']};padding-top:8px">{_e(n['rotulo'])}</div></td>"""
         for k, n in enumerate(c["numeros"]))
     secoes = "".join(_rotulo_secao(k + 1, s["titulo"]) +
-                     (f'<tr><td style="padding:8px 0 2px;font-family:{FONTE_TEXTO};font-size:13px;color:{COR["grafite"]}">{_e(s["nota"])}</td></tr>' if s.get("nota") else "") +
+                     (f'<tr><td style="padding:10px 0 2px;font-family:{FONTE_TEXTO};font-size:13px;color:{COR["grafite"]}">{_e(s["nota"])}</td></tr>' if s.get("nota") else "") +
                      "".join(_item_email(i, c["link"]) for i in s["itens"]) for k, s in enumerate(c["secoes"]))
     aviso = (f'<tr><td style="padding:12px 14px;background:{COR["alerta_fundo"]};color:{COR["alerta"]};font-family:{FONTE_TEXTO};font-size:13px">{_e(c["aviso"])}</td></tr>'
              if c.get("aviso") else "")
-    return f"""<!doctype html><html><body style="margin:0;padding:0;background:{COR['gelo']}">
-<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['gelo']}"><tr><td align="center" style="padding:20px 12px">
+    return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet"></head>
+<body style="margin:0;padding:0;background:{COR['travertino']}">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{COR['travertino']}"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%">
- <tr><td style="background:{COR['tinta']};padding:18px 22px">
+ <tr><td style="background:{COR['tinta']};padding:24px 28px;border-bottom:1px solid {COR['facho']}">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>
-   <td>{logo_html(negativo=True)}</td>
-   <td align="right" style="font-family:{FONTE_DADO};font-size:12px;color:{COR['nevoa']}">{data_br(c['data'])}</td>
+   <td valign="middle">{logo_html(negativo=True)}</td>
+   <td align="right" valign="middle" style="{ROTULO};font-size:10.5px;color:{COR['facho_claro']}">{data_br(c['data'])}</td>
   </tr></table>
  </td></tr>
- <tr><td style="background:{COR['papel']};border-top:6px solid {COR['facho']};padding:26px 24px 8px">
+ <tr><td style="background:{COR['papel']};padding:36px 32px 10px">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-   <tr><td style="font-family:{FONTE_DADO};font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:{COR['grafite']}">&mdash; {_e(c['rotulo'])}</td></tr>
-   <tr><td style="padding:10px 0 8px;font-family:{FONTE_MARCA};font-weight:900;font-size:38px;line-height:1.02;letter-spacing:-1.2px;color:{COR['tinta']}">{_e(c['titulo'])}</td></tr>
-   <tr><td style="padding:0 0 12px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.55;color:{COR['tinta']}">{_e(c['resumo'])}</td></tr>
+   <tr><td style="{ROTULO};color:{COR['facho_escuro']}">{_e(c['rotulo'])}</td></tr>
+   <tr><td style="padding:14px 0 12px;font-family:{FONTE_MARCA};font-weight:500;font-size:42px;line-height:1.04;color:{COR['tinta']}">{_e(c['titulo'])}</td></tr>
+   <tr><td style="padding:0 0 18px;font-family:{FONTE_TEXTO};font-size:16px;line-height:1.6;color:{COR['texto']}">{_e(c['resumo'])}</td></tr>
    {aviso}
-   <tr><td style="border-top:2px solid {COR['tinta']};border-bottom:1px solid {COR['linha']}"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
+   <tr><td style="border-top:1px solid {COR['facho']};border-bottom:1px solid {COR['linha']}"><table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr>{nums}</tr></table></td></tr>
    {secoes}
-   <tr><td align="left" style="padding:28px 0 26px">
-    <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['facho']};color:{COR['tinta']};font-family:{FONTE_TEXTO};font-weight:700;font-size:15px;text-decoration:none;padding:14px 22px">Abrir o Faro e perguntar &rarr;</a>
-    <span style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-left:12px">mapa, fichas e contatos de cada prédio</span>
+   <tr><td align="left" style="padding:32px 0 30px">
+    <a href="{c['link_boletim']}" style="display:inline-block;background:{COR['tinta']};color:{COR['tinta_texto']};{ROTULO};font-size:12px;letter-spacing:2.4px;text-decoration:none;padding:16px 26px">Abrir o Faro &rarr;</a>
+    <div style="font-family:{FONTE_TEXTO};font-size:13px;color:{COR['grafite']};padding-top:10px">Mapa, fichas e contatos de cada prédio. Pergunte o que quiser.</div>
    </td></tr>
   </table>
  </td></tr>
- <tr><td style="padding:16px 4px 0;font-family:{FONTE_DADO};font-size:11px;line-height:1.6;color:{COR['grafite']}">
+ <tr><td style="padding:18px 6px 0;font-family:{FONTE_TEXTO};font-size:11px;line-height:1.7;color:{COR['grafite']}">
   {_e(c['fontes'])}<br>Os dados públicos não trazem nome nem telefone de proprietários. Inteligência de mercado; não substitui consulta jurídica nem certidão de matrícula.
  </td></tr>
 </table></td></tr></table></body></html>"""

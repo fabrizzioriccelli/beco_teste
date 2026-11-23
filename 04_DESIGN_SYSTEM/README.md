@@ -1,71 +1,64 @@
-# Design system — Faro (v2.0)
+# Design system — Faro (v3.0, alto padrão)
 
-Base visual do produto, usada no site e no boletim por e-mail. Os tokens estão em [tokens.css](tokens.css), o logo em [03_BRAND_IDENTITY/faro](../03_BRAND_IDENTITY/faro/) e o manual de marca em [03_BRAND_IDENTITY/manual](../03_BRAND_IDENTITY/manual/) (publicado em https://claude.ai/artifact/4GWnbgo3bev3XKnsu2kc6v).
+Base visual do site e do boletim por e-mail. Tokens em [tokens.css](tokens.css), logo em [03_BRAND_IDENTITY/faro](../03_BRAND_IDENTITY/faro/) e manual de marca em [03_BRAND_IDENTITY/manual](../03_BRAND_IDENTITY/manual/) (publicado em https://claude.ai/artifact/4GWnbgo3bev3XKnsu2kc6v).
 
-## Origem
+## Direção
 
-Vem da análise dos 24 projetos "real estate" do Behance ([benchmark visual](../01_RESEARCH_BENCHMARK/BENCHMARK_VISUAL_BEHANCE.md), 23/11/2026):
+Pedido de 23/11/2026: "mais sofisticado, algo alta renda". O Faro serve a quem investe; a marca passa a ter cara de relatório privado e de imobiliária boutique. Referências do [benchmark do Behance](../01_RESEARCH_BENCHMARK/BENCHMARK_VISUAL_BEHANCE.md):
 
 | Referência | O que trouxemos |
 |---|---|
-| [Astrix Builders](https://www.behance.net/gallery/226083297/Astrix-Builders-Construction-brand-identity) | Dupla azul-marinho e laranja; folha de construção do símbolo |
-| [Alliance](https://www.behance.net/gallery/257399129/Alliance-Brand-Identity) | Números gigantes como peça gráfica (herói numérico, número do item) |
-| [Lumen](https://www.behance.net/gallery/258362035/LUMEN-WEBSITE-BRANDING) | Rótulos editoriais com traço e uma família tipográfica principal |
-| [Bilge İnşaat](https://www.behance.net/gallery/231472123/Bilge-nsaat-Modern-Real-Estate-Branding) | Área de proteção desenhada e apresentação técnica da marca |
+| [Brickell](https://www.behance.net/gallery/252336603/Brickell) | Posicionamento por patrimônio e investimento; nome em serifa de versais espaçadas |
+| [Forte](https://www.behance.net/gallery/257568569/Forte-Luxury-Architecture-Brand-Identity) | Sistema de monograma + logotipo |
+| [Orchard Hill](https://www.behance.net/gallery/237797617/Orchard-Hill-Refined-living-experience) | Contenção: fios finos, pouco texto, muito vazio |
+| [SOLA](https://www.behance.net/gallery/254893035/SOLA-Architecture-Studio-Luxury-Real-Estate-Website) | Espaçamento generoso entre letras e entre blocos |
 
-Deixamos de fora o padrão dominante (preto, creme e dourado com serifa de luxo), foto de banco de imagem, casinha, telhado e pin de mapa, gradientes e mockups 3D.
-
-## Símbolo
-
-![Construção do símbolo](../03_BRAND_IDENTITY/faro/construcao.svg)
-
-O F como farol: haste em Tinta, facho laranja separado por uma "rua" de 2 módulos, braço que fecha o F. Grade 48 × 48, proteção de 8 módulos, mínimo de 16 px (favicon) e 24 px (assinatura).
-
-**Não fazer:** distorcer; trocar as cores da haste e do facho; colar o facho na haste; pôr o símbolo dentro de pin, casa ou círculo; usar gradiente ou sombra; usar o laranja Facho em texto pequeno sobre branco.
+Evitamos: preto com dourado brilhante, degradê e folha metálica, letra cursiva, brasão e foto de mansão de banco de imagem.
 
 ## Cores
 
 | Token | Nome | HEX | RGB | CMYK (aprox.) | Uso | Contraste |
 |---|---|---|---|---|---|---|
-| `--tinta` | Tinta | #0F1E46 | 15, 30, 70 | 79, 57, 0, 73 | Texto, banda de marca, haste | 16,2:1 no branco |
-| `--facho` | Facho | #FF5A1F | 255, 90, 31 | 0, 65, 88, 0 | Facho, botão principal, números grandes | 5,2:1 com Tinta; 3,1:1 no branco (só preenchimento e números grandes) |
-| `--facho-escuro` | Facho escuro | #C2410C | 194, 65, 12 | 0, 66, 94, 24 | Laranja para texto e links | 5,2:1 no branco |
-| `--nevoa` | Névoa | #D9E4F5 | 217, 228, 245 | 11, 7, 0, 4 | Superfícies de apoio | 12,6:1 com Tinta |
-| `--gelo` | Gelo | #F5F7FB | 245, 247, 251 | 2, 2, 0, 2 | Fundo da página | 15,1:1 com Tinta |
-| `--papel` | Papel | #FFFFFF | 255, 255, 255 | 0, 0, 0, 0 | Cartões e fichas | — |
-| `--grafite` | Grafite | #4B5875 | 75, 88, 117 | 36, 25, 0, 54 | Texto secundário | 7,1:1 no branco |
-| `--linha` | Linha | #D5DCE8 | 213, 220, 232 | 8, 5, 0, 9 | Bordas | — |
-| `--ganho` | Ganho | #11795A | 17, 121, 90 | 86, 0, 26, 53 | Valorização acima da inflação | 5,4:1 no branco |
-| `--atencao` | Atenção | #A15C00 | 161, 92, 0 | 0, 43, 100, 37 | Ganho abaixo do CDI, avisos | 5,2:1 no branco |
-| `--alerta` | Alerta | #C0262D | 192, 38, 45 | 0, 80, 77, 25 | Acima do teto, perda real | 5,9:1 no branco |
+| `--tinta` | Verde Jardim | #17302A | 23, 48, 42 | 52, 0, 13, 81 | Banda, títulos, monograma, botão principal | 11,7:1 no travertino |
+| `--facho` | Latão | #B08D57 | 176, 141, 87 | 0, 20, 51, 31 | Facho, fios, marcadores | 2,9:1: só decorativo |
+| `--facho-claro` | Latão claro | #C9A878 | 201, 168, 120 | 0, 16, 40, 21 | Latão sobre o verde | 6,3:1 no verde |
+| `--facho-escuro` | Latão escuro | #7D5F38 | 125, 95, 56 | 0, 24, 55, 51 | Rótulos, links, numerais romanos | 5,6:1 no papel |
+| `--travertino` | Travertino | #EFEAE1 | 239, 234, 225 | 0, 2, 6, 6 | Fundo da página e do e-mail | — |
+| `--papel` | Papel | #FBF9F5 | 251, 249, 245 | 0, 1, 2, 2 | Boletim, cartões e fichas | — |
+| `--texto` | Ônix | #1A2622 | 26, 38, 34 | 32, 0, 11, 85 | Texto corrido | 13:1 no travertino |
+| `--grafite` | Grafite | #5B625D | 91, 98, 93 | 7, 0, 5, 62 | Texto secundário | 6,0:1 no papel |
+| `--ganho` | Ganho | #2D6A4F | 45, 106, 79 | 58, 0, 25, 58 | Valorização acima da inflação | 6,1:1 no papel |
+| `--atencao` | Atenção | #8A5A12 | 138, 90, 18 | 0, 35, 87, 46 | Ganho abaixo do CDI, avisos | 5,6:1 no papel |
+| `--alerta` | Alerta | #9E2B25 | 158, 43, 37 | 0, 73, 77, 38 | Acima do teto, perda real | 7,1:1 no papel |
 
-Todo texto atende WCAG AA (4,5:1). O CMYK é conversão matemática: valide com prova de cor na gráfica. O tema escuro tem valores próprios em `tokens.css`.
+Todo texto atende WCAG AA (4,5:1). O CMYK é conversão matemática: valide com prova de cor. O tema escuro tem valores próprios em `tokens.css` (fundo verde-noite, texto travertino, latão claro).
 
 ## Tipografia
 
-| Papel | Fonte | Pesos | Por quê |
+| Papel | Fonte | Pesos | Uso |
 |---|---|---|---|
-| Marca, títulos e texto | **Schibsted Grotesk** | 400, 500, 700, 900 | Grotesca de jornal: firme no título, legível no celular, números fortes |
-| Dados e rótulos | **JetBrains Mono** | 400, 500 | Lembra documento de registro; alinha SQL, matrícula e datas |
+| Nome, títulos e números | **Bodoni Moda** | 400, 500 | Didone de alto contraste com tamanho óptico; números de destaque do boletim |
+| Texto e rótulos | **Jost** | 300, 400, 500 | Geométrica (linhagem Futura). Texto em 300/400; rótulos em versais 11 px com espaçamento 0,22 em |
 
-Licença OFL (uso comercial gratuito). Escala: herói 56 / 40 / 26 / 19 / 16 / 14 / 13 px. Números em colunas usam `tabular-nums`; números de herói usam `proportional-nums` para não abrir espaço no ponto do milhar.
+Licença OFL. Escala: herói 64 / 44 / 28 / 20 / 16 / 14 / 11 px. No e-mail, a pilha de fontes cai para Bodoni 72 ou Didot (Apple) e Georgia (demais).
 
 ## Componentes
 
 | Componente | Regra |
 |---|---|
-| **Banda de marca** | Faixa Tinta no topo com a assinatura negativa e a data em JetBrains Mono; borda inferior Facho de 6 a 8 px |
-| **Rótulo editorial** | JetBrains Mono 12 px, caixa-alta, espaçamento 0,14 em, Grafite: "— BOLETIM DE TERÇA-FEIRA, 24/11/2026" |
-| **Título do boletim** | Schibsted Grotesk 900, 38 a 52 px, espaçamento −0,03 em: "O que rolou ontem" |
-| **Herói numérico** | Três números do dia em Schibsted 900 laranja Facho, entre linha Tinta (2 px) e linha clara |
-| **Seção numerada** | "01 — ALVARÁS NOVOS" com o número em Facho escuro e linha Tinta embaixo; a numeração segue a ordem de leitura |
-| **Item do boletim** | Quadrado Facho de 9 px, endereço em 700, contexto em Grafite, "Ver contatos e detalhes →" em Facho escuro; à direita o número do item em 900 (verde se ganho, vermelho se alerta) |
-| **Botão** | Principal: fundo Facho, texto Tinta. Secundário: fundo Tinta, texto branco. Sempre com verbo ("Achar quem vende") |
-| **Chip de estado** | Pílula com o par cor + fundo do token e sempre com texto ("+8% acima da inflação", "acima do teto") |
-| **Selo de procedência** | JetBrains Mono 11 a 13 px com fonte e data de cada dado |
+| **Banda de marca** | Verde Jardim com a assinatura negativa e a data em versais de latão claro; fio de latão de 1 px embaixo |
+| **Rótulo editorial** | Jost 500, 11 px, versais, espaçamento 0,22 em, latão escuro |
+| **Título do boletim** | Bodoni Moda 500, 42 a 64 px |
+| **Herói numérico** | Três números em Bodoni verde, entre fio de latão (cima) e fio claro (baixo) |
+| **Seção** | Numeral romano em Bodoni (I, II, III) + título em versais de Jost |
+| **Item do boletim** | Losango de latão de 6 px, endereço em Bodoni 18 px (grafia de título, nunca caixa alta), contexto em versais, "Ver contatos e detalhes →" em latão escuro; à direita o número em Bodoni 28 px |
+| **Botão** | Principal: fundo verde, texto travertino, versais 12 px espaçadas. Secundário: fio de latão |
+| **Chip de estado** | Retângulo de raio 2 com o par cor + fundo do token, sempre com texto |
 
-**E-mail:** tabelas com estilos inline, 600 px, sem imagens (o logo é desenhado com células e bordas), para funcionar no Gmail e no Outlook com imagens bloqueadas.
+**Endereços:** a Prefeitura publica em caixa alta; o Redator e o site convertem para grafia de título ("Rua Major Ari Gomes, 29, Vila Mazzei").
+
+**E-mail:** tabelas com estilos inline, 600 px, sem imagens (o logo é texto), para funcionar no Gmail e no Outlook com imagens bloqueadas.
 
 ## Voz
 
-Direta, com número e com próximo passo. Diz o que sabe, diz o que não sabe e não promete o que o dado não mostra. Exemplo: "3 revendas novas em Itaquera. A melhor ganhou 12% acima da inflação. Toque para ver quem vende."
+Discreta e precisa, como um relatório privado. Número, contexto e próximo passo; sem exclamação e sem promessa que o dado não sustenta. Exemplo: "Três revendas novas em Itaquera. A melhor ganhou 12% acima da inflação."

@@ -1,58 +1,59 @@
-/* Faro — tokens do design system (v2.0, 23/11/2026)
-   Marca: o F como haste de farol com um facho de luz. Tinta (azul-noite) + Facho (laranja), sobre Gelo.
+/* Faro — tokens do design system (v3.0, 23/11/2026)
+   Conceito "endereço nobre": os materiais dos prédios de alto padrão de São Paulo.
+   Verde dos Jardins (tinta), latão dos letreiros de fachada (facho) e travertino do hall (fundo).
    Uso: copie este bloco para o topo do CSS da página. */
 :root {
   /* Marca */
-  --tinta: #0F1E46;         /* primária escura: texto, banda de marca, haste do símbolo */
-  --tinta-texto: #FFFFFF;   /* texto sobre --tinta */
-  --facho: #FF5A1F;         /* assinatura: facho, botão principal, números de destaque. 3,1:1 no branco: não usar em texto pequeno */
-  --facho-texto: #0F1E46;   /* texto sobre --facho (5,2:1) */
-  --facho-escuro: #C2410C;  /* laranja para texto e links (5,2:1 no branco) */
-  --facho-suave: #FFE6DB;   /* fundo de destaque leve */
-  --nevoa: #D9E4F5;         /* apoio: superfícies, chips */
-  --banda: #0F1E46;         /* faixa de marca no topo (site e e-mail) */
-  --banda-texto: #FFFFFF;
+  --tinta: #17302A;         /* verde Jardim: banda de marca, títulos, monograma, botão principal */
+  --tinta-texto: #F4EFE6;   /* texto sobre --tinta */
+  --facho: #B08D57;         /* latão: facho do monograma, fios, marcadores. 2,9:1 no papel: só decorativo */
+  --facho-claro: #C9A878;   /* latão sobre fundo verde (6,3:1) */
+  --facho-escuro: #7D5F38;  /* latão para texto e links (5,6:1 no papel) */
+  --facho-suave: #F1E8DA;   /* fundo de destaque leve */
+  --banda: #17302A;         /* faixa de marca no topo (site e e-mail) */
+  --banda-texto: #F4EFE6;
 
   /* Neutros */
-  --texto: #0F1E46;
-  --grafite: #4B5875;       /* texto secundário (7,1:1) */
-  --linha: #D5DCE8;         /* bordas */
-  --calcada: #E9EEF6;       /* chips, fundos de apoio */
-  --gelo: #F5F7FB;          /* fundo da página */
-  --papel: #FFFFFF;         /* cartões e fichas */
+  --texto: #1A2622;         /* ônix esverdeado (13:1 no travertino) */
+  --grafite: #5B625D;       /* texto secundário (6,0:1 no papel) */
+  --linha: #DDD5C7;         /* fios e bordas */
+  --pedra: #E7E0D3;         /* chips e fundos de apoio */
+  --travertino: #EFEAE1;    /* fundo da página */
+  --papel: #FBF9F5;         /* cartões, fichas e o corpo do boletim */
 
   /* Estados */
-  --ganho: #11795A;   --ganho-fundo: #E0F3EC;
-  --atencao: #A15C00; --atencao-fundo: #FBEEDB;
-  --alerta: #C0262D;  --alerta-fundo: #FCE4E4;
+  --ganho: #2D6A4F;   --ganho-fundo: #E3EDE6;
+  --atencao: #8A5A12; --atencao-fundo: #F3E9D6;
+  --alerta: #9E2B25;  --alerta-fundo: #F5E3DF;
 
   /* Categorias de unidade */
-  --cat-his: #11795A; --cat-hmp: #2F5BD3; --cat-livre: #C2410C; --cat-sem: #9AA6BF;
+  --cat-his: #2D6A4F; --cat-hmp: #3F5E7A; --cat-livre: #9A6A2F; --cat-sem: #A9A297;
 
   /* Tipografia (OFL, uso comercial livre) */
-  --fonte-marca: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif; /* títulos, números, logo */
-  --fonte-texto: "Schibsted Grotesk", system-ui, -apple-system, sans-serif;
-  --fonte-dado: "JetBrains Mono", ui-monospace, Menlo, monospace;          /* rótulos, datas, códigos, fontes */
-  --t-heroi: 56px; --t-1: 40px; --t-2: 26px; --t-3: 19px; --t-corpo: 16px; --t-apoio: 14px; --t-nota: 13px;
+  --fonte-marca: "Bodoni Moda", "Bodoni 72", Didot, "Bodoni MT", Georgia, serif;   /* títulos e números */
+  --fonte-texto: "Jost", "Futura", "Century Gothic", "Helvetica Neue", Arial, sans-serif;
+  --fonte-dado: "Jost", "Futura", "Helvetica Neue", Arial, sans-serif;            /* rótulos em versais espaçadas, datas, códigos */
+  --rastreio-rotulo: .22em;
+  --t-heroi: 56px; --t-1: 44px; --t-2: 28px; --t-3: 20px; --t-corpo: 16px; --t-apoio: 14px; --t-nota: 12.5px;
 
   /* Espaço, raio e sombra */
   --e-1: 4px; --e-2: 8px; --e-3: 12px; --e-4: 16px; --e-5: 24px; --e-6: 32px; --e-7: 48px;
-  --raio-1: 4px; --raio-2: 8px; --raio-3: 12px; --raio-pilula: 999px;
-  --sombra-ficha: -12px 0 32px rgb(15 30 70 / .18);
+  --raio-1: 2px; --raio-2: 3px; --raio-3: 4px; --raio-pilula: 2px;
+  --sombra-ficha: -16px 0 40px rgb(23 48 42 / .16);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --tinta: #EEF2FA; --tinta-texto: #0B1530; --facho: #FF7A45; --facho-texto: #0B1530; --facho-escuro: #FF7A45; --facho-suave: #3A1E14; --nevoa: #1C2B57; --banda: #060D22; --banda-texto: #EEF2FA;
-    --texto: #EEF2FA; --grafite: #A3B0CC; --linha: #26345E; --calcada: #1A274F; --gelo: #0B1530; --papel: #131F45;
-    --ganho: #5FD3A5; --ganho-fundo: #10342A; --atencao: #F2B45C; --atencao-fundo: #3A2A10; --alerta: #FF8A8A; --alerta-fundo: #3D1A1F;
-    --cat-his: #5FD3A5; --cat-hmp: #8FB0FF; --cat-livre: #FF9A6B; --cat-sem: #5E6B8C;
+    --tinta: #EDE7DC; --tinta-texto: #0F1A17; --facho: #C9A878; --facho-claro: #C9A878; --facho-escuro: #D6B98C; --facho-suave: #2A2519; --banda: #0B1411; --banda-texto: #EDE7DC;
+    --texto: #EDE7DC; --grafite: #A7AFA9; --linha: #2A3A35; --pedra: #1E2E29; --travertino: #0F1A17; --papel: #15231F;
+    --ganho: #7CC4A0; --ganho-fundo: #16332A; --atencao: #E0B56E; --atencao-fundo: #33291A; --alerta: #EE8E84; --alerta-fundo: #3A1F1C;
+    --cat-his: #7CC4A0; --cat-hmp: #93AFCB; --cat-livre: #D6A866; --cat-sem: #5F6A65;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --tinta: #EEF2FA; --tinta-texto: #0B1530; --facho: #FF7A45; --facho-texto: #0B1530; --facho-escuro: #FF7A45; --facho-suave: #3A1E14; --nevoa: #1C2B57; --banda: #060D22; --banda-texto: #EEF2FA;
-  --texto: #EEF2FA; --grafite: #A3B0CC; --linha: #26345E; --calcada: #1A274F; --gelo: #0B1530; --papel: #131F45;
-  --ganho: #5FD3A5; --ganho-fundo: #10342A; --atencao: #F2B45C; --atencao-fundo: #3A2A10; --alerta: #FF8A8A; --alerta-fundo: #3D1A1F;
-  --cat-his: #5FD3A5; --cat-hmp: #8FB0FF; --cat-livre: #FF9A6B; --cat-sem: #5E6B8C;
+  --tinta: #EDE7DC; --tinta-texto: #0F1A17; --facho: #C9A878; --facho-claro: #C9A878; --facho-escuro: #D6B98C; --facho-suave: #2A2519; --banda: #0B1411; --banda-texto: #EDE7DC;
+  --texto: #EDE7DC; --grafite: #A7AFA9; --linha: #2A3A35; --pedra: #1E2E29; --travertino: #0F1A17; --papel: #15231F;
+  --ganho: #7CC4A0; --ganho-fundo: #16332A; --atencao: #E0B56E; --atencao-fundo: #33291A; --alerta: #EE8E84; --alerta-fundo: #3A1F1C;
+  --cat-his: #7CC4A0; --cat-hmp: #93AFCB; --cat-livre: #D6A866; --cat-sem: #5F6A65;
   color-scheme: dark;
 }

@@ -1,38 +1,40 @@
 # 03 — Identidade visual
 
-**Faro v2.0 (23/11/2026).** O F de Faro desenhado como farol: a haste (o prédio, a torre) em Tinta e um facho de luz laranja que sai dela e se abre até achar o alvo. "Ter faro" é ter instinto para a oportunidade; o produto é isso toda manhã.
+**Faro v3.0 (23/11/2026), direção alto padrão.** Conceito "endereço nobre": o F de Faro em Bodoni, como as letras de latão na fachada dos prédios de alto padrão de São Paulo, com um facho de luz de latão que sai da serifa superior. Paleta dos materiais desses prédios: verde Jardim, latão e travertino.
 
-Manual completo, com a pesquisa do Behance, nome, símbolo, cores, tipografia, componentes, aplicações e usos incorretos: `manual/index.html` (publicado em https://claude.ai/artifact/4GWnbgo3bev3XKnsu2kc6v).
+Manual completo (direção, referências do Behance, materiais, monograma, assinaturas, paleta, tipografia, componentes, aplicações e usos incorretos): `manual/index.html`, publicado em https://claude.ai/artifact/4GWnbgo3bev3XKnsu2kc6v.
 
 ## Arquivos
 
-| Pasta / arquivo | Conteúdo |
+| Arquivo | Uso |
 |---|---|
-| `faro/assinatura.svg` | Assinatura principal, fundo claro |
-| `faro/assinatura-negativa.svg` | Fundo Tinta ou foto escura |
-| `faro/assinatura-mono.svg` | Uma cor: sobre Facho, carimbo, impressão |
-| `faro/assinatura-com-descritor.svg` | Com "INTELIGÊNCIA IMOBILIÁRIA" |
+| `faro/assinatura.svg` | Principal: monograma, fio de latão, FARO e descritor. Fundo claro |
+| `faro/assinatura-negativa.svg` | Sobre verde Jardim (banda do site) |
+| `faro/assinatura-mono.svg` | Uma cor |
+| `faro/assinatura-sem-descritor*.svg` | Espaços menores |
+| `faro/logotipo.svg`, `faro/logotipo-negativo.svg` | Só FARO em versais espaçadas |
 | `faro/assinatura-vertical.svg` | Capas e telas quadradas |
-| `faro/simbolo*.svg` | Símbolo sozinho (cor, negativo, mono) |
-| `faro/icone-app.svg`, `faro/favicon.svg` | Ícone de app e aba do navegador |
-| `faro/construcao.svg` | Folha de construção com a grade 48 × 48 |
-| `faro/png/` | Ícone de app 512/192/180, favicon 32/48/64, símbolo 256, assinaturas a 96 px |
-| `manual/` | Manual de marca (`gerar_manual.py` gera o `index.html` com os SVGs embutidos) |
-| `arquivo/radar-his-v1/` | Identidade anterior ("Radar HIS", H de quadra), substituída em 23/11/2026 |
+| `faro/simbolo*.svg` | Monograma (cor, negativo, uma cor) |
+| `faro/icone-app.svg`, `faro/favicon.svg` | Selo verde com fio de latão; aba do navegador |
+| `faro/construcao.svg` | Folha de construção do monograma |
+| `faro/png/` | Ícone 512/192/180, favicon 32/48/64, monograma 256, assinaturas a 120 px |
+| `manual/` | Manual de marca (`gerar_manual.py` gera o `index.html`) |
+| `arquivo/faro-v2/` | Versão 2 (grotesca e laranja), substituída em 23/11/2026 |
+| `arquivo/radar-his-v1/` | Versão 1 ("Radar HIS") |
 
 O texto do logo está em curvas e não depende de fonte instalada. Para regerar:
 
 ```
-python3 03_BRAND_IDENTITY/gerar_identidade.py --fontes <pasta com fontsource schibsted-grotesk e jetbrains-mono> --saida 03_BRAND_IDENTITY/faro
+python3 03_BRAND_IDENTITY/gerar_identidade.py --fontes <pasta com @fontsource/bodoni-moda e @fontsource/jost> --saida 03_BRAND_IDENTITY/faro
 python3 03_BRAND_IDENTITY/manual/gerar_manual.py
 ```
 
-## Construção
+## Construção do monograma
 
-- Grade 48 × 48. Haste 11 × 36. Facho separado da haste por 2 módulos, abre de 5 para 19. Braço 16 × 8.
-- Área de proteção: 8 módulos (a altura do braço) em volta de qualquer assinatura.
-- Tamanho mínimo: 16 px de altura para o favicon e 24 px para a assinatura horizontal.
+- F da Bodoni Moda 500. O facho começa 60 unidades (4% da versal) depois da serifa superior, mede 900 (60% da versal) e abre de 70 para 500 unidades.
+- O eixo do facho passa no centro da serifa superior; as bordas do facho se encontram na serifa.
+- Área de proteção: um terço da altura da versal. Mínimo: 16 px (favicon) e 32 px de altura (assinatura horizontal).
 
-Regras de cor, tipografia e componentes: [04_DESIGN_SYSTEM/README.md](../04_DESIGN_SYSTEM/README.md).
+Cores, tipografia e componentes: [04_DESIGN_SYSTEM/README.md](../04_DESIGN_SYSTEM/README.md).
 
 Pendente antes de registrar: busca no INPI (classes 9, 35, 36 e 42) e disponibilidade de domínio.

@@ -1,5 +1,19 @@
 # Histórico de versões
 
+## [0.6.0] — 23/11/2026 — Faro v3: direção alto padrão
+
+### Alterado
+
+- Identidade refeita a pedido ("mais sofisticado, algo alta renda"): monograma F em Bodoni com facho de latão, logotipo FARO em versais espaçadas, paleta verde Jardim (#17302A), latão (#B08D57) e travertino (#EFEAE1).
+- Tipografia: Bodoni Moda (nome, títulos e números) e Jost (texto e rótulos), no lugar de Schibsted Grotesk e JetBrains Mono.
+- Design system v3.0, site e e-mail redesenhados: fios de latão, numerais romanos nas seções, losango como marcador, botões em versais.
+- Endereços da Prefeitura passam a aparecer em grafia de título no e-mail e no site.
+- Manual de marca v3 com a direção, as referências de alto padrão do Behance (Brickell, Forte, Orchard Hill, SOLA) e o antes × agora.
+
+### Arquivado
+
+- Versão 2 (grotesca e laranja) em `03_BRAND_IDENTITY/arquivo/faro-v2/`.
+
 ## [0.5.0] — 23/11/2026 — Rebrand: Faro
 
 ### Alterado
