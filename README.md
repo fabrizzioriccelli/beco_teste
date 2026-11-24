@@ -1,5 +1,7 @@
 # Faro — Inteligência imobiliária
 
+<p align="center"><b>Português</b> · <a href="README.en.md">English</a></p>
+
 > Nome proposto em 23/11/2026 (substitui "BECO" e "Radar HIS"). Falta a busca de anterioridade no INPI e a checagem de domínio antes do registro.
 
 O Faro transforma informação imobiliária dispersa em inteligência organizada, rastreável e acessível. O primeiro foco é o mapeamento de **HIS** (Habitação de Interesse Social) e **HMP** (Habitação de Mercado Popular) no Município de São Paulo, com classificação separada para os demais segmentos, como studios de livre comercialização.
